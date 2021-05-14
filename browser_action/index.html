@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+
+    <title>vaccin.click : mon vaccin COVID-19 en 1 click !</title>
+    <link rel="stylesheet" href="index.css" />
+  </head>
+
+  <body class="panel">
+    <header class="panel-section panel-section-header">
+      <div class="icon-section-header">
+        <img src="/icons/vaccine-color.svg" />
+      </div>
+      <div class="text-section-header">
+        <a href="https://vaccin.click" target="_blank">vaccin.click</a> : mon
+        vaccin COVID-19 en 1 click !
+      </div>
+    </header>
+
+    <div class="panel-section panel-section-formElements">
+      <div class="panel-formElements-item">
+        <button id="stop" class="expander">
+          Mettre en pause la surveillance des RDV
+        </button>
+        <button id="start" class="expander">
+          Reprendre la surveillance des RDV
+        </button>
+      </div>
+
+      <div class="panel-formElements-item">
+        <div>
+          <input type="radio" name="autoBook" id="disableAutoBook" checked />
+          <label for="disableAutoBook"
+            >Ouvrir un onglet lorsqu'une réservation est disponible</label
+          >
+        </div>
+
+        <div>
+          <input type="radio" name="autoBook" id="enableAutoBook" />
+          <label for="enableAutoBook"
+            >Réserver automatiquement (vous devez être
+            <a href="https://www.doctolib.fr/sessions/new" target="_blank"
+              >connecté à Doctolib</a
+            >)</label
+          >
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-section panel-section-list">
+      <div class="panel-list-item disabled">
+        <div class="icon"></div>
+        <div class="text">
+          Mes centres de vaccination en réservation automatique
+        </div>
+        <div class="text-shortcut"></div>
+      </div>
+
+      <div id="locations"></div>
+
+      <div class="panel-section-separator"></div>
+
+      <div class="panel-list-item">
+        <div class="icon"></div>
+        <div class="text">
+          <a
+            href="https://www.doctolib.fr/vaccination-covid-19"
+            target="_blank"
+          >
+            Trouver des centres de vaccination sur Doctolib</a
+          >
+        </div>
+        <div class="text-shortcut"></div>
+      </div>
+
+      <div class="panel-section-separator"></div>
+
+      <div class="panel-list-item">
+        <div class="icon"></div>
+        <div class="text">
+          <a
+            href="https://twitter.com/intent/tweet?text=J'utilise https%3A%2F%2Fvaccin.click de %40dunglas pour réserver automatiquement mon rendez-vous de vaccination %23COVID19 !"
+            target="_blank"
+          >
+            Partager vaccin.click sur Twitter</a
+          >
+        </div>
+        <div class="text-shortcut"></div>
+      </div>
+
+      <div class="panel-section-separator"></div>
+
+      <details class="panel-section panel-section-formElements">
+        <summary>Options avancées</summary>
+
+        <div class="panel-formElements-item">
+          <button id="reset" class="expander">
+            Remise à zéro (effecera toutes les données)
+          </button>
+        </div>
+      </details>
+    </div>
+
+    <template id="location">
+      <div class="panel-list-item">
+        <div class="icon"><img width="20" /></div>
+        <div class="text"><a target="_blank"></a></div>
+        <div class="text-shortcut">
+          <button class="browser-style">❌</button>
+        </div>
+      </div>
+    </template>
+
+    <script src="index.js"></script>
+  </body>
+</html>

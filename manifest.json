@@ -1,0 +1,45 @@
+{
+  "manifest_version": 2,
+  "name": "vaccin.click",
+  "version": "1.0",
+  "description": "Trouvez et réservez automatiquement votre créneau de vaccination COVID-19.",
+  "author": "Kévin Dunglas",
+  "homepage_url": "https://dunglas.fr",
+  "icons": {
+    "48": "icons/vaccine-color.svg",
+    "96": "icons/vaccine-color.svg"
+  },
+  "permissions": [
+    "*://*.doctolib.fr/*",
+    "storage",
+    "alarms"
+  ],
+  "web_accessible_resources": [
+    "icons/vaccine-color.svg"
+  ],
+  "browser_action": {
+    "default_icon": "icons/vaccine-color.svg",
+    "default_title": "vaccin.click : mon vaccin COVID-19 en 1 click !",
+    "default_popup": "browser_action/index.html",
+    "browser_style": true
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.doctolib.fr/vaccination-covid-19*"],
+      "js": ["content_scripts/doctolib/search.js"]
+    },
+    {
+      "matches": ["*://*.doctolib.fr/*"],
+      "js": ["content_scripts/doctolib/book.js"],
+      "all_frames": true
+    }
+  ],
+  "background": {
+    "scripts": ["background_scripts/index.js"]
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "extension@vaccin.click"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+h1 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#stop,
+#start {
+  display: none;
+}
+
+.location,
+.location a {
+  display: flex;
+  align-items: center;
+}
+
+a {
+  color: #222426;
+  text-decoration: none;
+}
+
+label a {
+  text-decoration: underline;
+}
+
+.icon {
+  margin-right: 5px;
+}
