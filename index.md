@@ -8,12 +8,8 @@ La vaccination contre le COVID-19 est désormais ouverte à toutes les personnes
 
 ### Installer vaccin.click
 
-**Procédure temporaire** : la [vérification de l'extension](https://support.mozilla.org/fr/kb/signature-modules-complementaires-firefox) par l'équipe de Firefox est en cours. Quand elle sera terminée, l'extension sera installable en 1 click depuis Firefox.
-
-En attendant, vous pouvez suivre la procédure temporaire suivante pour utiliser quand même l'extension :
-
 1. Si ce n'est pas encore fait, [téléchargez Firefox](https://www.mozilla.org/fr/firefox/new/), un navigateur web libre, gratuit et respectueux de votre vie privée
-2. [Installez l'extension *vaccin.click](https://addons.mozilla.org/fr/firefox/addon/vaccin-click/)
+2. [Installez l'extension *vaccin.click*](https://addons.mozilla.org/fr/firefox/addon/vaccin-click/)
 
 **Vous êtes prêt à être vacciné !**
 
