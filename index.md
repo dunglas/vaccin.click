@@ -6,29 +6,21 @@ La vaccination contre le COVID-19 est désormais ouverte à toutes les personnes
 
 ![Capture d'écran](screenshot.png)
 
-Firefox est un navigateur libre, gratuit et respectueux de votre vie privée.
-
 ### Installer vaccin.click
 
 **Procédure temporaire** : la [vérification de l'extension](https://support.mozilla.org/fr/kb/signature-modules-complementaires-firefox) par l'équipe de Firefox est en cours. Quand elle sera terminée, l'extension sera installable en 1 click depuis Firefox.
 
 En attendant, vous pouvez suivre la procédure temporaire suivante pour utiliser quand même l'extension :
 
-1. [Téléchargez et installez la version Extended Support Release (ESR) de Firefox](https://www.mozilla.org/fr/firefox/enterprise/#download) (le deuxième item de la liste déroulante, cette version permet d'installer des extensions non signées). Il est aussi possible d'utiliser la [Firefox Developer Edition](https://www.mozilla.org/fr/firefox/developer/) plutôt que la version ESR.
-2. Tapez `about:config` dans la barre d'URL du navigateur
-3. Appuyez sur le bouton `Accepter le risque et poursuivre`
-4. Cherchez `xpinstall.signatures.required` et passez cette préférence à `false` pour désactiver la vérification des extensions
-5. [Téléchargez l'extension *vaccin.click*](vaccin.click-1.0.zip)
-6. Ouvrez le menu de Firefox (l'icône avec trois barres horizontales sur la droite) et cliquez sur `Modules complémentaires`
-7. Cliquez sur la roue crantée et choisissez `Installer un module depuis un fichier...`
-8. Sélectionnez le fichier `vaccin.click-1.0.zip` que vous avez téléchargé précédemment et cliquez sur `Ajouter` !
+1. Si ce n'est pas encore fait, [téléchargez Firefox](https://www.mozilla.org/fr/firefox/new/), un navigateur web libre, gratuit et respectueux de votre vie privée
+2. [Installez l'extension *vaccin.click](https://addons.mozilla.org/fr/firefox/addon/vaccin-click/)
 
 **Vous êtes prêt à être vacciné !**
 
 ### Comment ça marche ?
 
 1. Cliquez sur l'icône représentant un vaccin qui est apparue dans la barre d'outils
-2. Choisissez si vous voulez que la page du centre de vaccination s'ouvre quand un créneau est disponible (par défaut), ou si vous souhaitez que *vaccin.click* prenne le rendez-vous pour vous automatiquement (pour utiliser cette fonctionnalité, il faut que vous soyez connecté à Doctolib, dans ce cas l'extension prendra automatiquement le premier RDV disponible pour la 1ère et la 2nde dose - soyez sûr d'être disponible !).
+2. Choisissez si vous voulez que la page du centre de vaccination s'ouvre quand un créneau est disponible (par défaut), ou si vous souhaitez que *vaccin.click* prenne le rendez-vous pour vous automatiquement (pour utiliser cette fonctionnalité, il faut que vous soyez connecté à Doctolib, dans ce cas l'extension prendra automatiquement le premier RDV disponible pour la 1ère et la 2nde dose - soyez sûr d'être disponible !)
 3. Cliquez sur `Trouver des centres de vaccination sur Doctolib`
 4. Doctolib s'ouvre, utilisez les filtres pour trouver les centres de vaccination près de chez vous
 5. Ajoutez des centres à votre liste à surveiller en appuyant sur le bouton `Ajouter à ma liste` ajouté par l'extension
