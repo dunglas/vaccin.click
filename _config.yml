@@ -1,1 +1,6 @@
+lang: fr
 theme: jekyll-theme-minimal
+title: vaccin.click
+description: Une extension Firefox pour trouver et réserver automatiquement votre créneau de vaccination COVID-19
+logo: logo.svg
+show_downloads: false
