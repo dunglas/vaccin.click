@@ -4,13 +4,15 @@
 
   const url = document.URL; // Sauvegarde de l'URL originale, avant que l'on change de page
 
-  const { locations, stopped } = await browser.storage.sync.get({
+  const { locations, stopped, autoBook } = await browser.storage.sync.get({
     locations: {},
     stopped: false,
     autoBook: false,
   });
 
-  if (stopped || !locations[url]) return;
+  if (!locations[url]) return;
+
+  console.info(`Vérification de ${url}`);
 
   const MONTHS = {
     janvier: 1,
@@ -45,7 +47,7 @@
   let found = false;
   try {
     await wait();
-
+    if (stopped) return; // TODO: écouter un évènement envoyé par le background script pour éviter de recharger la page inutilement
     let slot = null;
 
     const $bookingMotive = document.getElementById("booking_motive");
@@ -164,12 +166,14 @@
       type: "error",
       url,
       error: {
-        // From https://stackoverflow.com/a/53624454/1352334
+        // https://stackoverflow.com/a/53624454/1352334
         ...e,
         name: e.name,
         message: e.message,
         stack: e.stack,
       },
     });
+  } finally {
+    setTimeout(window.location.reload.bind(window.location), 5 * 60 * 1000);
   }
 })();
