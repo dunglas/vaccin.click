@@ -6,7 +6,7 @@ La vaccination contre le COVID-19 est désormais ouverte à toutes les personnes
 
 ![Capture d'écran](screenshot.png)
 
-Firefox est navigateur libre, gratuit et respectueux de votre vie privée.
+Firefox est un navigateur libre, gratuit et respectueux de votre vie privée.
 
 ### Installer vaccin.click
 
