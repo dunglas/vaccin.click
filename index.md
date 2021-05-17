@@ -47,12 +47,6 @@ De même, si vous avez un empêchement, n'oubliez pas d'annuler le RDV depuis l'
 
 L'extension choisi un vaccin Pfizer ou Moderna (en fonction des disponibilités), seuls éligibles pour la population générale.
 
-### Chez moi ça marche pas !
-
-Cette extension est un projet non-commercial et est fournie sans aucune garantie. Le code de Doctolib peut changer, et certains centres de vaccination ont des formulaires particuliers qui ne sont pas encore supportés par l'extension.
-
-Si ça ne fonctionne pas chez vous, n'hésitez pas à [ouvrir un ticket](https://github.com/dunglas/vaccin.click/issues) en indiquant précisément quel est le problème que vous rencontrez et quelle est l'URL du centre de vaccination pour lequel l'extension ne fonctionne pas.
-
 ### Est-ce que les autres sites que Doctolib sont supportés ?
 
 Pas pour l'instant. Si vous êtes un développeur, [vous pouvez contribuer pour ajouter le support d'autres sites](https://github.com/dunglas/vaccin.click).
@@ -72,6 +66,12 @@ Si vous souhaitez m'accorder du temps pour corriger les bugs et ajouter de nouve
 ### Mes données sont-elles collectées par l'extension ?
 
 Non (mais elles le sont par Doctolib et le centre de vaccination bien entendu). L'extension fonctionne entièrement en local sur votre propre ordinateur.
+
+### Chez moi ça marche pas !
+
+Cette extension est un projet non-commercial et est fournie sans aucune garantie. Le code de Doctolib peut changer, et certains centres de vaccination ont des formulaires particuliers qui ne sont pas encore supportés par l'extension.
+
+Si ça ne fonctionne pas chez vous, n'hésitez pas à [ouvrir un ticket](https://github.com/dunglas/vaccin.click/issues) en indiquant précisément quel est le problème que vous rencontrez et quelle est l'URL du centre de vaccination pour lequel l'extension ne fonctionne pas.
 
 ### Qui a créé cette extension ?
 
