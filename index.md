@@ -63,7 +63,7 @@ Si ça ne fonctionne pas chez vous, n'hésitez pas à [ouvrir un ticket](https:/
 
 ### Qui a créé cette extension ?
 
-Cette extension a été créée par [Kévin Dunglas](https://dunglas.fr). [Me suivre sur Twitter](https://twitter.com/dunglas).
+Cette extension a été créée par [Kévin Dunglas](https://dunglas.fr) ([Twitter](https://twitter.com/dunglas)) et Anne Lesouef.
 
 Les [icônes](https://www.iconfinder.com/icons/5959975/corona_drugs_injection_syringe_vaccine_icon) ont été réalisées par [E Conceptive](https://www.iconfinder.com/econceptive) (licence Creative Commons Attribution 3.0 Unported).
 
