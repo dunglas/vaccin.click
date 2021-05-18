@@ -46,9 +46,13 @@
 
     switch (data.type) {
       case "found":
-        await browser.tabs.create({
-          url: data.url,
-        });
+        const tabs = await browser.tabs.query({ url: data.url });
+
+        // Ne pas réouvrir l'onglet si il est déjà ouvert
+        if (0 === tabs.length)
+          await browser.tabs.create({
+            url: data.url,
+          });
         break;
 
       case "booked":
