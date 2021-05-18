@@ -11,12 +11,12 @@ La vaccination contre le COVID-19 est désormais ouverte à toutes les personnes
 1. Si ce n'est pas encore fait, [téléchargez Firefox](https://www.mozilla.org/fr/firefox/new/), un navigateur web libre, gratuit et respectueux de votre vie privée
 2. [Installez l'extension *vaccin.click*](https://addons.mozilla.org/fr/firefox/addon/vaccin-click/)
 
-**Vous êtes prêt à être vacciné !**
+**Vous êtes prêt⋅e à être vacciné !**
 
 ### Comment ça marche ?
 
 1. Cliquez sur l'icône représentant un vaccin qui est apparue dans la barre d'outils
-2. Choisissez si vous voulez que la page du centre de vaccination s'ouvre quand un créneau est disponible (par défaut), ou si vous souhaitez que *vaccin.click* prenne le rendez-vous pour vous automatiquement (pour utiliser cette fonctionnalité, il faut que vous soyez connecté à Doctolib, dans ce cas l'extension prendra automatiquement le premier RDV disponible pour la 1ère et la 2nde dose - soyez sûr d'être disponible !)
+2. Choisissez si vous voulez que la page du centre de vaccination s'ouvre quand un créneau est disponible (par défaut), ou si vous souhaitez que *vaccin.click* prenne le rendez-vous pour vous automatiquement (pour utiliser cette fonctionnalité, il faut que vous soyez connecté⋅e à Doctolib, dans ce cas l'extension prendra automatiquement le premier RDV disponible pour la 1ère et la 2nde dose - soyez sûr⋅e d'être disponible !)
 3. Cliquez sur `Trouver des centres de vaccination sur Doctolib`
 4. Doctolib s'ouvre, utilisez les filtres pour trouver les centres de vaccination près de chez vous
 5. Ajoutez des centres à votre liste à surveiller en appuyant sur le bouton `Ajouter à ma liste` ajouté par l'extension
@@ -33,7 +33,7 @@ De même, si vous avez un empêchement, n'oubliez pas d'annuler le RDV depuis l'
 
 ### Quel vaccin est choisi ?
 
-L'extension choisi un vaccin Pfizer ou Moderna (en fonction des disponibilités), seuls éligibles pour la population générale.
+L'extension choisit un vaccin Pfizer ou Moderna (en fonction des disponibilités), seuls éligibles pour la population générale.
 
 ### Est-ce que les autres sites que Doctolib sont supportés ?
 
@@ -63,7 +63,7 @@ Si ça ne fonctionne pas chez vous, n'hésitez pas à [ouvrir un ticket](https:/
 
 ### Qui a créé cette extension ?
 
-Cette extension a été créee par [Kévin Dunglas](https://dunglas.fr). [Me suivre sur Twitter](https://twitter.com/dunglas).
+Cette extension a été créée par [Kévin Dunglas](https://dunglas.fr). [Me suivre sur Twitter](https://twitter.com/dunglas).
 
 Les [icônes](https://www.iconfinder.com/icons/5959975/corona_drugs_injection_syringe_vaccine_icon) ont été réalisées par [E Conceptive](https://www.iconfinder.com/econceptive) (licence Creative Commons Attribution 3.0 Unported).
 
