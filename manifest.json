@@ -11,7 +11,8 @@
   },
   "permissions": [
     "*://*.doctolib.fr/*",
-    "storage"
+    "storage",
+    "notifications"
   ],
   "web_accessible_resources": [
     "icons/vaccine-color.svg"
