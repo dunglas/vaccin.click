@@ -96,8 +96,13 @@
         }`
       );
 
-      if (date - new Date() > 24 * 3600 * 1000)
-        throw new Error("Pas de créneau dispo dans les prochaines 24h");
+      const tomorrow = new Date();
+      tomorrow.setHours(23);
+      tomorrow.setMinutes(59);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+
+      if (date > tomorrow)
+        throw new Error("Pas de créneau dispo d'ici demain soir");
 
       if (!autoBook) {
         browser.runtime.sendMessage({
