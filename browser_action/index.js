@@ -5,14 +5,13 @@
   const $template = document.getElementById("location");
 
   function displayLocations(locations) {
-    Object.entries(locations).forEach(([url, { name, img }]) => {
+    Object.entries(locations).forEach(([url, name]) => {
       const $location = $template.content.cloneNode(true);
       const $a = $location.querySelector("a");
 
       $a.textContent = name;
       $a.href = url;
 
-      $location.querySelector("img").src = img;
       $location.querySelector("button").onclick = async () => {
         if (
           !confirm(`Êtes-vous sur de vouloir retirer "${name}" de la liste ?`)

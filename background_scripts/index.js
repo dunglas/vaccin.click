@@ -45,7 +45,7 @@
     console.info(data);
 
     switch (data.type) {
-      case "found":
+      case "found": {
         const tabs = await browser.tabs.query({ url: data.url });
 
         // Ne pas réouvrir l'onglet si il est déjà ouvert
@@ -57,10 +57,11 @@
           type: "basic",
           iconUrl: browser.extension.getURL("icons/vaccine-color.svg"),
           title: "Un créneau de vaccination est disponible !",
-          message: `Cliquez ici pour finaliser la réservation dans le centre "${data.location.name}"`,
+          message: `Cliquez ici pour finaliser la réservation dans le centre "${data.name}"`,
           priority: 2,
         });
         break;
+      }
 
       case "booked":
         await browser.storage.sync.set({ stopped: true });
@@ -72,7 +73,7 @@
           type: "basic",
           iconUrl: browser.extension.getURL("icons/vaccine-color.svg"),
           title: "Votre créneau de vaccination a été réservé !",
-          message: `Vous avez rendez-vous au centre "${data.location.name}".`,
+          message: `Vous avez rendez-vous au centre "${data.name}".`,
         });
 
         break;

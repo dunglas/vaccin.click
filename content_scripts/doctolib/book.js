@@ -108,7 +108,7 @@
         browser.runtime.sendMessage({
           type: "found",
           url,
-          location: locations[url],
+          name: locations[url],
         });
 
         return;
@@ -161,7 +161,7 @@
       await browser.runtime.sendMessage({
         type: "booked",
         url,
-        location: locations[url],
+        name: locations[url],
       });
     } catch (e) {
       console.debug(e);
@@ -171,7 +171,7 @@
         await browser.runtime.sendMessage({
           type: "found",
           url,
-          location: locations[url],
+          name: locations[url],
         });
 
         return;
@@ -180,7 +180,7 @@
       await browser.runtime.sendMessage({
         type: "error",
         url,
-        location: locations[url],
+        name: locations[url],
         error: {
           // https://stackoverflow.com/a/53624454/1352334
           ...e,

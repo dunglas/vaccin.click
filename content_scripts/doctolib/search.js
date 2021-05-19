@@ -65,10 +65,7 @@
     if (locations[locationUrl]) {
       delete locations[locationUrl];
     } else {
-      locations[locationUrl] = {
-        name: this.dataset.locationName,
-        img: this.dataset.locationImg,
-      };
+      locations[locationUrl] = this.dataset.locationName;
     }
 
     await browser.storage.sync.set({ locations });
