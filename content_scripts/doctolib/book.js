@@ -1,5 +1,6 @@
 (async function () {
   if (window.hasRun) return;
+
   window.hasRun = true;
   const url = document.URL; // Sauvegarde de l'URL originale, avant que l'on change de page
 
@@ -23,6 +24,16 @@
     return new Promise((r) =>
       setTimeout(r, 1000 + Math.floor(Math.random() * 3000))
     );
+  }
+
+  async function selectOption($select, $option) {
+    const evt = document.createEvent("HTMLEvents");
+    evt.initEvent("change", true, true);
+
+    $select.value = $option.value;
+    $select.dispatchEvent(evt);
+
+    await wait();
   }
 
   function isARNm(text) {
@@ -55,6 +66,38 @@
     await wait();
 
     try {
+      // Catégorie de motif (optionel)
+      const $bookingCategoryMotive = document.getElementById(
+        "booking_motive_category"
+      );
+      if ($bookingCategoryMotive) {
+        const options = [];
+        let optionFound = false;
+        for (const $option of $bookingCategoryMotive.querySelectorAll(
+          "option"
+        )) {
+          options.push($option.textContent);
+          if (
+            !/Patients de 18 à 50 ans|Je suis un particulier/.test(
+              $option.textContent
+            )
+          )
+            continue;
+
+          selectOption($bookingCategoryMotive, $option);
+          optionFound = true;
+          break;
+        }
+
+        if (!optionFound)
+          throw new Error(
+            `Catégorie de motif non trouvé. Motif disponibles : ${options.join(
+              ", "
+            )}`
+          );
+      }
+
+      // Motif de consultation
       const $bookingMotive = document.getElementById("booking_motive");
       if ($bookingMotive) {
         let optionFound = false;
@@ -63,15 +106,8 @@
           // Pour le reste pas besoin de l'extension, de nombreux RDV sont disponibles.
           if (!isARNm($option.textContent)) continue;
 
-          $bookingMotive.value = $option.value;
-
-          const evt = document.createEvent("HTMLEvents");
-          evt.initEvent("change", true, true);
-          $bookingMotive.dispatchEvent(evt);
-
+          selectOption($bookingMotive, $option);
           optionFound = true;
-
-          await wait();
 
           // Il peut y avoir des places pour Moderna mais pas pour Pfizer, ou inversement. Il faut tester les deux.
           slot = getAvailableSlot();
