@@ -2,6 +2,8 @@
   if (window.vaccinClickSearchHasRun) return;
   window.vaccinClickSearchHasRun = true;
 
+  if (!document.querySelector(".dl-search-result")) return;
+
   const MSG_ADD = " Ajouter à ma liste";
   const MSG_DELETE = " Retirer de ma liste";
   const ICON_URL = browser.runtime.getURL("icons/vaccine-color.svg");
