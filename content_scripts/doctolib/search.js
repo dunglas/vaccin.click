@@ -1,6 +1,6 @@
 (async function () {
-  if (window.hasRun) return;
-  window.hasRun = true;
+  if (window.vaccinClickSearchHasRun) return;
+  window.vaccinClickSearchHasRun = true;
 
   const MSG_ADD = " Ajouter à ma liste";
   const MSG_DELETE = " Retirer de ma liste";
