@@ -38,7 +38,7 @@
 
   // Parfois on doit envoyer un vrai click avec tous les événements.
   function fireFullClick(target) {
-    ["mousedown", "mouseup", "click"].forEach(type => {
+    ["mousedown", "mouseup", "click"].forEach((type) => {
       const evt = new MouseEvent(type, { bubbles: true, cancelable: true });
       target.dispatchEvent(evt);
     });
@@ -46,7 +46,10 @@
 
   function isARNmMotive(text) {
     // Matches "Vaccin Pfizer" but not "2de dose Pfizer suite à 1e dose AstraZeneca"
-    return (text.includes("Pfizer") || text.includes("Moderna")) && !text.startsWith("2");
+    return (
+      (text.includes("Pfizer") || text.includes("Moderna")) &&
+      !text.startsWith("2")
+    );
   }
 
   function isGeneralPopulationMotive(text) {
@@ -87,20 +90,27 @@
 
     try {
       // Possible step 1: question sur consultation antérieure
-      const $questionPreviousPatient = document.querySelector(".dl-new-patient-option");
+      const $questionPreviousPatient = document.querySelector(
+        ".dl-new-patient-option"
+      );
       if ($questionPreviousPatient) {
         // "Avez-vous déjà consulté un praticien de cet établissement ?"
         // -> Non
 
         let optionFound = false;
-        for (const $button of document.querySelectorAll(".dl-new-patient-option")) {
+        for (const $button of document.querySelectorAll(
+          ".dl-new-patient-option"
+        )) {
           if ($button.textContent.includes("Non")) {
             fireFullClick($button);
             optionFound = true;
             break;
           }
         }
-        if (!optionFound) throw new Error("N'a pas pu répondre 'Non' à la question de nouveau patient");
+        if (!optionFound)
+          throw new Error(
+            "N'a pas pu répondre 'Non' à la question de nouveau patient"
+          );
         await wait();
       }
 
@@ -115,21 +125,23 @@
           "option"
         )) {
           options.push($option.textContent);
-          if (!isARNmMotive($option.textContent) && !isGeneralPopulationMotive($option.textContent)) continue
+          if (
+            !isARNmMotive($option.textContent) &&
+            !isGeneralPopulationMotive($option.textContent)
+          )
+            continue;
           selectOption($bookingCategoryMotive, $option);
           optionFound = true;
           break;
         }
 
-        if (!optionFound) {
+        if (!optionFound)
           throw new Error(
             `Catégorie de motif non trouvé. Motifs disponibles : ${options.join(
               ", "
             )}`
           );
-        }
       }
-
 
       // Possible step 3: Motive de consultation
       const $bookingMotive = document.getElementById("booking_motive");
