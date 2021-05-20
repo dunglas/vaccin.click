@@ -6,7 +6,7 @@
   const url = document.URL;
 
   // Préparation à la levée de la contrainte des 24h, et debug
-  const DOSE_24H = true;
+  const DOSE_24H = false;
 
   const MONTHS = {
     janvier: 1,
@@ -23,10 +23,13 @@
     decembre: 12,
   };
 
-  async function findElementWithWait(selector) {
+  async function findElementWithWait(selector, wait = true) {
+    console.log(selector);
     // On cherche d'abord si l'élèment est déjà présent
     const $elem = document.querySelector(selector);
-    if ($elem !== null) return Promise.resolve($elem);
+    if (!wait || $elem !== null) return $elem;
+
+    console.log("waiting for " + selector);
 
     // Sinon on test à chaque mutation du DOM
     let observer;
@@ -48,8 +51,11 @@
 
     // On règle un timeout pour ne pas attendre eternellement
     const timer = new Promise((resolve) => {
-      observer.disconnect();
-      setTimeout(() => resolve(null), 5000);
+      setTimeout(() => {
+        observer.disconnect();
+
+        resolve(null);
+      }, 5000);
     });
 
     return Promise.race([domObserver, timer]);
@@ -119,18 +125,18 @@
 
     running = true;
     let found = false,
-      noWait = false,
       slot = null;
 
     console.info(`Vérification de ${url}`);
 
     try {
-      // Possible étape 1 : question sur consultation antérieure
+      let wait = false;
+
+      // Possible étape 1 : "Avez-vous déjà consulté un praticien de cet établissement ?" (non)
       const $questionPreviousPatient = await findElementWithWait(
         ".dl-new-patient-option"
       );
       if ($questionPreviousPatient) {
-        // "Avez-vous déjà consulté un praticien de cet établissement ?" (non)
         let optionFound = false;
         for (const $button of document.querySelectorAll(
           ".dl-new-patient-option"
@@ -138,6 +144,7 @@
           if ($button.textContent.includes("Non")) {
             fireFullClick($button);
             optionFound = true;
+            wait = true;
             break;
           }
         }
@@ -145,13 +152,14 @@
           throw new Error(
             "N'a pas pu répondre 'Non' à la question de nouveau patient"
           );
-      } else noWait = true;
+      }
 
       // Possible étape 2 : spécialité (ex : https://www.doctolib.fr/centre-de-sante/paris/sos-medecins-paris?pid=practice-165129)
       const $bookingSpecialty = await findElementWithWait(
         "#booking_speciality",
-        noWait
+        wait
       );
+      wait = false;
       if ($bookingSpecialty) {
         const options = [];
         let optionFound = false;
@@ -160,6 +168,7 @@
           if (!/vaccination/i.test($option.textContent)) continue;
           selectOption($bookingSpecialty, $option);
           optionFound = true;
+          wait = true;
           break;
         }
 
@@ -174,8 +183,10 @@
 
       // Possible étape 3 : catégorie de motif
       const $bookingCategoryMotive = await findElementWithWait(
-        "#booking_motive_category"
+        "#booking_motive_category",
+        wait
       );
+      wait = false;
       if ($bookingCategoryMotive) {
         const options = [];
         let optionFound = false;
@@ -190,6 +201,7 @@
             continue;
           selectOption($bookingCategoryMotive, $option);
           optionFound = true;
+          wait = true;
           break;
         }
 
@@ -202,7 +214,7 @@
       }
 
       // Possible étape 4 : motif de consultation
-      const $bookingMotive = document.getElementById("booking_motive");
+      const $bookingMotive = await findElementWithWait("#booking_motive", wait);
       if ($bookingMotive) {
         let optionFound = false;
         for (const $option of $bookingMotive.querySelectorAll("option")) {
@@ -241,8 +253,9 @@
         $nextAvailabilities.click();
 
         slot = await getAvailableSlot();
+        console.log(slot, document.querySelector(".availabilities-slot"));
 
-        if (null === slot) throw new Error("Aucun créneau disponible 3");
+        if (slot === null) throw new Error("Aucun créneau disponible 3");
       }
 
       if (DOSE_24H) {
