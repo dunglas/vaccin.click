@@ -1,7 +1,7 @@
 (async function () {
-  if (window.hasRun) return;
+  if (window.vaccinClickBookHasRun) return;
+  window.vaccinClickBookHasRun = true;
 
-  window.hasRun = true;
   const url = document.URL; // Sauvegarde de l'URL originale, avant que l'on change de page
 
   const MONTHS = {
@@ -48,7 +48,7 @@
     // Matches "Vaccin Pfizer" but not "2de dose Pfizer suite à 1e dose AstraZeneca"
     return (
       (text.includes("Pfizer") || text.includes("Moderna")) &&
-      !text.startsWith("2")
+      !(text.startsWith("2") || text.startsWith("3"))
     );
   }
 
@@ -59,7 +59,10 @@
     // Matches "Patients éligibles" (Centre Air France)
     // Matches "Patients de moins 50 ans" et "Patients de moins de 50 ans"
     // Matches "Grand public"
-    return /(?:18 à|particulier|éligibles|moins (?:de )?50|public)/i.test(text) && !text.includes("comorb");
+    return (
+      /(?:18 à|particulier|éligibles|moins (?:de )?50|public)/i.test(text) &&
+      !text.includes("comorb")
+    );
   }
 
   function getAvailableSlot() {
@@ -187,7 +190,9 @@
       } else {
         // On a peut-être directement la boite "pas de créneaux possibles"
         // Cas où il n'y a qu'un choix
-        if (!isARNmMotive(document.getElementById("booking-content").textContent))
+        if (
+          !isARNmMotive(document.getElementById("booking-content").textContent)
+        )
           throw new Error("Injection ARNm non disponible 2");
         slot = getAvailableSlot();
       }
@@ -226,8 +231,11 @@
       await wait();
 
       // Sélection du 2ème RDV
-      getAvailableSlot().click();
-      await wait();
+      const slot2 = getAvailableSlot();
+      if (slot2) {
+        slot2.click();
+        await wait();
+      }
 
       // Boutons "J'accepte" dans la popup "À lire avant de prendre un rendez-vous"
       let el;
