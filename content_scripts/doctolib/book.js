@@ -122,16 +122,14 @@
         await wait();
       }
 
-      // Possible étape : spécialité (Chez SOS Médecins notamment)
+      // Possible étape 1 : spécialité (ex : https://www.doctolib.fr/centre-de-sante/paris/sos-medecins-paris?pid=practice-165129)
       const $bookingSpecialty = document.getElementById("booking_speciality");
       if ($bookingSpecialty) {
         const options = [];
         let optionFound = false;
-        for (const $option of $bookingSpecialty.querySelectorAll(
-          "option"
-        )) {
+        for (const $option of $bookingSpecialty.querySelectorAll("option")) {
           options.push($option.textContent);
-          if (!/vaccination/i.test($option.textContent)) continue
+          if (!/vaccination/i.test($option.textContent)) continue;
           selectOption($bookingSpecialty, $option);
           optionFound = true;
           break;
@@ -253,7 +251,9 @@
       }
 
       // Bouton de confirmation de la popup
-      fireFullClick(document.querySelector(".dl-modal-footer .dl-button-label"));
+      fireFullClick(
+        document.querySelector(".dl-modal-footer .dl-button-label")
+      );
       await wait();
 
       // Pour qui prenez-vous ce rendez-vous ? (moi)
