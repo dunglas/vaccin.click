@@ -22,19 +22,19 @@
     <div class="panel-section panel-section-formElements">
       <div class="panel-formElements-item">
         <button id="stop" class="expander">
-          Mettre en pause la surveillance des RDV
+          <!-- Mettre en pause la surveillance des RDV -->
         </button>
         <button id="start" class="expander">
-          Reprendre la surveillance des RDV
+          <!-- Reprendre la surveillance des RDV -->
         </button>
       </div>
 
       <div class="panel-formElements-item">
         <div>
           <input type="radio" name="autoBook" id="disableAutoBook" checked />
-          <label for="disableAutoBook"
-            >Ouvrir un onglet lorsqu'une réservation est disponible</label
-          >
+          <label id="disableAutoBook_label" for="disableAutoBook">
+            <!-- Ouvrir un onglet lorsqu'une réservation est disponible -->
+            </label>
         </div>
 
         <div>
@@ -114,5 +114,7 @@
     </template>
 
     <script src="index.js"></script>
+    <script type="text/javascript" src="locales.js"></script>
+
   </body>
 </html>

@@ -1,0 +1,27 @@
+{
+  "extensionName": {
+    "message": "vaccin.click",
+    "description": "Nom de l'extension."
+  },
+
+  "extensionDescription": {
+    "message": "Trouvez et réservez automatiquement votre créneau de vaccination COVID-19.",
+    "description": "Description de extension."
+  },
+
+  "default_title": {
+    "message": "vaccin.click : mon vaccin COVID-19 en 1 click !"
+  },
+
+  "button_stop": {
+    "message": "Mettre en pause la surveillance des RDV"
+  },
+
+  "button_start": {
+    "message": "Reprendre la surveillance des RDV"
+  },
+
+  "radio_disableAutoBook_label": {
+    "message": "Ouvrir un onglet lorsqu'une réservation est disponible"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "extensionName": {
+    "message": "vaccin.click",
+    "description": "Name of the extension."
+  },
+
+  "extensionDescription": {
+    "message": "Find and reserve automatically your COVID-19 vaccination slot.",
+    "description": "Description of the extension."
+  },
+
+  "default_title": {
+    "message": "vaccin.click : my COVID-19 vaccin in 1 click!"
+  },
+
+  "button_stop": {
+    "message": "Stop looking for appointments"
+  },
+
+  "button_start": {
+    "message": "Start looking for appointments"
+  },
+
+  "radio_disableAutoBook_label": {
+    "message": "Open a tab when a reservation is available"
+  }
+
+
+}
