@@ -322,10 +322,14 @@
           name: e.name,
           message: e.message,
           stack: e.stack,
-        },
+        }
       });
     } finally {
-      setTimeout(window.location.reload.bind(window.location), 3 * 60 * 1000);
+      browser.runtime.sendMessage({
+        type: "over",
+        url,
+        location: locations[url]
+      });
     }
   }
 

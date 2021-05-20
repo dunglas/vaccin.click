@@ -1,5 +1,9 @@
 // Scan périodique des RDV
 (async function () {
+  const TIME_BETWEEN_JOBS = 20;
+  const iframes = {};
+  const jobs = [];
+
   async function updateIconStatus() {
     return await browser.browserAction.setIcon({
       path: {
@@ -10,12 +14,30 @@
   }
 
   function createIframe(url) {
-    const $iframe = document.createElement("iframe");
-    // On charge l'URL dans une iframe
-    // Ici on laisse la main au content script qui va vérifier si un RDV est disponible
-    $iframe.src = url;
-    $iframe.id = url;
-    document.body.appendChild($iframe);
+    const iframe = document.createElement("iframe");
+    document.body.appendChild(iframe);
+    
+    return iframe;
+  }
+
+  async function executeNextJob() {
+    const { stopped } = await browser.storage.sync.get({
+      stopped: false
+    });
+
+    if (stopped) {
+      return;
+    }
+
+    const job = jobs.shift();
+    if (job) {
+      console.info('Start job ' + job);
+      
+      const iframe = iframes[job];
+      // On charge l'URL dans une iframe
+      // Ici on laisse la main au content script qui va vérifier si un RDV est disponible
+      iframe.src = job;
+    }
   }
 
   browser.storage.onChanged.addListener(async (change, areaName) => {
@@ -45,6 +67,13 @@
     console.info(data);
 
     switch (data.type) {
+      case "over":
+        // Close Iframe
+        iframes[data.url].src = "";
+        // Set job in the queue for next execution
+        jobs.push(data.url);
+        break;
+
       case "found":
         const tabs = await browser.tabs.query({ url: data.url });
 
@@ -87,5 +116,12 @@
   await updateIconStatus(stopped);
 
   // On ajoute les iframes pour charger les centres à surveiller en arrière plan
-  Object.keys(locations).forEach((url) => createIframe(url));
+  Object.keys(locations).forEach((url) => {
+    iframes[url] = createIframe(url);
+    jobs.push(url);
+  });
+
+  // Execute jobs every TIME_BETWEEN_JOBS sec
+  setInterval(executeNextJob, TIME_BETWEEN_JOBS * 1000);
+  executeNextJob();
 })();
