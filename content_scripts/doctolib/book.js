@@ -56,11 +56,10 @@
     // Matches "Patients de 18 à 50 ans" but not "Patients de plus de 50 ans"
     // Matches "Je suis un particulier"
     // Doesn't match "plus de 18 ans avec comorbidité"
-    return text.includes("18 à") || text.includes("particulier");
-  }
-
-  function isARNm(text) {
-    return /1.+injection.+(?:Pfizer|Moderna)/.test(text);
+    // Matches "Patients éligibles" (Centre Air France)
+    // Matches "Patients de moins 50 ans" et "Patients de moins de 50 ans"
+    // Matches "Grand public"
+    return /(?:18 à|particulier|éligibles|moins (?:de )?50|public)/i.test(text) && !text.includes("comorb");
   }
 
   function getAvailableSlot() {
@@ -150,7 +149,7 @@
         for (const $option of $bookingMotive.querySelectorAll("option")) {
           // On ne s'occupe que de Pfizer et Moderna.
           // Pour le reste pas besoin de l'extension, de nombreux RDV sont disponibles.
-          if (!isARNm($option.textContent)) continue;
+          if (!isARNmMotive($option.textContent)) continue;
 
           selectOption($bookingMotive, $option);
           optionFound = true;
@@ -164,7 +163,7 @@
       } else {
         // On a peut-être directement la boite "pas de créneaux possibles"
         // Cas où il n'y a qu'un choix
-        if (!isARNm(document.getElementById("booking-content").textContent))
+        if (!isARNmMotive(document.getElementById("booking-content").textContent))
           throw new Error("Injection ARNm non disponible 2");
         slot = getAvailableSlot();
       }
