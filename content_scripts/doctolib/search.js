@@ -65,6 +65,13 @@
     if (locations[locationUrl]) {
       delete locations[locationUrl];
     } else {
+      if (Object.keys(locations).length >= 20) {
+        alert(
+          "Pour ne pas trop charger les serveurs de Doctolib, il n'est pas possible de surveiller plus de 20 centres en même temps. Supprimez des centres de votre liste pour en ajouter d'autres."
+        );
+        return;
+      }
+
       locations[locationUrl] = {
         name: this.dataset.locationName,
         img: this.dataset.locationImg,
