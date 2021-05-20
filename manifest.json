@@ -25,7 +25,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["*://*.doctolib.fr/vaccination-covid-19*"],
+      "matches": ["*://*.doctolib.fr/*"],
       "js": ["content_scripts/doctolib/search.js"]
     },
     {
