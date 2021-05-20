@@ -44,19 +44,25 @@
     if (areaName !== "sync") return;
 
     if (change.locations && change.locations.newValue) {
-      const existingIframes = [];
-      document.querySelectorAll("iframe").forEach(($iframe) => {
-        if (!change.locations.newValue[$iframe.id]) {
-          $iframe.remove();
-
+      // Remove old iframes & concerned job
+      Object.keys(iframes).forEach((url) => {
+        if (!change.locations.newValue[url]) {
+          iframes[url].remove();
+          delete iframes[url];
+          const deletedJob = jobs.indexOf(url);
+          if (deletedJob !== -1) {
+            jobs.splice(deletedJob, 1);
+          }
           return;
         }
-
-        existingIframes.push($iframe.id);
       });
 
+      // Create new iframes
       Object.keys(change.locations.newValue).forEach((url) => {
-        if (!existingIframes.includes(url)) createIframe(url);
+        if (!iframes[url]) {
+          iframes[url] = createIframe(url);
+          jobs.push(url);
+        }
       });
     }
 
