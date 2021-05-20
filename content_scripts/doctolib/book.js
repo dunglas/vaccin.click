@@ -189,6 +189,7 @@
           selectOption($bookingMotive, $option);
           optionFound = true;
 
+          await wait();
           // Il peut y avoir des places pour Moderna mais pas pour Pfizer, ou inversement, il faut tester les deux
           slot = getAvailableSlot();
           if (slot !== null) break;
@@ -202,6 +203,8 @@
           !isARNmMotive(document.getElementById("booking-content").textContent)
         )
           throw new Error("Injection ARNm non disponible 2");
+
+        await wait();
         slot = getAvailableSlot();
       }
 
