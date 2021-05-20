@@ -122,7 +122,7 @@
         await wait();
       }
 
-      // Possible étape 1 : spécialité (ex : https://www.doctolib.fr/centre-de-sante/paris/sos-medecins-paris?pid=practice-165129)
+      // Possible étape 2 : spécialité (ex : https://www.doctolib.fr/centre-de-sante/paris/sos-medecins-paris?pid=practice-165129)
       const $bookingSpecialty = document.getElementById("booking_speciality");
       if ($bookingSpecialty) {
         const options = [];
@@ -144,7 +144,7 @@
         }
       }
 
-      // Possible étape 2 : catégorie de motif
+      // Possible étape 3 : catégorie de motif
       const $bookingCategoryMotive = document.getElementById(
         "booking_motive_category"
       );
@@ -173,7 +173,7 @@
           );
       }
 
-      // Possible étape 3 : motif de consultation
+      // Possible étape 4 : motif de consultation
       const $bookingMotive = document.getElementById("booking_motive");
       if ($bookingMotive) {
         let optionFound = false;
