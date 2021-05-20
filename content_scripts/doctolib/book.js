@@ -45,20 +45,28 @@
   }
 
   function isARNmMotive(text) {
-    // Matches "Vaccin Pfizer" but not "2de dose Pfizer suite à 1e dose AstraZeneca"
     return (
-      (text.includes("Pfizer") || text.includes("Moderna")) &&
-      !(text.startsWith("2") || text.startsWith("3"))
+      (text.includes("Pfizer") || text.includes("Moderna")) && // On ne veut que du Pifzer ou du Moderna, seuls ouverts à la population générale
+      !(
+        (text.startsWith("2") || text.startsWith("3")) // La deuxième et la troisième dose doivent être exclue (ex : https://www.doctolib.fr/vaccination-covid-19/lille/centre-de-vaccination-covid-19-centre-de-vaccination-covid-19-zenith-de-lille?highlight%5Bspeciality_ids%5D%5B%5D=5494)
+      )
     );
   }
 
   function isGeneralPopulationMotive(text) {
-    // Matches "Patients de 18 à 50 ans" but not "Patients de plus de 50 ans"
-    // Matches "Je suis un particulier"
-    // Doesn't match "plus de 18 ans avec comorbidité"
-    // Matches "Patients éligibles" (Centre Air France)
-    // Matches "Patients de moins 50 ans" et "Patients de moins de 50 ans"
-    // Matches "Grand public"
+    // Doit matcher :
+    // * "Patients de 18 à 50 ans"
+    // * "Je suis un particulier"
+    // * "Patients éligibles" (Centre Air France)
+    // * "Patients de moins 50 ans"
+    // * "Patients de moins de 50 ans"
+    // * "Grand public"
+    //
+    // Ne doit pas matcher :
+    // * "plus de 18 ans avec comorbidité"
+    // * "Patients de plus de 50 ans"
+    //
+    // Oui, ça mériterait un test unitaire !
     return (
       /(?:18 à|particulier|éligibles|moins (?:de )?50|public)/i.test(text) &&
       !text.includes("comorb")
@@ -91,14 +99,12 @@
     await wait();
 
     try {
-      // Possible step 1: question sur consultation antérieure
+      // Possible étape 1 : question sur consultation antérieure
       const $questionPreviousPatient = document.querySelector(
         ".dl-new-patient-option"
       );
       if ($questionPreviousPatient) {
-        // "Avez-vous déjà consulté un praticien de cet établissement ?"
-        // -> Non
-
+        // "Avez-vous déjà consulté un praticien de cet établissement ?" (non)
         let optionFound = false;
         for (const $button of document.querySelectorAll(
           ".dl-new-patient-option"
@@ -116,7 +122,7 @@
         await wait();
       }
 
-      // Possible step: Spécialité (Chez SOS Médecins notamment)
+      // Possible étape : spécialité (Chez SOS Médecins notamment)
       const $bookingSpecialty = document.getElementById("booking_speciality");
       if ($bookingSpecialty) {
         const options = [];
@@ -140,7 +146,7 @@
         }
       }
 
-      // Possible step 2: Catégorie de motif (optionel)
+      // Possible étape 2 : catégorie de motif
       const $bookingCategoryMotive = document.getElementById(
         "booking_motive_category"
       );
@@ -169,19 +175,19 @@
           );
       }
 
-      // Possible step 3: Motive de consultation
+      // Possible étape 3 : motif de consultation
       const $bookingMotive = document.getElementById("booking_motive");
       if ($bookingMotive) {
         let optionFound = false;
         for (const $option of $bookingMotive.querySelectorAll("option")) {
-          // On ne s'occupe que de Pfizer et Moderna.
-          // Pour le reste pas besoin de l'extension, de nombreux RDV sont disponibles.
+          // On ne s'occupe que de Pfizer et Moderna
+          // Pour le reste pas besoin de l'extension, de nombreux RDV sont disponibles
           if (!isARNmMotive($option.textContent)) continue;
 
           selectOption($bookingMotive, $option);
           optionFound = true;
 
-          // Il peut y avoir des places pour Moderna mais pas pour Pfizer, ou inversement. Il faut tester les deux.
+          // Il peut y avoir des places pour Moderna mais pas pour Pfizer, ou inversement, il faut tester les deux
           slot = getAvailableSlot();
           if (slot !== null) break;
         }
