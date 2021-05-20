@@ -2,7 +2,11 @@
   if (window.vaccinClickBookHasRun) return;
   window.vaccinClickBookHasRun = true;
 
-  const url = document.URL; // Sauvegarde de l'URL originale, avant que l'on change de page
+  // Sauvegarde de l'URL originale, avant que l'on change de page
+  const url = document.URL;
+
+  // Préparation à la levée de la contrainte des 24h, et debug
+  const DOSE_24H = true;
 
   const MONTHS = {
     janvier: 1,
@@ -201,23 +205,38 @@
         slot = getAvailableSlot();
       }
 
-      if (slot === null) throw new Error("Aucun créneau disponible");
+      if (slot === null) {
+        if (DOSE_24H) throw new Error("Aucun créneau disponible 1");
 
-      // format : lun. 17 mai 08:54
-      const parts = slot.title.match(/([0-9]+) ([a-z]+) ([0-9]+:[0-9]+)/);
-      const date = new Date(
-        `${MONTHS[parts[2]]} ${parts[1]} ${new Date().getFullYear()} ${
-          parts[3]
-        }`
-      );
+        await wait();
+        const $nextAvailabilities = document.querySelector(
+          ".availabilities-next-slot button"
+        );
+        if (!$nextAvailabilities) throw new Error("Aucun créneau disponible 2");
+        $nextAvailabilities.click();
+        await wait();
+        slot = getAvailableSlot();
 
-      const tomorrow = new Date();
-      tomorrow.setHours(23);
-      tomorrow.setMinutes(59);
-      tomorrow.setDate(tomorrow.getDate() + 1);
+        if (null === slot) throw new Error("Aucun créneau disponible 3");
+      }
 
-      if (date > tomorrow)
-        throw new Error("Pas de créneau dispo d'ici demain soir");
+      if (DOSE_24H) {
+        // format : lun. 17 mai 08:54
+        const parts = slot.title.match(/([0-9]+) ([a-z]+) ([0-9]+:[0-9]+)/);
+        const date = new Date(
+          `${MONTHS[parts[2]]} ${parts[1]} ${new Date().getFullYear()} ${
+            parts[3]
+          }`
+        );
+
+        const tomorrow = new Date();
+        tomorrow.setHours(23);
+        tomorrow.setMinutes(59);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+
+        if (date > tomorrow)
+          throw new Error("Pas de créneau dispo d'ici demain soir");
+      }
 
       if (!autoBook) {
         browser.runtime.sendMessage({
@@ -231,7 +250,7 @@
       found = true;
 
       // Sélection du 1er RDV
-      getAvailableSlot().click();
+      slot.click();
       await wait();
 
       // Sélection du 2ème RDV
