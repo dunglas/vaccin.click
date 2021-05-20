@@ -204,11 +204,7 @@
       }
 
       // Bouton de confirmation de la popup
-      document
-        .querySelector(".dl-modal-footer .dl-button-label")
-        .dispatchEvent(
-          new MouseEvent("mouseup", { bubbles: true, cancelable: true })
-        );
+      fireFullClick(document.querySelector(".dl-modal-footer .dl-button-label"));
       await wait();
 
       // Pour qui prenez-vous ce rendez-vous ? (moi)
