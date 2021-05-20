@@ -104,6 +104,30 @@
         await wait();
       }
 
+      // Possible step: Spécialité (Chez SOS Médecins notamment)
+      const $bookingSpecialty = document.getElementById("booking_speciality");
+      if ($bookingSpecialty) {
+        const options = [];
+        let optionFound = false;
+        for (const $option of $bookingSpecialty.querySelectorAll(
+          "option"
+        )) {
+          options.push($option.textContent);
+          if (!/vaccination/i.test($option.textContent)) continue
+          selectOption($bookingSpecialty, $option);
+          optionFound = true;
+          break;
+        }
+
+        if (!optionFound) {
+          throw new Error(
+            `Spécialité non trouvée. Spécialités disponibles : ${options.join(
+              ", "
+            )}`
+          );
+        }
+      }
+
       // Possible step 2: Catégorie de motif (optionel)
       const $bookingCategoryMotive = document.getElementById(
         "booking_motive_category"
