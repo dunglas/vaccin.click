@@ -2,7 +2,7 @@
   "default_locale": "en",
   "manifest_version": 2,
   "name": "vaccin.click",
-  "version": "1.2",
+  "version": "1.4",
   "description": "__MSG_extensionDescription__",
   "author": "Kévin Dunglas",
   "homepage_url": "https://dunglas.fr",
