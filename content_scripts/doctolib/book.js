@@ -328,7 +328,7 @@
 
       // Avez-vous déjà consulté ce praticien ? (non)
       const $no = await waitForSelector("#late_new_patient_question-1");
-      if ($no) $no.checked = true;
+      if ($no) fireFullClick($no);
 
       // Confirmation finale
       document.querySelector('button[type="submit"]').click();
