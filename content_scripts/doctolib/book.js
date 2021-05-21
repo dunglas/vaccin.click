@@ -23,11 +23,45 @@
     decembre: 12,
   };
 
-  // Pas très élégant (on pourrait utiliser un MutationObserver), mais ça fait le boulot et ça permet de laisser souffler les serveurs de Doctolib
-  function wait() {
-    return new Promise((r) =>
-      setTimeout(r, 1000 + Math.floor(Math.random() * 3000))
-    );
+  async function waitForSelector(
+    selector,
+    wait = true,
+    initialWait = true,
+    i = 0,
+    resolve
+  ) {
+    // Timeout après ~5 secondes
+    if (i === 10 && resolve) {
+      resolve(null);
+      return;
+    }
+    i++;
+
+    if (initialWait) {
+      await new Promise((r) =>
+        setTimeout(r, 500 + Math.floor(Math.random() * 3000))
+      );
+    }
+
+    const $el = document.querySelector(selector);
+    if (!wait) return $el;
+
+    if ($el === null) {
+      if (!resolve)
+        return new Promise((resolve) =>
+          setTimeout(waitForSelector, 500, selector, wait, false, i, resolve)
+        );
+
+      setTimeout(waitForSelector, 500, selector, wait, false, i, resolve);
+      return;
+    }
+
+    if (resolve) {
+      resolve($el);
+      return;
+    }
+
+    return $el;
   }
 
   async function selectOption($select, $option) {
@@ -36,8 +70,6 @@
 
     $select.value = $option.value;
     $select.dispatchEvent(evt);
-
-    await wait();
   }
 
   // Parfois on doit envoyer un vrai click avec tous les événements.
@@ -77,8 +109,8 @@
     );
   }
 
-  function getAvailableSlot() {
-    return document.querySelector(".availabilities-slot");
+  async function getAvailableSlot() {
+    return waitForSelector(".availabilities-slot:not([disabled])");
   }
 
   let running = false;
@@ -100,15 +132,16 @@
 
     console.info(`Vérification de ${url}`);
 
-    await wait();
-
     try {
-      // Possible étape 1 : question sur consultation antérieure
-      const $questionPreviousPatient = document.querySelector(
-        ".dl-new-patient-option"
+      let wait = false;
+
+      // Possible étape 1 : "Avez-vous déjà consulté un praticien de cet établissement ?" (non)
+      const $questionPreviousPatient = await waitForSelector(
+        ".dl-new-patient-option",
+        true,
+        false
       );
       if ($questionPreviousPatient) {
-        // "Avez-vous déjà consulté un praticien de cet établissement ?" (non)
         let optionFound = false;
         for (const $button of document.querySelectorAll(
           ".dl-new-patient-option"
@@ -116,6 +149,7 @@
           if ($button.textContent.includes("Non")) {
             fireFullClick($button);
             optionFound = true;
+            wait = true;
             break;
           }
         }
@@ -123,11 +157,15 @@
           throw new Error(
             "N'a pas pu répondre 'Non' à la question de nouveau patient"
           );
-        await wait();
       }
 
       // Possible étape 2 : spécialité (ex : https://www.doctolib.fr/centre-de-sante/paris/sos-medecins-paris?pid=practice-165129)
-      const $bookingSpecialty = document.getElementById("booking_speciality");
+      const $bookingSpecialty = await waitForSelector(
+        "#booking_speciality",
+        wait,
+        wait
+      );
+      wait = false;
       if ($bookingSpecialty) {
         const options = [];
         let optionFound = false;
@@ -136,6 +174,7 @@
           if (!/vaccination/i.test($option.textContent)) continue;
           selectOption($bookingSpecialty, $option);
           optionFound = true;
+          wait = true;
           break;
         }
 
@@ -149,9 +188,12 @@
       }
 
       // Possible étape 3 : catégorie de motif
-      const $bookingCategoryMotive = document.getElementById(
-        "booking_motive_category"
+      const $bookingCategoryMotive = await waitForSelector(
+        "#booking_motive_category",
+        wait,
+        wait
       );
+      wait = false;
       if ($bookingCategoryMotive) {
         const options = [];
         let optionFound = false;
@@ -166,6 +208,7 @@
             continue;
           selectOption($bookingCategoryMotive, $option);
           optionFound = true;
+          wait = true;
           break;
         }
 
@@ -178,7 +221,11 @@
       }
 
       // Possible étape 4 : motif de consultation
-      const $bookingMotive = document.getElementById("booking_motive");
+      const $bookingMotive = await waitForSelector(
+        "#booking_motive",
+        wait,
+        wait
+      );
       if ($bookingMotive) {
         let optionFound = false;
         for (const $option of $bookingMotive.querySelectorAll("option")) {
@@ -190,7 +237,7 @@
           optionFound = true;
 
           // Il peut y avoir des places pour Moderna mais pas pour Pfizer, ou inversement, il faut tester les deux
-          slot = getAvailableSlot();
+          slot = await getAvailableSlot();
           if (slot !== null) break;
         }
 
@@ -198,26 +245,26 @@
       } else {
         // On a peut-être directement la boite "pas de créneaux possibles"
         // Cas où il n'y a qu'un choix
+        const $bookingContent = document.getElementById("booking-content");
         if (
-          !isARNmMotive(document.getElementById("booking-content").textContent)
+          $bookingContent === null ||
+          !isARNmMotive($bookingContent.textContent)
         )
           throw new Error("Injection ARNm non disponible 2");
-        slot = getAvailableSlot();
+        slot = await getAvailableSlot();
       }
 
       if (slot === null) {
         if (DOSE_24H) throw new Error("Aucun créneau disponible 1");
 
-        await wait();
-        const $nextAvailabilities = document.querySelector(
+        const $nextAvailabilities = await waitForSelector(
           ".availabilities-next-slot button"
         );
         if (!$nextAvailabilities) throw new Error("Aucun créneau disponible 2");
         $nextAvailabilities.click();
-        await wait();
-        slot = getAvailableSlot();
 
-        if (null === slot) throw new Error("Aucun créneau disponible 3");
+        slot = await getAvailableSlot();
+        if (slot === null) throw new Error("Aucun créneau disponible 3");
       }
 
       if (DOSE_24H) {
@@ -251,47 +298,38 @@
 
       // Sélection du 1er RDV
       slot.click();
-      await wait();
 
       // Sélection du 2ème RDV
-      const slot2 = getAvailableSlot();
-      if (slot2) {
-        slot2.click();
-        await wait();
-      }
+      const slot2 = await getAvailableSlot();
+      if (slot2) slot2.click();
 
       // Boutons "J'accepte" dans la popup "À lire avant de prendre un rendez-vous"
       let el;
       while (
-        (el = document.querySelector(".dl-button-check-inner:not([disabled])"))
+        (el = await waitForSelector(".dl-button-check-inner:not([disabled])"))
       ) {
         el.click();
-        await wait();
       }
 
       // Bouton de confirmation de la popup
-      fireFullClick(
-        document.querySelector(".dl-modal-footer .dl-button-label")
-      );
-      await wait();
+      fireFullClick(await waitForSelector(".dl-modal-footer .dl-button-label"));
 
       // Pour qui prenez-vous ce rendez-vous ? (moi)
-      const masterPatientId = document.querySelector(
+      const masterPatientId = await waitForSelector(
         'input[name="masterPatientId"]'
       );
       if (masterPatientId) {
         masterPatientId.click();
-        await wait();
       }
 
       // Avez-vous déjà consulté ce praticien ? (non)
-      const no = document.getElementById("late_new_patient_question-1");
-      if (no) no.checked = true;
+      const $no = await waitForSelector("#late_new_patient_question-1");
+      if ($no) fireFullClick($no);
 
       // Confirmation finale
       document.querySelector('button[type="submit"]').click();
 
-      await wait();
+      await new Promise((r) => setTimeout(r, 3000));
 
       await browser.runtime.sendMessage({
         type: "booked",
