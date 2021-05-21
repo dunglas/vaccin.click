@@ -23,44 +23,45 @@
     decembre: 12,
   };
 
-  async function findElementWithWait(selector, wait = true) {
-    console.log(selector);
+  async function waitForSelector(
+    selector,
+    wait = true,
+    initialWait = true,
+    i = 0,
+    resolve
+  ) {
+    // Timeout après ~5 secondes
+    if (i === 10 && resolve) {
+      resolve(null);
+      return;
+    }
+    i++;
 
-    console.log("waiting for " + selector);
+    if (initialWait) {
+      await new Promise((r) =>
+        setTimeout(r, 500 + Math.floor(Math.random() * 3000))
+      );
+    }
 
-    // Sinon on test à chaque mutation du DOM
-    let observer;
-    const domObserver = new Promise((resolve) => {
-      observer = new MutationObserver(() => {
-        const $elem = document.querySelector(selector);
-        if ($elem === null) return;
+    const $el = document.querySelector(selector);
+    if (!wait) return $el;
 
-        observer.disconnect();
-        resolve($elem);
-      });
-    });
+    if ($el === null) {
+      if (!resolve)
+        return new Promise((resolve) =>
+          setTimeout(waitForSelector, 500, selector, wait, false, i, resolve)
+        );
 
-    // On commence l'observation avant le check initial pour éviter les races conditions
-    observer.observe(document.getElementsByTagName("body")[0], {
-      attributes: true,
-      childList: true,
-      subtree: true,
-    });
+      setTimeout(waitForSelector, 500, selector, wait, false, i, resolve);
+      return;
+    }
 
-    // Si l'élèment est déjà présent dans le DOM, on le retourne immédiatement
-    const $elem = document.querySelector(selector);
-    if (!wait || $elem !== null) return $elem;
+    if (resolve) {
+      resolve($el);
+      return;
+    }
 
-    // On règle un timeout pour ne pas attendre éternellement
-    const timer = new Promise((resolve) => {
-      setTimeout(() => {
-        observer.disconnect();
-
-        resolve(null);
-      }, 5000);
-    });
-
-    return Promise.race([domObserver, timer]);
+    return $el;
   }
 
   async function selectOption($select, $option) {
@@ -109,7 +110,7 @@
   }
 
   async function getAvailableSlot() {
-    return findElementWithWait(".availabilities-slot:not([disabled])");
+    return waitForSelector(".availabilities-slot:not([disabled])");
   }
 
   let running = false;
@@ -135,8 +136,10 @@
       let wait = false;
 
       // Possible étape 1 : "Avez-vous déjà consulté un praticien de cet établissement ?" (non)
-      const $questionPreviousPatient = await findElementWithWait(
-        ".dl-new-patient-option"
+      const $questionPreviousPatient = await waitForSelector(
+        ".dl-new-patient-option",
+        true,
+        false
       );
       if ($questionPreviousPatient) {
         let optionFound = false;
@@ -157,8 +160,9 @@
       }
 
       // Possible étape 2 : spécialité (ex : https://www.doctolib.fr/centre-de-sante/paris/sos-medecins-paris?pid=practice-165129)
-      const $bookingSpecialty = await findElementWithWait(
+      const $bookingSpecialty = await waitForSelector(
         "#booking_speciality",
+        wait,
         wait
       );
       wait = false;
@@ -184,8 +188,9 @@
       }
 
       // Possible étape 3 : catégorie de motif
-      const $bookingCategoryMotive = await findElementWithWait(
+      const $bookingCategoryMotive = await waitForSelector(
         "#booking_motive_category",
+        wait,
         wait
       );
       wait = false;
@@ -216,7 +221,11 @@
       }
 
       // Possible étape 4 : motif de consultation
-      const $bookingMotive = await findElementWithWait("#booking_motive", wait);
+      const $bookingMotive = await waitForSelector(
+        "#booking_motive",
+        wait,
+        wait
+      );
       if ($bookingMotive) {
         let optionFound = false;
         for (const $option of $bookingMotive.querySelectorAll("option")) {
@@ -248,7 +257,7 @@
       if (slot === null) {
         if (DOSE_24H) throw new Error("Aucun créneau disponible 1");
 
-        const $nextAvailabilities = await findElementWithWait(
+        const $nextAvailabilities = await waitForSelector(
           ".availabilities-next-slot button"
         );
         if (!$nextAvailabilities) throw new Error("Aucun créneau disponible 2");
@@ -301,20 +310,16 @@
       // Boutons "J'accepte" dans la popup "À lire avant de prendre un rendez-vous"
       let el;
       while (
-        (el = await findElementWithWait(
-          ".dl-button-check-inner:not([disabled])"
-        ))
+        (el = await waitForSelector(".dl-button-check-inner:not([disabled])"))
       ) {
         el.click();
       }
 
       // Bouton de confirmation de la popup
-      fireFullClick(
-        await findElementWithWait(".dl-modal-footer .dl-button-label")
-      );
+      fireFullClick(await waitForSelector(".dl-modal-footer .dl-button-label"));
 
       // Pour qui prenez-vous ce rendez-vous ? (moi)
-      const masterPatientId = await findElementWithWait(
+      const masterPatientId = await waitForSelector(
         'input[name="masterPatientId"]'
       );
       if (masterPatientId) {
@@ -322,7 +327,7 @@
       }
 
       // Avez-vous déjà consulté ce praticien ? (non)
-      const $no = await findElementWithWait("#late_new_patient_question-1");
+      const $no = await waitForSelector("#late_new_patient_question-1");
       if ($no) $no.checked = true;
 
       // Confirmation finale
