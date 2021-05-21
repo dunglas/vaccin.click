@@ -25,17 +25,14 @@
 
   async function findElementWithWait(selector, wait = true) {
     console.log(selector);
-    // On cherche d'abord si l'élèment est déjà présent
-    const $elem = document.querySelector(selector);
-    if (!wait || $elem !== null) return $elem;
 
     console.log("waiting for " + selector);
 
     // Sinon on test à chaque mutation du DOM
     let observer;
     const domObserver = new Promise((resolve) => {
-      observer = new MutationObserver((mutationList) => {
-        const $elem = mutationList.querySelector(selector);
+      observer = new MutationObserver(() => {
+        const $elem = document.querySelector(selector);
         if ($elem === null) return;
 
         observer.disconnect();
@@ -43,13 +40,18 @@
       });
     });
 
+    // On commence l'observation avant le check initial pour éviter les races conditions
     observer.observe(document.getElementsByTagName("body")[0], {
       attributes: true,
       childList: true,
       subtree: true,
     });
 
-    // On règle un timeout pour ne pas attendre eternellement
+    // Si l'élèment est déjà présent dans le DOM, on le retourne immédiatement
+    const $elem = document.querySelector(selector);
+    if (!wait || $elem !== null) return $elem;
+
+    // On règle un timeout pour ne pas attendre éternellement
     const timer = new Promise((resolve) => {
       setTimeout(() => {
         observer.disconnect();
@@ -107,7 +109,7 @@
   }
 
   async function getAvailableSlot() {
-    return findElementWithWait(".availabilities-slot");
+    return findElementWithWait(".availabilities-slot:not([disabled])");
   }
 
   let running = false;
@@ -253,7 +255,7 @@
         $nextAvailabilities.click();
 
         slot = await getAvailableSlot();
-        console.log(slot, document.querySelector(".availabilities-slot"));
+        console.log(slot);
 
         if (slot === null) throw new Error("Aucun créneau disponible 3");
       }
@@ -289,6 +291,8 @@
 
       // Sélection du 1er RDV
       slot.click();
+
+      console.log("clicked");
 
       // Sélection du 2ème RDV
       const slot2 = await getAvailableSlot();
