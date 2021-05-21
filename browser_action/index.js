@@ -3,8 +3,22 @@
 (async function () {
   const $locations = document.getElementById("locations");
   const $template = document.getElementById("location");
+  const $debugActivity = document.getElementById("debugActivity");
+
+  function displayActivities(activities) {
+    $debugActivity.innerHTML = '';
+
+    activities.forEach(activity => {
+      const $li = document.createElement("li");
+      $li.innerText = activity;
+      $debugActivity.appendChild($li);
+      $debugActivity.scrollTop = $debugActivity.scrollHeight;
+    });
+  }
 
   function displayLocations(locations) {
+    $locations.innerHTML = '';
+
     Object.entries(locations).forEach(([url, { name, img }]) => {
       const $location = $template.content.cloneNode(true);
       const $a = $location.querySelector("a");
@@ -44,19 +58,24 @@
   });
 
   browser.storage.onChanged.addListener(async (change, areaName) => {
-    if (areaName !== "sync") return;
-
-    if (change.locations) {
-      $locations.innerHTML = "";
-      displayLocations(change.locations.newValue || {});
+    if (areaName === "local") {
+      if (change.activities) {
+        displayActivities(change.activities.newValue || []);
+      }
     }
 
-    if (change.stopped) displayStopStart(change.stopped.newValue || false);
+    if (areaName === "sync") {
+      if (change.locations) {
+        displayLocations(change.locations.newValue || {});
+      }
 
-    if (change.autoBook)
-      document.getElementById(
-        change.autoBook.newValue || false ? "enableAutoBook" : "disableAutoBook"
-      ).checked = true;
+      if (change.stopped) displayStopStart(change.stopped.newValue || false);
+
+      if (change.autoBook)
+        document.getElementById(
+          change.autoBook.newValue || false ? "enableAutoBook" : "disableAutoBook"
+        ).checked = true;
+    }
   });
 
   document.getElementById("stop").onclick = async () => {
@@ -92,4 +111,7 @@
   ).checked = true;
 
   displayLocations(locations);
+
+  const { activities } = await browser.storage.local.get({ activities: [] });
+  displayActivities(activities);
 })();

@@ -34,8 +34,8 @@
     // Sinon on test à chaque mutation du DOM
     let observer;
     const domObserver = new Promise((resolve) => {
-      observer = new MutationObserver((mutationList) => {
-        const $elem = mutationList.querySelector(selector);
+      observer = new MutationObserver(() => {
+        const $elem = document.querySelector(selector);
         if ($elem === null) return;
 
         observer.disconnect();
@@ -133,9 +133,7 @@
       let wait = false;
 
       // Possible étape 1 : "Avez-vous déjà consulté un praticien de cet établissement ?" (non)
-      const $questionPreviousPatient = await findElementWithWait(
-        ".dl-new-patient-option"
-      );
+      const $questionPreviousPatient = await findElementWithWait(".dl-new-patient-option");
       if ($questionPreviousPatient) {
         let optionFound = false;
         for (const $button of document.querySelectorAll(
@@ -225,7 +223,6 @@
           selectOption($bookingMotive, $option);
           optionFound = true;
 
-          await wait();
           // Il peut y avoir des places pour Moderna mais pas pour Pfizer, ou inversement, il faut tester les deux
           slot = await getAvailableSlot();
           if (slot !== null) break;

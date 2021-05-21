@@ -1,5 +1,6 @@
 // Scan périodique des RDV
 (async function () {
+  const MAX_ACTIVITY = 30;
   const TIME_BETWEEN_JOBS = 20;
   const iframes = {};
   const jobs = [];
@@ -20,6 +21,18 @@
     return iframe;
   }
 
+  async function addActivity(message) {
+    const { activities } = await browser.storage.local.get({ activities: [] });
+
+    activities.push((new Date()).toLocaleTimeString() + ' - ' + message);
+
+    while (activities.length > MAX_ACTIVITY) {
+      activities.shift();
+    }
+
+    await browser.storage.local.set({ activities: activities });
+  }
+
   async function executeNextJob() {
     const { stopped } = await browser.storage.sync.get({
       stopped: false
@@ -31,7 +44,7 @@
 
     const job = jobs.shift();
     if (job) {
-      console.info('Start job ' + job);
+      addActivity('Début du check pour: ' + locations[job].name);
       
       const iframe = iframes[job];
       // On charge l'URL dans une iframe
@@ -78,6 +91,8 @@
         iframes[data.url].src = "";
         // Set job in the queue for next execution
         jobs.push(data.url);
+
+        addActivity('Fin du check pour: ' + data.location.name);
         break;
 
       case "found":
@@ -95,6 +110,8 @@
           message: `Cliquez ici pour finaliser la réservation dans le centre "${data.location.name}"`,
           priority: 2,
         });
+
+        addActivity('Créneau disponible pour : ' + data.location.name);
         break;
 
       case "booked":
