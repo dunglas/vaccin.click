@@ -362,12 +362,6 @@
           stack: e.stack,
         }
       });
-    } finally {
-      browser.runtime.sendMessage({
-        type: "over",
-        url,
-        location: locations[url]
-      });
     }
   }
 

@@ -4,6 +4,11 @@
   const TIME_BETWEEN_JOBS = 20;
   const iframes = {};
   const jobs = [];
+  const STATUS = {
+    ERROR: 'e',
+    SUCCESS: 's',
+    WORKING: 'w'
+  };
 
   async function updateIconStatus() {
     return await browser.browserAction.setIcon({
@@ -24,6 +29,15 @@
     document.body.appendChild($iframe);
     
     return $iframe;
+  }
+
+  async function setStatusOnLocation(loc, status) {
+    const { locations } = await browser.storage.local.get({ locations: {} });
+    locations[loc] = {
+      status: status,
+      date: Date.now()
+    };
+    await browser.storage.local.set({ locations });
   }
 
   async function addActivity(message) {
@@ -54,6 +68,7 @@
 
     const job = jobs.shift();
     if (job) {
+      setStatusOnLocation(job, STATUS.WORKING);
       addLocationActivity(locations[job], 'Début de la vérification');
       
       iframes[job] = createIframe(job);
@@ -68,7 +83,7 @@
     }
 
     // Supprime le job si il existe
-    while(jobs.indexOf(url) >= 0) {
+    while(jobs.includes(url)) {
       jobs.splice(jobs.indexOf(url), 1);
     }
   }
@@ -77,16 +92,19 @@
     if (areaName !== "sync") return;
 
     if (change.locations && change.locations.newValue) {
-      // Suppression des jobs expirés
-      Object.keys(iframes).forEach((url) => {
+      Object.keys(locations).forEach((url) => {
         if (!change.locations.newValue[url]) {
+          delete locations[url];
           killJob(url);
         }
       });
 
-      // Creation des nouvelles iframs si besoin
       Object.keys(change.locations.newValue).forEach((url) => {
-        if (!iframes[url]) {
+        if (!locations[url]) {
+          locations[url] = change.locations.newValue[url];
+        }
+        // Si je job n'est pas déjà en attente ou en cours de traitement
+        if (!jobs.includes(url) && !iframes[url]) {
           jobs.push(url);
         }
       });
@@ -99,15 +117,8 @@
     console.info(data);
 
     switch (data.type) {
-      case "over":
-        // Nettoyer le job précédent
-        killJob(data.url);
-        
-        // Prévoir le job suivant
-        jobs.push(data.url);
-        break;
-
       case "error":
+        setStatusOnLocation(data.url, STATUS.ERROR);
         addLocationActivity(data.location, 'Erreur - ' + data.error.message);
         break;
 
@@ -127,6 +138,7 @@
           priority: 2,
         });
 
+        setStatusOnLocation(data.url, STATUS.SUCCESS);
         addLocationActivity(data.location, 'Succes - Créneau trouvé');
         break;
 
@@ -143,8 +155,17 @@
           message: `Vous avez rendez-vous au centre "${data.location.name}".`,
         });
 
+        setStatusOnLocation(data.url, STATUS.SUCCESS);
         addLocationActivity(data.location, 'Succes - Créneau réservé');
         break;
+    }
+
+    if (['error', 'found', 'booked'].includes(data.type)) {
+      // Nettoyer le job précédent
+      killJob(data.url);
+      
+      // Prévoir le job suivant
+      jobs.push(data.url);
     }
   });
 

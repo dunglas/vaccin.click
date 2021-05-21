@@ -16,16 +16,24 @@
     });
   }
 
-  function displayLocations(locations) {
+  function displayLocations(locations, localLocations) {
     $locations.innerHTML = '';
 
-    Object.entries(locations).forEach(([url, { name, img }]) => {
-      const $location = $template.content.cloneNode(true);
-      const $a = $location.querySelector("a");
+    locations = locations || {};
+    localLocations = localLocations || {};
 
-      $a.textContent = name;
+    Object.entries(locations).forEach(([url, { name, img }]) => {
+      const localLocation = localLocations[url] || {};
+
+      const $location = $template.content.cloneNode(true);
+      const $item = $location.querySelector(".panel-list-item");
+      const $a = $location.querySelector("a");
+      const date = localLocation.date ? (new Date(localLocation.date)).toLocaleTimeString() : '';
+
+      $a.innerHTML = `${name} <span class="date">${date}</span>`;
       $a.href = url;
 
+      if (localLocation.status) $item.classList.add("status-" + localLocation.status);
       $location.querySelector("img").src = img;
       $location.querySelector("button").onclick = async () => {
         if (
@@ -51,22 +59,29 @@
     document.getElementById(stopped ? "stop" : "start").style = "display: none";
   }
 
-  const { locations, stopped, autoBook } = await browser.storage.sync.get({
+  let { locations, stopped, autoBook } = await browser.storage.sync.get({
     locations: {},
     autoBook: false,
     stopped: false,
   });
+
+  let { localLocations } = await browser.storage.local.get({ locations: {} });
 
   browser.storage.onChanged.addListener(async (change, areaName) => {
     if (areaName === "local") {
       if (change.activities) {
         displayActivities(change.activities.newValue || []);
       }
+      if (change.locations) {
+        localLocations = change.locations.newValue;
+        displayLocations(locations, localLocations);
+      }
     }
 
     if (areaName === "sync") {
       if (change.locations) {
-        displayLocations(change.locations.newValue || {});
+        locations = change.locations.newValue;
+        displayLocations(locations, localLocations);
       }
 
       if (change.stopped) displayStopStart(change.stopped.newValue || false);
@@ -110,7 +125,7 @@
     autoBook ? "enableAutoBook" : "disableAutoBook"
   ).checked = true;
 
-  displayLocations(locations);
+  displayLocations(locations, localLocations);
 
   const { activities } = await browser.storage.local.get({ activities: [] });
   displayActivities(activities);

@@ -15,6 +15,28 @@ h1 {
   align-items: center;
 }
 
+.panel-list-item.status-e {background: #f7fff7;}
+.panel-list-item.status-s {background: #4ecdc4;}
+.panel-list-item.status-w {background: #ffe66d;}
+
+a {
+  color: #222426;
+  text-decoration: none;
+}
+
+label a {
+  text-decoration: underline;
+}
+
+.date {
+  float: right;
+  margin-right: 1em;
+}
+
+.icon {
+  margin-right: 5px;
+}
+
 #debugActivity {
   list-style: none;
   max-height: 70px;
@@ -26,17 +48,4 @@ h1 {
   background: #eee;
   margin: 0.1em 0.5em;
   padding: 0.1em 0.2em;
-}
-
-a {
-  color: #222426;
-  text-decoration: none;
-}
-
-label a {
-  text-decoration: underline;
-}
-
-.icon {
-  margin-right: 5px;
 }
