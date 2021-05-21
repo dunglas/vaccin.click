@@ -299,8 +299,6 @@
       // Sélection du 1er RDV
       slot.click();
 
-      console.log("clicked");
-
       // Sélection du 2ème RDV
       const slot2 = await getAvailableSlot();
       if (slot2) slot2.click();

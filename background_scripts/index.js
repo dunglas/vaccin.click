@@ -15,10 +15,15 @@
   }
 
   function createIframe(url) {
-    const iframe = document.createElement("iframe");
-    document.body.appendChild(iframe);
+    const $iframe = document.createElement("iframe");
+
+    // On charge l'URL dans une iframe
+    // Ici on laisse la main au content script qui va vérifier si un RDV est disponible
+    $iframe.src = url;
+
+    document.body.appendChild($iframe);
     
-    return iframe;
+    return $iframe;
   }
 
   async function addActivity(message) {
@@ -33,6 +38,11 @@
     await browser.storage.local.set({ activities: activities });
   }
 
+  async function addLocationActivity(location, message) {
+    return addActivity(location.name + ' - ' + message);
+  }
+
+
   async function executeNextJob() {
     const { stopped } = await browser.storage.sync.get({
       stopped: false
@@ -44,12 +54,22 @@
 
     const job = jobs.shift();
     if (job) {
-      addActivity(`Début de la vérification pour : ${ locations[job].name}`);
+      addLocationActivity(locations[job], 'Début de la vérification');
       
-      const iframe = iframes[job];
-      // On charge l'URL dans une iframe
-      // Ici on laisse la main au content script qui va vérifier si un RDV est disponible
-      iframe.src = job;
+      iframes[job] = createIframe(job);
+    }
+  }
+
+  function killJob(url) {
+    // Supprimer l'iframe si elle existe
+    if (iframes.hasOwnProperty(url)) {
+      iframes[url].remove();
+      delete iframes[url];
+    }
+
+    // Supprime le job si il existe
+    while(jobs.indexOf(url) >= 0) {
+      jobs.splice(jobs.indexOf(url), 1);
     }
   }
 
@@ -57,23 +77,16 @@
     if (areaName !== "sync") return;
 
     if (change.locations && change.locations.newValue) {
-      // Suppression des iframes expirés et de leurs jobs
+      // Suppression des jobs expirés
       Object.keys(iframes).forEach((url) => {
         if (!change.locations.newValue[url]) {
-          iframes[url].remove();
-          delete iframes[url];
-          const deletedJob = jobs.indexOf(url);
-          if (deletedJob !== -1) {
-            jobs.splice(deletedJob, 1);
-          }
-          return;
+          killJob(url);
         }
       });
 
       // Creation des nouvelles iframs si besoin
       Object.keys(change.locations.newValue).forEach((url) => {
         if (!iframes[url]) {
-          iframes[url] = createIframe(url);
           jobs.push(url);
         }
       });
@@ -87,12 +100,15 @@
 
     switch (data.type) {
       case "over":
-        // Close Iframe
-        iframes[data.url].src = "";
-        // Set job in the queue for next execution
+        // Nettoyer le job précédent
+        killJob(data.url);
+        
+        // Prévoir le job suivant
         jobs.push(data.url);
+        break;
 
-        addActivity(`Fin de la vérifiation pour : ${data.location.name}`);
+      case "error":
+        addLocationActivity(data.location, 'Erreur - ' + data.error.message);
         break;
 
       case "found":
@@ -111,7 +127,7 @@
           priority: 2,
         });
 
-        addActivity(`Créneau trouvé pour : ${data.location.name}`);
+        addLocationActivity(data.location, 'Succes - Créneau trouvé');
         break;
 
       case "booked":
@@ -127,6 +143,7 @@
           message: `Vous avez rendez-vous au centre "${data.location.name}".`,
         });
 
+        addLocationActivity(data.location, 'Succes - Créneau réservé');
         break;
     }
   });
@@ -139,10 +156,7 @@
   await updateIconStatus(stopped);
 
   // On ajoute les iframes pour charger les centres à surveiller en arrière plan
-  Object.keys(locations).forEach((url) => {
-    iframes[url] = createIframe(url);
-    jobs.push(url);
-  });
+  Array.prototype.push.apply(jobs, Object.keys(locations));
 
   // Execute jobs every TIME_BETWEEN_JOBS sec
   setInterval(executeNextJob, TIME_BETWEEN_JOBS * 1000);
