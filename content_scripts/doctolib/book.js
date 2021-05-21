@@ -264,8 +264,6 @@
         $nextAvailabilities.click();
 
         slot = await getAvailableSlot();
-        console.log(slot);
-
         if (slot === null) throw new Error("Aucun créneau disponible 3");
       }
 
@@ -300,8 +298,6 @@
 
       // Sélection du 1er RDV
       slot.click();
-
-      console.log("clicked");
 
       // Sélection du 2ème RDV
       const slot2 = await getAvailableSlot();
