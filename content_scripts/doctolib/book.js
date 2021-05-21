@@ -29,7 +29,6 @@
     const $elem = document.querySelector(selector);
     if (!wait || $elem !== null) return $elem;
 
-    console.log("waiting for " + selector);
 
     // Sinon on test à chaque mutation du DOM
     let observer;
