@@ -16,16 +16,21 @@ La vaccination contre le COVID-19 est désormais ouverte à toutes les personnes
 ### Comment ça marche ?
 
 1. Cliquez sur l'icône représentant un vaccin qui est apparue dans la barre d'outils
-2. Choisissez si vous voulez que la page du centre de vaccination s'ouvre quand un créneau est disponible (par défaut), ou si vous souhaitez que *vaccin.click* prenne le rendez-vous pour vous automatiquement (pour utiliser cette fonctionnalité, il faut que vous soyez connecté⋅e à Doctolib, dans ce cas l'extension prendra automatiquement le premier RDV disponible pour la 1ère et la 2nde dose - soyez sûr⋅e d'être disponible !)
+2. Choisissez si vous voulez que la page du centre de vaccination s'ouvre quand un créneau est disponible (par défaut), ou si vous souhaitez que *vaccin.click* essaie de prendre le rendez-vous pour vous automatiquement (pour utiliser cette fonctionnalité, il faut que vous soyez connecté⋅e à Doctolib, dans ce cas l'extension choisira automatiquement le premier RDV disponible pour la 1ère et la 2nde dose - soyez sûr⋅e de pouvoir vous y rendre !)
 3. Cliquez sur `Trouver des centres de vaccination sur Doctolib`
 4. Doctolib s'ouvre, utilisez les filtres pour trouver les centres de vaccination près de chez vous
 5. Ajoutez des centres à votre liste à surveiller en appuyant sur le bouton `Ajouter à ma liste` ajouté par l'extension
+
+L'extension va alors automatiquement vérifier les disponibilités de chaque centre toutes les 3 minutes.
+Dès qu'une disponibilité est trouvée, une notification est affichée et l'onglet du centre de vaccination s'ouvre pour vous permettre de finaliser la prise de rendez-vous.
+
+Si vous avez activé le mode automatique, une notification et un onglet s'ouvre pour vous prévenir que le rendez-vous a été pris. Vous recevrez également un mail de Doctolib. Si un problème survient au moment de la réservation automatique, la page s'ouvre pour que vous puissiez finaliser à la main (fonctionnement similaire au mode non-automatique).
 
 **Attention : la vérification périodique ne fonctionne que quand votre navigateur et votre ordinateur sont ouverts !**
 
 A tout moment, arrêtez la surveillance en cliquant sur `Mettre en pause la surveillance des RDV`.
 
-Quand un RDV est réservé, l'extension arrête automatiquement la surveillance. Si vous avez trouvé un RDV sans utiliser l'extension, pensez à la désinstaller !
+Quand un RDV est réservé, l'extension arrête automatiquement la surveillance. Si vous avez trouvé un rendez-vous sans utiliser l'extension, pensez à l'arrêter !
 
 De même, si vous avez un empêchement, n'oubliez pas d'annuler le RDV depuis l'interface de Doctolib.
 
@@ -59,7 +64,15 @@ Non (mais elles le sont par Doctolib et le centre de vaccination bien entendu). 
 
 Cette extension est un projet non-commercial et est fournie sans aucune garantie. Le code de Doctolib peut changer, et certains centres de vaccination ont des formulaires particuliers qui ne sont pas encore supportés par l'extension.
 
-Si ça ne fonctionne pas chez vous, n'hésitez pas à [ouvrir un ticket](https://github.com/dunglas/vaccin.click/issues) en indiquant précisément quel est le problème que vous rencontrez et quelle est l'URL du centre de vaccination pour lequel l'extension ne fonctionne pas.
+Pour vérifier si l'extension fonctionne correctement :
+
+1. Tapez `about:debugging` dans la barre d'URL
+2. Cliquez sur `ce Firefox`
+3. Cherchez l'extension vaccin.click
+4. Appuyez sur le bouton `inspecter` puis ouvrez la console
+
+Si ça fonctionne, un message indiquant "aucun créneau disponible" doit être loggué régulièrement.
+Si vous ne voyez pas ce message, n'hésitez pas à [ouvrir un ticket](https://github.com/dunglas/vaccin.click/issues) en indiquant précisément quel est le message d'erreur précis et quelle est l'URL du centre de vaccination pour lequel l'extension ne fonctionne pas.
 
 ### Qui a créé cette extension ?
 
