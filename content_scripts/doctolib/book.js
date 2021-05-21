@@ -6,7 +6,7 @@
   const url = document.URL;
 
   // Préparation à la levée de la contrainte des 24h, et debug
-  const DOSE_24H = false;
+  const DOSE_24H = true;
 
   const MONTHS = {
     janvier: 1,
