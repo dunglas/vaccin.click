@@ -44,7 +44,7 @@
 
     const job = jobs.shift();
     if (job) {
-      addActivity('Début du check pour: ' + locations[job].name);
+      addActivity(`Début de la vérification pour : ${ locations[job].name}`);
       
       const iframe = iframes[job];
       // On charge l'URL dans une iframe
@@ -57,7 +57,7 @@
     if (areaName !== "sync") return;
 
     if (change.locations && change.locations.newValue) {
-      // Remove old iframes & concerned job
+      // Suppression des iframes expirés et de leurs jobs
       Object.keys(iframes).forEach((url) => {
         if (!change.locations.newValue[url]) {
           iframes[url].remove();
@@ -70,7 +70,7 @@
         }
       });
 
-      // Create new iframes
+      // Creation des nouvelles iframs si besoin
       Object.keys(change.locations.newValue).forEach((url) => {
         if (!iframes[url]) {
           iframes[url] = createIframe(url);
@@ -92,7 +92,7 @@
         // Set job in the queue for next execution
         jobs.push(data.url);
 
-        addActivity('Fin du check pour: ' + data.location.name);
+        addActivity(`Fin de la vérifiation pour : ${data.location.name}`);
         break;
 
       case "found":
@@ -111,7 +111,7 @@
           priority: 2,
         });
 
-        addActivity('Créneau disponible pour : ' + data.location.name);
+        addActivity(`Créneau trouvé pour : ${data.location.name}`);
         break;
 
       case "booked":
