@@ -64,15 +64,10 @@ Non (mais elles le sont par Doctolib et le centre de vaccination bien entendu). 
 
 Cette extension est un projet non-commercial et est fournie sans aucune garantie. Le code de Doctolib peut changer, et certains centres de vaccination ont des formulaires particuliers qui ne sont pas encore supportés par l'extension.
 
-Pour vérifier si l'extension fonctionne correctement :
+Pour vérifier si l'extension fonctionne correctement vous pouvez taper `about:devtools-toolbox?id=extension%40vaccin.click&type=extension` dans la barre d'URL.
 
-1. Tapez `about:debugging` dans la barre d'URL
-2. Cliquez sur `ce Firefox`
-3. Cherchez l'extension vaccin.click
-4. Appuyez sur le bouton `inspecter` puis ouvrez la console
-
-Si ça fonctionne, un message indiquant "aucun créneau disponible" doit être loggué régulièrement.
-Si vous ne voyez pas ce message, n'hésitez pas à [ouvrir un ticket](https://github.com/dunglas/vaccin.click/issues) en indiquant précisément quel est le message d'erreur précis et quelle est l'URL du centre de vaccination pour lequel l'extension ne fonctionne pas.
+Si elle fonctionne, un message indiquant "aucun créneau disponible" doit être loggué régulièrement (il faut déplier la clef `error` pour le voir).
+Si vous ne voyez pas ce message, n'hésitez pas à [ouvrir un ticket](https://github.com/dunglas/vaccin.click/issues) en indiquant quel est le problème rencontré, quel est le message d'erreur précis et quelle est l'URL du centre de vaccination pour lequel l'extension ne fonctionne pas.
 
 ### Qui a créé cette extension ?
 
