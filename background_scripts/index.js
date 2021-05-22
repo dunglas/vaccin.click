@@ -1,5 +1,15 @@
 // Scan périodique des RDV
 (async function () {
+  const MAX_ACTIVITY = 30;
+  const TIME_BETWEEN_JOBS = 20;
+  const iframes = {};
+  const jobs = [];
+  const STATUS = {
+    ERROR: 'e',
+    SUCCESS: 's',
+    WORKING: 'w'
+  };
+
   async function updateIconStatus() {
     return await browser.browserAction.setIcon({
       path: {
@@ -11,30 +21,102 @@
 
   function createIframe(url) {
     const $iframe = document.createElement("iframe");
+
     // On charge l'URL dans une iframe
     // Ici on laisse la main au content script qui va vérifier si un RDV est disponible
     $iframe.src = url;
-    $iframe.id = url;
+
     document.body.appendChild($iframe);
+    
+    return $iframe;
+  }
+
+  async function setStatusOnLocation(loc, status) {
+    const { locations } = await browser.storage.local.get({ locations: {} });
+    locations[loc] = {
+      status: status,
+      date: Date.now()
+    };
+    await browser.storage.local.set({ locations });
+  }
+
+  async function addActivity(message) {
+    const { activities } = await browser.storage.local.get({ activities: [] });
+
+    activities.push((new Date()).toLocaleTimeString() + ' - ' + message);
+
+    while (activities.length > MAX_ACTIVITY) {
+      activities.shift();
+    }
+
+    await browser.storage.local.set({ activities: activities });
+  }
+
+  async function addLocationActivity(location, message) {
+    return addActivity(location.name + ' - ' + message);
+  }
+
+
+  async function executeNextJob() {
+    const { stopped } = await browser.storage.sync.get({
+      stopped: false
+    });
+
+    if (stopped) {
+      return;
+    }
+
+    const job = jobs.shift();
+    if (job) {
+      setStatusOnLocation(job, STATUS.WORKING);
+      addLocationActivity(locations[job], 'Début de la vérification');
+      
+      if (iframes.hasOwnProperty(job)) {
+        // Recharger l'iframe existante
+        iframes[job].contentWindow.postMessage({
+          type: "retry"
+        }, '*');
+      }
+      else {
+        // Créer une nouvelle iframe
+        iframes[job] = createIframe(job);
+      }
+      
+    }
+  }
+
+  function killJob(url, deleteIframe) {
+    // Supprimer l'iframe si elle existe
+    if (deleteIframe === true && iframes.hasOwnProperty(url)) {
+      iframes[url].remove();
+      delete iframes[url];
+    }
+
+    // Supprime le job si il existe
+    while(jobs.includes(url)) {
+      jobs.splice(jobs.indexOf(url), 1);
+    }
   }
 
   browser.storage.onChanged.addListener(async (change, areaName) => {
     if (areaName !== "sync") return;
 
     if (change.locations && change.locations.newValue) {
-      const existingIframes = [];
-      document.querySelectorAll("iframe").forEach(($iframe) => {
-        if (!change.locations.newValue[$iframe.id]) {
-          $iframe.remove();
-
-          return;
+      Object.keys(locations).forEach((url) => {
+        if (!change.locations.newValue[url]) {
+          delete locations[url];
+          killJob(url, true);
         }
-
-        existingIframes.push($iframe.id);
       });
 
       Object.keys(change.locations.newValue).forEach((url) => {
-        if (!existingIframes.includes(url)) createIframe(url);
+        if (!locations[url]) {
+          locations[url] = change.locations.newValue[url];
+        }
+        // Si je job n'est pas déjà en attente ou en cours de traitement
+        if (!jobs.includes(url) && !iframes[url]) {
+          jobs.push(url);
+        }
       });
     }
 
@@ -45,6 +127,11 @@
     console.info(data);
 
     switch (data.type) {
+      case "error":
+        setStatusOnLocation(data.url, STATUS.ERROR);
+        addLocationActivity(data.location, 'Echec - ' + data.error.message);
+        break;
+
       case "found":
         const tabs = await browser.tabs.query({ url: data.url });
 
@@ -60,6 +147,9 @@
           message: `Cliquez ici pour finaliser la réservation dans le centre "${data.location.name}"`,
           priority: 2,
         });
+
+        setStatusOnLocation(data.url, STATUS.SUCCESS);
+        addLocationActivity(data.location, 'Succes - Créneau trouvé');
         break;
 
       case "booked":
@@ -75,7 +165,17 @@
           message: `Vous avez rendez-vous au centre "${data.location.name}".`,
         });
 
+        setStatusOnLocation(data.url, STATUS.SUCCESS);
+        addLocationActivity(data.location, 'Succes - Créneau réservé');
         break;
+    }
+
+    if (['error', 'found', 'booked'].includes(data.type)) {
+      // Nettoyer le job précédent
+      killJob(data.url);
+      
+      // Prévoir le job suivant
+      jobs.push(data.url);
     }
   });
 
@@ -87,5 +187,9 @@
   await updateIconStatus(stopped);
 
   // On ajoute les iframes pour charger les centres à surveiller en arrière plan
-  Object.keys(locations).forEach((url) => createIframe(url));
+  Array.prototype.push.apply(jobs, Object.keys(locations));
+
+  // Executer les jobs toutes les TIME_BETWEEN_JOBS sec
+  setInterval(executeNextJob, TIME_BETWEEN_JOBS * 1000);
+  executeNextJob();
 })();

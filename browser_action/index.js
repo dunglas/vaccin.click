@@ -3,15 +3,37 @@
 (async function () {
   const $locations = document.getElementById("locations");
   const $template = document.getElementById("location");
+  const $debugActivity = document.getElementById("debugActivity");
 
-  function displayLocations(locations) {
+  function displayActivities(activities) {
+    $debugActivity.innerHTML = '';
+
+    activities.forEach(activity => {
+      const $li = document.createElement("li");
+      $li.innerText = activity;
+      $debugActivity.appendChild($li);
+      $debugActivity.scrollTop = $debugActivity.scrollHeight;
+    });
+  }
+
+  function displayLocations(locations, localLocations) {
+    $locations.innerHTML = '';
+
+    locations = locations || {};
+    localLocations = localLocations || {};
+
     Object.entries(locations).forEach(([url, { name, img }]) => {
-      const $location = $template.content.cloneNode(true);
-      const $a = $location.querySelector("a");
+      const localLocation = localLocations[url] || {};
 
-      $a.textContent = name;
+      const $location = $template.content.cloneNode(true);
+      const $item = $location.querySelector(".panel-list-item");
+      const $a = $location.querySelector("a");
+      const date = localLocation.date ? (new Date(localLocation.date)).toLocaleTimeString() : '';
+
+      $a.innerHTML = `${name} <span class="date">${date}</span>`;
       $a.href = url;
 
+      if (localLocation.status) $item.classList.add("status-" + localLocation.status);
       $location.querySelector("img").src = img;
       $location.querySelector("button").onclick = async () => {
         if (
@@ -37,26 +59,38 @@
     document.getElementById(stopped ? "stop" : "start").style = "display: none";
   }
 
-  const { locations, stopped, autoBook } = await browser.storage.sync.get({
+  let { locations, stopped, autoBook } = await browser.storage.sync.get({
     locations: {},
     autoBook: false,
     stopped: false,
   });
 
-  browser.storage.onChanged.addListener(async (change, areaName) => {
-    if (areaName !== "sync") return;
+  let { localLocations } = await browser.storage.local.get({ locations: {} });
 
-    if (change.locations) {
-      $locations.innerHTML = "";
-      displayLocations(change.locations.newValue || {});
+  browser.storage.onChanged.addListener(async (change, areaName) => {
+    if (areaName === "local") {
+      if (change.activities) {
+        displayActivities(change.activities.newValue || []);
+      }
+      if (change.locations) {
+        localLocations = change.locations.newValue;
+        displayLocations(locations, localLocations);
+      }
     }
 
-    if (change.stopped) displayStopStart(change.stopped.newValue || false);
+    if (areaName === "sync") {
+      if (change.locations) {
+        locations = change.locations.newValue;
+        displayLocations(locations, localLocations);
+      }
 
-    if (change.autoBook)
-      document.getElementById(
-        change.autoBook.newValue || false ? "enableAutoBook" : "disableAutoBook"
-      ).checked = true;
+      if (change.stopped) displayStopStart(change.stopped.newValue || false);
+
+      if (change.autoBook)
+        document.getElementById(
+          change.autoBook.newValue || false ? "enableAutoBook" : "disableAutoBook"
+        ).checked = true;
+    }
   });
 
   document.getElementById("stop").onclick = async () => {
@@ -91,5 +125,8 @@
     autoBook ? "enableAutoBook" : "disableAutoBook"
   ).checked = true;
 
-  displayLocations(locations);
+  displayLocations(locations, localLocations);
+
+  const { activities } = await browser.storage.local.get({ activities: [] });
+  displayActivities(activities);
 })();
