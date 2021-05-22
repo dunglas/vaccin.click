@@ -24,7 +24,7 @@ La vaccination contre le COVID-19 est désormais ouverte à toutes les personnes
 L'extension va alors automatiquement vérifier les disponibilités de chaque centre toutes les 3 minutes.
 Dès qu'une disponibilité est trouvée, une notification est affichée et l'onglet du centre de vaccination s'ouvre pour vous permettre de finaliser la prise de rendez-vous.
 
-Si vous avez activé le mode automatique, une notification et un onglet s'ouvre pour vous prévenir que le rendez-vous a été pris. Vous recevrez également un mail de Doctolib. Si un problème survient au moment de la réservation automatique, la page s'ouvre pour que vous puissiez finaliser à la main (fonctionnement similaire au mode non-automatique).
+Si vous avez activé le mode automatique, une notification s'affiche et un onglet s'ouvre pour vous prévenir que le rendez-vous a été pris. Vous recevrez également un mail de Doctolib. Si un problème survient au moment de la réservation automatique, la page s'ouvre pour que vous puissiez finaliser à la main (fonctionnement similaire au mode non-automatique).
 
 **Attention : la vérification périodique ne fonctionne que quand votre navigateur et votre ordinateur sont ouverts !**
 
