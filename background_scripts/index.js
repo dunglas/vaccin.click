@@ -129,7 +129,7 @@
     switch (data.type) {
       case "error":
         setStatusOnLocation(data.url, STATUS.ERROR);
-        addLocationActivity(data.location, 'Erreur - ' + data.error.message);
+        addLocationActivity(data.location, 'Echec - ' + data.error.message);
         break;
 
       case "found":
