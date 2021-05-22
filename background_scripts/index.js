@@ -189,7 +189,7 @@
   // On ajoute les iframes pour charger les centres à surveiller en arrière plan
   Array.prototype.push.apply(jobs, Object.keys(locations));
 
-  // Execute jobs every TIME_BETWEEN_JOBS sec
+  // Executer les jobs toutes les TIME_BETWEEN_JOBS sec
   setInterval(executeNextJob, TIME_BETWEEN_JOBS * 1000);
   executeNextJob();
 })();
