@@ -25,6 +25,7 @@
 
   async function waitForSelector(
     selector,
+    failSelector,
     wait = true,
     initialWait = true,
     i = 0,
@@ -43,16 +44,29 @@
       );
     }
 
+    // On essaie d'échouer rapidement si on nous a donner un failSelector
+    if (failSelector) {
+      const $elFail = document.querySelector(failSelector);
+      if ($elFail !== null) {
+        if (resolve) {
+          resolve(null);
+          return;
+        }
+
+        return null;
+      }
+    }
+
     const $el = document.querySelector(selector);
     if (!wait) return $el;
 
     if ($el === null) {
       if (!resolve)
         return new Promise((resolve) =>
-          setTimeout(waitForSelector, 500, selector, wait, false, i, resolve)
+          setTimeout(waitForSelector, 500, selector, failSelector, wait, false, i, resolve)
         );
 
-      setTimeout(waitForSelector, 500, selector, wait, false, i, resolve);
+      setTimeout(waitForSelector, 500, selector, failSelector, wait, false, i, resolve);
       return;
     }
 
@@ -110,7 +124,7 @@
   }
 
   async function getAvailableSlot() {
-    return waitForSelector(".availabilities-slot:not([disabled])");
+    return waitForSelector(".availabilities-slot:not([disabled])", ".booking-availabilities .booking-message.booking-message-warning");
   }
 
   let running = false;
@@ -138,6 +152,7 @@
       // Possible étape 1 : "Avez-vous déjà consulté un praticien de cet établissement ?" (non)
       const $questionPreviousPatient = await waitForSelector(
         ".dl-new-patient-option",
+        undefined,
         true,
         false
       );
@@ -162,6 +177,7 @@
       // Possible étape 2 : spécialité (ex : https://www.doctolib.fr/centre-de-sante/paris/sos-medecins-paris?pid=practice-165129)
       const $bookingSpecialty = await waitForSelector(
         "#booking_speciality",
+        undefined,
         wait,
         wait
       );
@@ -190,6 +206,7 @@
       // Possible étape 3 : catégorie de motif
       const $bookingCategoryMotive = await waitForSelector(
         "#booking_motive_category",
+        undefined,
         wait,
         wait
       );
@@ -223,6 +240,7 @@
       // Possible étape 4 : motif de consultation
       const $bookingMotive = await waitForSelector(
         "#booking_motive",
+        undefined,
         wait,
         wait
       );
@@ -257,9 +275,7 @@
       if (slot === null) {
         if (DOSE_24H) throw new Error("Aucun créneau disponible 1");
 
-        const $nextAvailabilities = await waitForSelector(
-          ".availabilities-next-slot button"
-        );
+        const $nextAvailabilities = await waitForSelector(".availabilities-next-slot button");
         if (!$nextAvailabilities) throw new Error("Aucun créneau disponible 2");
         $nextAvailabilities.click();
 
@@ -305,9 +321,7 @@
 
       // Boutons "J'accepte" dans la popup "À lire avant de prendre un rendez-vous"
       let el;
-      while (
-        (el = await waitForSelector(".dl-button-check-inner:not([disabled])"))
-      ) {
+      while (el = await waitForSelector(".dl-button-check-inner:not([disabled])")) {
         el.click();
       }
 
@@ -315,9 +329,7 @@
       fireFullClick(await waitForSelector(".dl-modal-footer .dl-button-label"));
 
       // Pour qui prenez-vous ce rendez-vous ? (moi)
-      const masterPatientId = await waitForSelector(
-        'input[name="masterPatientId"]'
-      );
+      const masterPatientId = await waitForSelector('input[name="masterPatientId"]');
       if (masterPatientId) {
         masterPatientId.click();
       }
@@ -374,6 +386,23 @@
     )
       checkAvailability();
   });
+
+  window.addEventListener("message", (event) => {
+    const data = event.data;
+
+    if (data.type === 'retry') {
+      // On essaie de ne pas recharger toute la page
+      const $bookingMotive = document.querySelector("#booking_motive");
+      if ($bookingMotive) {
+        selectOption($bookingMotive, {value: ''});
+        checkAvailability();
+      }
+      // Sinon on recharge tout
+      else {
+        window.location.reload();
+      }
+    }
+  }, false);
 
   checkAvailability();
 })();

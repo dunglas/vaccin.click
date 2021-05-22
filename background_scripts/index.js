@@ -71,13 +71,23 @@
       setStatusOnLocation(job, STATUS.WORKING);
       addLocationActivity(locations[job], 'Début de la vérification');
       
-      iframes[job] = createIframe(job);
+      if (iframes.hasOwnProperty(job)) {
+        // Recharger l'iframe existante
+        iframes[job].contentWindow.postMessage({
+          type: "retry"
+        }, '*');
+      }
+      else {
+        // Créer une nouvelle iframe
+        iframes[job] = createIframe(job);
+      }
+      
     }
   }
 
-  function killJob(url) {
+  function killJob(url, deleteIframe) {
     // Supprimer l'iframe si elle existe
-    if (iframes.hasOwnProperty(url)) {
+    if (deleteIframe === true && iframes.hasOwnProperty(url)) {
       iframes[url].remove();
       delete iframes[url];
     }
@@ -95,7 +105,7 @@
       Object.keys(locations).forEach((url) => {
         if (!change.locations.newValue[url]) {
           delete locations[url];
-          killJob(url);
+          killJob(url, true);
         }
       });
 
