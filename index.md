@@ -4,11 +4,11 @@ La vaccination contre le COVID-19 est désormais ouverte à toutes les personnes
 
 *vaccin.click* vous permet de lister les centres de vaccination dans lesquels vous pouvez vous rendre et de réserver automatiquement dès qu'un créneau est disponible dans les 24 heures !
 
-![Capture d'écran](screenshot.png)
+[![Capture d'écran](screenshot.png)](screenshot.png)
 
 ### Installer vaccin.click
 
-1. Si ce n'est pas encore fait, [téléchargez Firefox](https://www.mozilla.org/fr/firefox/new/), un navigateur web libre, gratuit et respectueux de votre vie privée
+1. Si ce n'est pas encore fait, [installez Firefox sur votre ordinateur](https://www.mozilla.org/fr/firefox/new/), un navigateur web libre, gratuit et respectueux de votre vie privée (la version mobile de Firefox n'est pas supportée)
 2. [Installez l'extension *vaccin.click*](https://addons.mozilla.org/fr/firefox/addon/vaccin-click/)
 
 **Vous êtes prêt⋅e à être vacciné !**
@@ -47,6 +47,10 @@ Pas pour l'instant. Si vous êtes un développeur, [vous pouvez contribuer pour 
 ### Est-ce que les autres navigateurs web sont supportés ?
 
 Pas pour l'instant (même si l'extension devrait fonctionner aussi avec Safari). Si vous êtes un développeur, [vous pouvez contribuer pour ajouter le support d'autres navigateurs](https://github.com/dunglas/vaccin.click).
+
+### Est-ce que la version mobile de Firefox est supportée ?
+
+Pas pour l'instant, Firefox Mobile n'est pas compatible avec les extensions destiné à Firefox pour ordinateur. Si vous êtes un développeur, [vous pouvez contribuer pour ajouter le support d'autres navigateurs](https://github.com/dunglas/vaccin.click).
 
 ### Combien ça coûte ?
 
