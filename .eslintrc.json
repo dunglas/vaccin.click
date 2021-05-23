@@ -1,13 +1,11 @@
 {
-    "env": {
-        "browser": true,
-        "es6": true,
-        "webextensions": true
-    },
-    "extends": [
-      "eslint:recommended"
-    ],
-    "parserOptions": {
-        "ecmaVersion": 11
-    }
+  "env": {
+    "browser": true,
+    "es6": true,
+    "webextensions": true
+  },
+  "extends": ["eslint:recommended"],
+  "parserOptions": {
+    "ecmaVersion": 11
+  }
 }
