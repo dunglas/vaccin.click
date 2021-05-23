@@ -15,9 +15,15 @@ h1 {
   align-items: center;
 }
 
-.panel-list-item.status-e {background: #f7fff7;}
-.panel-list-item.status-s {background: #4ecdc4;}
-.panel-list-item.status-w {background: #ffe66d;}
+.panel-list-item.status-e {
+  background: #f7fff7;
+}
+.panel-list-item.status-s {
+  background: #4ecdc4;
+}
+.panel-list-item.status-w {
+  background: #ffe66d;
+}
 
 a {
   color: #222426;

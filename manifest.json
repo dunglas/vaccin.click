@@ -9,14 +9,8 @@
     "48": "icons/vaccine-color.svg",
     "96": "icons/vaccine-color.svg"
   },
-  "permissions": [
-    "*://*.doctolib.fr/*",
-    "storage",
-    "notifications"
-  ],
-  "web_accessible_resources": [
-    "icons/vaccine-color.svg"
-  ],
+  "permissions": ["*://*.doctolib.fr/*", "storage", "notifications"],
+  "web_accessible_resources": ["icons/vaccine-color.svg"],
   "browser_action": {
     "default_icon": "icons/vaccine-color.svg",
     "default_title": "vaccin.click : mon vaccin COVID-19 en 1 click !",
