@@ -5,9 +5,9 @@
   const iframes = {};
   const jobs = [];
   const STATUS = {
-    ERROR: 'e',
-    SUCCESS: 's',
-    WORKING: 'w'
+    ERROR: "e",
+    SUCCESS: "s",
+    WORKING: "w",
   };
 
   async function updateIconStatus() {
@@ -27,7 +27,7 @@
     $iframe.src = url;
 
     document.body.appendChild($iframe);
-    
+
     return $iframe;
   }
 
@@ -35,7 +35,7 @@
     const { locations } = await browser.storage.local.get({ locations: {} });
     locations[loc] = {
       status: status,
-      date: Date.now()
+      date: Date.now(),
     };
     await browser.storage.local.set({ locations });
   }
@@ -43,7 +43,7 @@
   async function addActivity(message) {
     const { activities } = await browser.storage.local.get({ activities: [] });
 
-    activities.push((new Date()).toLocaleTimeString() + ' - ' + message);
+    activities.push(new Date().toLocaleTimeString() + " - " + message);
 
     while (activities.length > MAX_ACTIVITY) {
       activities.shift();
@@ -53,35 +53,31 @@
   }
 
   async function addLocationActivity(location, message) {
-    return addActivity(location.name + ' - ' + message);
+    return addActivity(location.name + " - " + message);
   }
-
 
   async function executeNextJob() {
     const { stopped } = await browser.storage.sync.get({
-      stopped: false
+      stopped: false,
     });
 
-    if (stopped) {
-      return;
-    }
+    if (stopped) return;
 
     const job = jobs.shift();
     if (job) {
       setStatusOnLocation(job, STATUS.WORKING);
-      addLocationActivity(locations[job], 'Début de la vérification');
-      
-      if (iframes.hasOwnProperty(job)) {
+      addLocationActivity(locations[job], "Début de la vérification");
+
+      if (iframes.hasOwnProperty(job))
         // Recharger l'iframe existante
-        iframes[job].contentWindow.postMessage({
-          type: "retry"
-        }, '*');
-      }
-      else {
-        // Créer une nouvelle iframe
-        iframes[job] = createIframe(job);
-      }
-      
+        iframes[job].contentWindow.postMessage(
+          {
+            type: "retry",
+          },
+          "*"
+        );
+      // Créer une nouvelle iframe
+      else iframes[job] = createIframe(job);
     }
   }
 
@@ -93,9 +89,7 @@
     }
 
     // Supprime le job si il existe
-    while(jobs.includes(url)) {
-      jobs.splice(jobs.indexOf(url), 1);
-    }
+    while (jobs.includes(url)) jobs.splice(jobs.indexOf(url), 1);
   }
 
   browser.storage.onChanged.addListener(async (change, areaName) => {
@@ -110,13 +104,10 @@
       });
 
       Object.keys(change.locations.newValue).forEach((url) => {
-        if (!locations[url]) {
-          locations[url] = change.locations.newValue[url];
-        }
+        if (!locations[url]) locations[url] = change.locations.newValue[url];
+
         // Si je job n'est pas déjà en attente ou en cours de traitement
-        if (!jobs.includes(url) && !iframes[url]) {
-          jobs.push(url);
-        }
+        if (!jobs.includes(url) && !iframes[url]) jobs.push(url);
       });
     }
 
@@ -129,7 +120,7 @@
     switch (data.type) {
       case "error":
         setStatusOnLocation(data.url, STATUS.ERROR);
-        addLocationActivity(data.location, 'Echec - ' + data.error.message);
+        addLocationActivity(data.location, "Echec - " + data.error.message);
         break;
 
       case "found":
@@ -149,7 +140,7 @@
         });
 
         setStatusOnLocation(data.url, STATUS.SUCCESS);
-        addLocationActivity(data.location, 'Succes - Créneau trouvé');
+        addLocationActivity(data.location, "Succes - Créneau trouvé");
         break;
 
       case "booked":
@@ -166,14 +157,14 @@
         });
 
         setStatusOnLocation(data.url, STATUS.SUCCESS);
-        addLocationActivity(data.location, 'Succes - Créneau réservé');
+        addLocationActivity(data.location, "Succes - Créneau réservé");
         break;
     }
 
-    if (['error', 'found', 'booked'].includes(data.type)) {
+    if (["error", "found", "booked"].includes(data.type)) {
       // Nettoyer le job précédent
       killJob(data.url);
-      
+
       // Prévoir le job suivant
       jobs.push(data.url);
     }

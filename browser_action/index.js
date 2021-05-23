@@ -6,9 +6,9 @@
   const $debugActivity = document.getElementById("debugActivity");
 
   function displayActivities(activities) {
-    $debugActivity.innerHTML = '';
+    $debugActivity.innerHTML = "";
 
-    activities.forEach(activity => {
+    activities.forEach((activity) => {
       const $li = document.createElement("li");
       $li.innerText = activity;
       $debugActivity.appendChild($li);
@@ -17,7 +17,7 @@
   }
 
   function displayLocations(locations, localLocations) {
-    $locations.innerHTML = '';
+    $locations.innerHTML = "";
 
     locations = locations || {};
     localLocations = localLocations || {};
@@ -28,12 +28,15 @@
       const $location = $template.content.cloneNode(true);
       const $item = $location.querySelector(".panel-list-item");
       const $a = $location.querySelector("a");
-      const date = localLocation.date ? (new Date(localLocation.date)).toLocaleTimeString() : '';
+      const date = localLocation.date
+        ? new Date(localLocation.date).toLocaleTimeString()
+        : "";
 
       $a.innerHTML = `${name} <span class="date">${date}</span>`;
       $a.href = url;
 
-      if (localLocation.status) $item.classList.add("status-" + localLocation.status);
+      if (localLocation.status)
+        $item.classList.add("status-" + localLocation.status);
       $location.querySelector("img").src = img;
       $location.querySelector("button").onclick = async () => {
         if (
@@ -69,9 +72,9 @@
 
   browser.storage.onChanged.addListener(async (change, areaName) => {
     if (areaName === "local") {
-      if (change.activities) {
+      if (change.activities)
         displayActivities(change.activities.newValue || []);
-      }
+
       if (change.locations) {
         localLocations = change.locations.newValue;
         displayLocations(locations, localLocations);
@@ -88,7 +91,9 @@
 
       if (change.autoBook)
         document.getElementById(
-          change.autoBook.newValue || false ? "enableAutoBook" : "disableAutoBook"
+          change.autoBook.newValue || false
+            ? "enableAutoBook"
+            : "disableAutoBook"
         ).checked = true;
     }
   });

@@ -63,10 +63,28 @@
     if ($el === null) {
       if (!resolve)
         return new Promise((resolve) =>
-          setTimeout(waitForSelector, 500, selector, failSelector, wait, false, i, resolve)
+          setTimeout(
+            waitForSelector,
+            500,
+            selector,
+            failSelector,
+            wait,
+            false,
+            i,
+            resolve
+          )
         );
 
-      setTimeout(waitForSelector, 500, selector, failSelector, wait, false, i, resolve);
+      setTimeout(
+        waitForSelector,
+        500,
+        selector,
+        failSelector,
+        wait,
+        false,
+        i,
+        resolve
+      );
       return;
     }
 
@@ -124,7 +142,10 @@
   }
 
   async function getAvailableSlot() {
-    return waitForSelector(".availabilities-slot:not([disabled])", ".booking-availabilities .booking-message.booking-message-warning");
+    return waitForSelector(
+      ".availabilities-slot:not([disabled])",
+      ".booking-availabilities .booking-message.booking-message-warning"
+    );
   }
 
   let running = false;
@@ -194,13 +215,12 @@
           break;
         }
 
-        if (!optionFound) {
+        if (!optionFound)
           throw new Error(
             `Spécialité non trouvée. Spécialités disponibles : ${options.join(
               ", "
             )}`
           );
-        }
       }
 
       // Possible étape 3 : catégorie de motif
@@ -275,7 +295,9 @@
       if (slot === null) {
         if (DOSE_24H) throw new Error("Aucun créneau disponible 1");
 
-        const $nextAvailabilities = await waitForSelector(".availabilities-next-slot button");
+        const $nextAvailabilities = await waitForSelector(
+          ".availabilities-next-slot button"
+        );
         if (!$nextAvailabilities) throw new Error("Aucun créneau disponible 2");
         $nextAvailabilities.click();
 
@@ -321,7 +343,9 @@
 
       // Boutons "J'accepte" dans la popup "À lire avant de prendre un rendez-vous"
       let el;
-      while (el = await waitForSelector(".dl-button-check-inner:not([disabled])")) {
+      while (
+        (el = await waitForSelector(".dl-button-check-inner:not([disabled])"))
+      ) {
         el.click();
       }
 
@@ -329,7 +353,9 @@
       fireFullClick(await waitForSelector(".dl-modal-footer .dl-button-label"));
 
       // Pour qui prenez-vous ce rendez-vous ? (moi)
-      const masterPatientId = await waitForSelector('input[name="masterPatientId"]');
+      const masterPatientId = await waitForSelector(
+        'input[name="masterPatientId"]'
+      );
       if (masterPatientId) {
         masterPatientId.click();
       }
@@ -372,7 +398,7 @@
           name: e.name,
           message: e.message,
           stack: e.stack,
-        }
+        },
       });
     }
   }
@@ -387,22 +413,24 @@
       checkAvailability();
   });
 
-  window.addEventListener("message", (event) => {
-    const data = event.data;
+  window.addEventListener(
+    "message",
+    (event) => {
+      const data = event.data;
 
-    if (data.type === 'retry') {
-      // On essaie de ne pas recharger toute la page
-      const $bookingMotive = document.querySelector("#booking_motive");
-      if ($bookingMotive) {
-        selectOption($bookingMotive, {value: ''});
-        checkAvailability();
+      if (data.type === "retry") {
+        // On essaie de ne pas recharger toute la page
+        const $bookingMotive = document.querySelector("#booking_motive");
+        if ($bookingMotive) {
+          selectOption($bookingMotive, { value: "" });
+          checkAvailability();
+        }
+        // Sinon on recharge tout
+        else window.location.reload();
       }
-      // Sinon on recharge tout
-      else {
-        window.location.reload();
-      }
-    }
-  }, false);
+    },
+    false
+  );
 
   checkAvailability();
 })();
