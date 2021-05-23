@@ -4,7 +4,7 @@ La vaccination contre le COVID-19 est désormais ouverte à toutes les personnes
 
 *vaccin.click* vous permet de lister les centres de vaccination dans lesquels vous pouvez vous rendre et de réserver automatiquement dès qu'un créneau est disponible dans les 24 heures !
 
-[![Capture d'écran](screenshot.png)](screenshot.png)
+[![Popup](screenshot.png)](screenshot.png)
 
 ### Installer vaccin.click
 
@@ -23,6 +23,8 @@ La vaccination contre le COVID-19 est désormais ouverte à toutes les personnes
 
 L'extension va alors automatiquement vérifier les disponibilités de chaque centre toutes les 3 minutes.
 Dès qu'une disponibilité est trouvée, une notification est affichée et l'onglet du centre de vaccination s'ouvre pour vous permettre de finaliser la prise de rendez-vous.
+
+[![Notification](notification.png)](notification.png)
 
 Si vous avez activé le mode automatique, une notification s'affiche et un onglet s'ouvre pour vous prévenir que le rendez-vous a été pris. Vous recevrez également un mail de Doctolib. Si un problème survient au moment de la réservation automatique, la page s'ouvre pour que vous puissiez finaliser à la main (fonctionnement similaire au mode non-automatique).
 
