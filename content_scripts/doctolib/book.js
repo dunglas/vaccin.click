@@ -391,6 +391,7 @@
       await browser.runtime.sendMessage({
         type: "error",
         url,
+        message: e.message,
         location: locations[url],
         error: {
           // https://stackoverflow.com/a/53624454/1352334

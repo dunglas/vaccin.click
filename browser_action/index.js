@@ -28,12 +28,12 @@
       const $location = $template.content.cloneNode(true);
       const $item = $location.querySelector(".panel-list-item");
       const $a = $location.querySelector("a");
-      const date = localLocation.date
+      $a.innerText = name;
+      $a.href = url;
+
+      $location.querySelector(".date").innerText = localLocation.date
         ? new Date(localLocation.date).toLocaleTimeString()
         : "";
-
-      $a.innerHTML = `${name} <span class="date">${date}</span>`;
-      $a.href = url;
 
       if (localLocation.status)
         $item.classList.add("status-" + localLocation.status);
