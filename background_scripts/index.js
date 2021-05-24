@@ -7,7 +7,7 @@
     WORKING: "w",
   };
   const appStatus = new AppStatus();
-  const jobs = new JobQueue(20, (job) => {
+  const jobs = new JobQueue(10, 45, (job) => {
     setStatusOnLocation(job, STATUS.WORKING);
     addLocationActivity(appStatus.getLocation(job), "Début de la vérification");
   });

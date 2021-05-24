@@ -3,6 +3,8 @@ class JobDeamon {
   url;
   /** @type {HTMLIFrameElement} */
   iframe;
+  /** @type {number} */
+  lastExecutionTimestamp;
 
   /**
    * @param {string} job Url d'un job
@@ -10,6 +12,7 @@ class JobDeamon {
   constructor(url) {
     this.url = url;
     this.iframe = document.createElement("iframe");
+    this.lastExecutionTimestamp = Date.now();
 
     // On charge l'URL dans une iframe
     // Ici on laisse la main au content script qui va vérifier si un RDV est disponible
@@ -20,6 +23,7 @@ class JobDeamon {
 
   retry() {
     this.iframe.contentWindow.postMessage({ type: "retry" }, "*");
+    this.lastExecutionTimestamp = Date.now();
   }
 
   kill() {
@@ -31,8 +35,10 @@ class JobDeamon {
 class JobQueue {
   /** @type {number} en millisecondes */
   delayBetweenJobs = 30 * 1000;
+  /** @type {number} en millisecondes */
+  delayRetryJob = 60 * 1000;
   /** @type {(job: string) => void} Callback quand un job débute */
-  onJobStart = () => {};
+  onJobStart = () => { };
   /** @type {number} */
   intervalRef = null;
   /** @type {Object<string, JobDeamon>} map de deamon traitant les jobs */
@@ -42,10 +48,12 @@ class JobQueue {
 
   /**
    * @param {number} delayBetweenJobs Delais entre deux jobs, en secondes
+   * @param {number} delayRetryJob Delais entre deux executions d'un même jobs, en secondes
    * @param {(job: string) => void} onJobStart Callback quand un job débute
    */
-  constructor(delayBetweenJobs, onJobStart) {
+  constructor(delayBetweenJobs, minDelayRetryJob, onJobStart) {
     this.delayBetweenJobs = delayBetweenJobs * 1000;
+    this.delayRetryJob = minDelayRetryJob * 1000
     this.onJobStart = onJobStart;
   }
 
@@ -63,8 +71,8 @@ class JobQueue {
    */
   remove(job) {
     // Supprime les jobs existants
-    while (this.jobs.includes(url)) {
-      jobs.splice(jobs.indexOf(url), 1);
+    while (this.jobs.includes(job)) {
+      this.jobs.splice(this.jobs.indexOf(job), 1);
     }
   }
 
@@ -82,12 +90,17 @@ class JobQueue {
   executeNextJob() {
     const job = this.jobs.shift();
     if (job) {
-      this.onJobStart(job);
-
       if (this.deamons.hasOwnProperty(job)) {
-        this.deamons[job].retry();
+        if (Date.now() - this.deamons[job].lastExecutionTimestamp >= this.delayRetryJob) {
+          this.onJobStart(job);
+          this.deamons[job].retry();
+        }
+        else {
+          this.jobs.push(job);
+        }
       }
       else {
+        this.onJobStart(job);
         this.deamons[job] = new JobDeamon(job);
       }
     }
