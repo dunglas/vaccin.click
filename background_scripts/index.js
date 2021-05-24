@@ -1,10 +1,10 @@
 // Scan périodique des RDV
 (async function () {
   const appStatus = new AppStatus();
-  const localStatus = new LocalStatus(30);
+  const localStorage = new LocalStorage(30);
   const jobs = new JobQueue(10, 45, (job) => {
-    localStatus.setLocationStatus(job, LocationCheckStatus.WORKING);
-    localStatus.locationLog(
+    localStorage.setLocationStatus(job, LocationCheckStatus.WORKING);
+    localStorage.locationLog(
       appStatus.getLocation(job),
       "Début de la vérification"
     );
@@ -36,13 +36,13 @@
 
     switch (data.type) {
       case "error":
-        localStatus.setLocationStatus(data.url, LocationCheckStatus.ERROR);
-        localStatus.locationLog(data.location, "Echec - " + data.error.message);
+        localStorage.setLocationStatus(data.url, LocationCheckStatus.ERROR);
+        localStorage.locationLog(data.location, "Echec - " + data.error.message);
         break;
 
       case "found":
-        localStatus.setLocationStatus(data.url, LocationCheckStatus.SUCCESS);
-        localStatus.locationLog(data.location, "Succes - Créneau trouvé");
+        localStorage.setLocationStatus(data.url, LocationCheckStatus.SUCCESS);
+        localStorage.locationLog(data.location, "Succes - Créneau trouvé");
 
         const tabs = await browser.tabs.query({ url: data.url });
 
@@ -63,8 +63,8 @@
       case "booked":
         appStatus.stop();
 
-        localStatus.setLocationStatus(data.url, LocationCheckStatus.SUCCESS);
-        localStatus.locationLog(data.location, "Succes - Créneau réservé");
+        localStorage.setLocationStatus(data.url, LocationCheckStatus.SUCCESS);
+        localStorage.locationLog(data.location, "Succes - Créneau réservé");
 
         await browser.tabs.create({
           url: "https://twitter.com/intent/tweet?text=J%27ai%20r%C3%A9serv%C3%A9%20automatiquement%20mon%20rendez-vous%20de%20vaccination%20%23COVID19%20gr%C3%A2ce%20%C3%A0%20https%3A%2F%2Fvaccin.click%20de%20%40dunglas",
@@ -85,7 +85,7 @@
   });
 
   // Récupérer le status initial de l'application PUIS executer les jobs
-  Promise.all([appStatus.init(), localStatus.init()]).then(
+  Promise.all([appStatus.init(), localStorage.init()]).then(
     jobs.start.bind(this)
   );
 })();

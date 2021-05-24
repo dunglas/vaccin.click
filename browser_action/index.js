@@ -5,12 +5,20 @@
   const $template = document.getElementById("location");
   const $debugActivity = document.getElementById("debugActivity");
 
-  function displayLogs(activities) {
+  //const appStatus = new AppStatus();
+  const localStorage = new LocalStorageReader({
+    onLogsChanged: displayLogs,
+    onLocationsChanged: (localLocations) => {
+      displayLocations(locations, localLocations);
+    }
+  });
+
+  function displayLogs(logLines) {
     $debugActivity.innerHTML = "";
 
-    activities.forEach((activity) => {
+    logLines.forEach((log) => {
       const $li = document.createElement("li");
-      $li.innerText = activity;
+      $li.innerText = log;
       $debugActivity.appendChild($li);
       $debugActivity.scrollTop = $debugActivity.scrollHeight;
     });
@@ -68,22 +76,13 @@
     stopped: false,
   });
 
-  let { localLocations } = await browser.storage.local.get({ locations: {} });
-
+  await localStorage.init();
+  
   browser.storage.onChanged.addListener(async (change, areaName) => {
-    if (areaName === "local") {
-      if (change.logs) displayLogs(change.logs.newValue || []);
-
-      if (change.locations) {
-        localLocations = change.locations.newValue;
-        displayLocations(locations, localLocations);
-      }
-    }
-
     if (areaName === "sync") {
       if (change.locations) {
         locations = change.locations.newValue;
-        displayLocations(locations, localLocations);
+        displayLocations(locations, localStorage.getLocations());
       }
 
       if (change.stopped) displayStopStart(change.stopped.newValue || false);
@@ -129,8 +128,5 @@
     autoBook ? "enableAutoBook" : "disableAutoBook"
   ).checked = true;
 
-  displayLocations(locations, localLocations);
-
-  const { activities } = await browser.storage.local.get({ activities: [] });
-  displayLogs(activities);
+  displayLocations(locations, localStorage.getLocations());
 })();
