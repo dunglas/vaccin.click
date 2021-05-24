@@ -28,14 +28,14 @@ class JobDeamon {
   }
 }
 
-class jobQueue {
+class JobQueue {
   /** @type {number} en millisecondes */
   delayBetweenJobs = 30 * 1000;
   /** @type {(job: string) => void} Callback quand un job débute */
   onJobStart = () => {};
   /** @type {number} */
   intervalRef = null;
-  /** @type {{string: JobDeamon}} map de deamon traitant les jobs */
+  /** @type {Object<string, JobDeamon>} map de deamon traitant les jobs */
   deamons = {};
   /** @type {string[]} tableau d'url de job */
   jobs = [];

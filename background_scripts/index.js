@@ -6,19 +6,28 @@
     SUCCESS: "s",
     WORKING: "w",
   };
-  const jobsQ = new jobQueue(20, (job) => {
+  const appStatus = new AppStatus({
+    onStoppedChange: (stoppedStatus) => {
+      browser.browserAction.setIcon({
+        path: {
+          16: `../icons/vaccine-${stoppedStatus ? "black" : "color"}.svg`,
+          32: `../icons/vaccine-${stoppedStatus ? "black" : "color"}.svg`,
+        },
+      });
+    }
+  });
+
+  const jobs = new JobQueue(20, (job) => {
     setStatusOnLocation(job, STATUS.WORKING);
     addLocationActivity(locations[job], "Début de la vérification");
   });
 
-  async function updateIconStatus() {
-    return await browser.browserAction.setIcon({
-      path: {
-        16: `../icons/vaccine-${stopped ? "black" : "color"}.svg`,
-        32: `../icons/vaccine-${stopped ? "black" : "color"}.svg`,
-      },
-    });
-  }
+  appStatus.onLocationChange((url) => {
+    jobs.add(url);
+  }, (url) => {
+    jobs.kill(url);
+    jobs.remove(url);
+  });
 
   async function setStatusOnLocation(loc, status) {
     const { locations } = await browser.storage.local.get({ locations: {} });
@@ -44,37 +53,6 @@
   async function addLocationActivity(location, message) {
     return addActivity(location.name + " - " + message);
   }
-
-  browser.storage.onChanged.addListener(async (change, areaName) => {
-    if (areaName !== "sync") return;
-
-    if (change.locations && change.locations.newValue) {
-      Object.keys(locations).forEach((url) => {
-        if (!change.locations.newValue[url]) {
-          delete locations[url];
-          jobsQ.kill(url);
-          jobsQ.remove(url);
-        }
-      });
-
-      Object.keys(change.locations.newValue).forEach((url) => {
-        if (!locations[url]) locations[url] = change.locations.newValue[url];
-
-        this.jobsQ.add(url);
-      });
-    }
-
-    if (change.stopped !== undefined) {
-      if (change.stopped === true) {
-        jobsQ.stop();
-      }
-      else {
-        jobsQ.start();
-      }
-
-      return await updateIconStatus(stopped);
-    }
-  });
 
   browser.runtime.onMessage.addListener(async (data) => {
     console.info(data);
@@ -106,7 +84,7 @@
         break;
 
       case "booked":
-        await browser.storage.sync.set({ stopped: true });
+        appStatus.stop();
 
         await browser.tabs.create({
           url: "https://twitter.com/intent/tweet?text=J%27ai%20r%C3%A9serv%C3%A9%20automatiquement%20mon%20rendez-vous%20de%20vaccination%20%23COVID19%20gr%C3%A2ce%20%C3%A0%20https%3A%2F%2Fvaccin.click%20de%20%40dunglas",
@@ -125,20 +103,10 @@
 
     if (["error", "found", "booked"].includes(data.type)) {
       // Prévoir le job suivant
-      jobsQ.add(data.url);
+      jobs.add(data.url);
     }
   });
 
-  const { locations, stopped } = await browser.storage.sync.get({
-    locations: {},
-    stopped: false,
-  });
-
-  await updateIconStatus(stopped);
-
-  // On initialis tous les jobs à faire
-  Object.keys(locations).forEach(job => jobsQ.add(job));
-
   // Executer les jobs toutes les TIME_BETWEEN_JOBS sec
-  jobsQ.start();
+  jobs.start();
 })();

@@ -29,7 +29,11 @@
     }
   ],
   "background": {
-    "scripts": ["background_scripts/jobQueue.js", "background_scripts/index.js"]
+    "scripts": [
+      "background_scripts/AppStatus.js", 
+      "background_scripts/JobQueue.js", 
+      "background_scripts/index.js"
+    ]
   },
   "browser_specific_settings": {
     "gecko": {
