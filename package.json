@@ -4,8 +4,20 @@
   "repository": "https://github.com/dunglas/vaccin.click",
   "author": "Kévin Dunglas <dunglas@gmail.com>",
   "license": " AGPL-3.0-only",
+  "scripts": {
+    "lint": "prettier --check .",
+    "lint-fix": "prettier --check -w .",
+    "start": "web-ext run",
+    "build": "web-ext build"
+  },
   "devDependencies": {
     "prettier": "^2.3.0",
     "web-ext": "^6.1.0"
+  },
+  "webExt": {
+    "ignoreFiles": [
+      "*.md",
+      "package*.json"
+    ]
   }
 }
