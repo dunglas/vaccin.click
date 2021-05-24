@@ -1,9 +1,9 @@
 class LocalStorageReader extends AbstractLocalStorage {
   /**
-   * @param {{ 
-   *   onLocationsChanged: (locations: LocationStatus[]) => void 
-   *   onLogsChanged: (logs: string[]) => void 
-   * }} callbacks 
+   * @param {{
+   *   onLocationsChanged: (locations: LocationStatus[]) => void
+   *   onLogsChanged: (logs: string[]) => void
+   * }} callbacks
    */
   constructor(callbacks) {
     super();

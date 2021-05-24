@@ -37,7 +37,10 @@
     switch (data.type) {
       case "error":
         localStorage.setLocationStatus(data.url, LocationCheckStatus.ERROR);
-        localStorage.locationLog(data.location, "Echec - " + data.error.message);
+        localStorage.locationLog(
+          data.location,
+          "Echec - " + data.error.message
+        );
         break;
 
       case "found":

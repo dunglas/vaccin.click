@@ -10,7 +10,7 @@
     onLogsChanged: displayLogs,
     onLocationsChanged: (localLocations) => {
       displayLocations(locations, localLocations);
-    }
+    },
   });
 
   function displayLogs(logLines) {
@@ -77,7 +77,7 @@
   });
 
   await localStorage.init();
-  
+
   browser.storage.onChanged.addListener(async (change, areaName) => {
     if (areaName === "sync") {
       if (change.locations) {

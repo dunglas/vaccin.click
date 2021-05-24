@@ -3,7 +3,7 @@
  * @readonly
  * @enum {string}
  */
- const LocationCheckStatus = Object.freeze({
+const LocationCheckStatus = Object.freeze({
   ERROR: "e",
   SUCCESS: "s",
   WORKING: "w",
