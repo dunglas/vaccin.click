@@ -36,7 +36,11 @@
 
     switch (data.type) {
       case "error":
-        localStorage.setLocationStatus(data.url, LocationCheckStatus.ERROR, data.error.message);
+        localStorage.setLocationStatus(
+          data.url,
+          LocationCheckStatus.ERROR,
+          data.error.message
+        );
         localStorage.locationLog(
           data.location,
           "Echec - " + data.error.message
@@ -44,7 +48,11 @@
         break;
 
       case "found":
-        localStorage.setLocationStatus(data.url, LocationCheckStatus.SUCCESS, 'Créneau trouvé');
+        localStorage.setLocationStatus(
+          data.url,
+          LocationCheckStatus.SUCCESS,
+          "Créneau trouvé"
+        );
         localStorage.locationLog(data.location, "Succes - Créneau trouvé");
 
         const tabs = await browser.tabs.query({ url: data.url });
@@ -66,7 +74,11 @@
       case "booked":
         appStatus.stop();
 
-        localStorage.setLocationStatus(data.url, LocationCheckStatus.SUCCESS, 'Créneau réservé');
+        localStorage.setLocationStatus(
+          data.url,
+          LocationCheckStatus.SUCCESS,
+          "Créneau réservé"
+        );
         localStorage.locationLog(data.location, "Succes - Créneau réservé");
 
         await browser.tabs.create({

@@ -92,7 +92,9 @@ class AppStatus {
 
       Object.keys(change.locations.newValue).forEach((url) => {
         if (this.locations[url] === undefined) {
-          this.locations[url] = new VaccineLocation(change.locations.newValue[url]);
+          this.locations[url] = new VaccineLocation(
+            change.locations.newValue[url]
+          );
         }
 
         this.onLocationAddedCb(url);

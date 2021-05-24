@@ -25,8 +25,8 @@
   }
 
   /**
-   * @param {Object<string, VaccineLocation>} locations 
-   * @param {Object<string, LocationStatus>} localLocations 
+   * @param {Object<string, VaccineLocation>} locations
+   * @param {Object<string, LocationStatus>} localLocations
    */
   function displayLocations(locations, localLocations) {
     $locations.innerHTML = "";
@@ -51,8 +51,7 @@
       if (localLocation.status)
         $item.classList.add("status-" + localLocation.status);
 
-      if (localLocation.message)
-        $item.title = localLocation.message;
+      if (localLocation.message) $item.title = localLocation.message;
 
       $location.querySelector("img").src = img;
       $location.querySelector("button").onclick = async () => {
