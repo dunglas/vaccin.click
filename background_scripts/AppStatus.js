@@ -26,6 +26,9 @@ class AppStatus {
     browser.storage.onChanged.addListener(this.onStorageChange.bind(this));
   }
 
+  /**
+   * @returns {Promise<void>} Une promesse resolue quand le traitement est fini
+   */
   init() {
     return browser.storage.sync
       .get({

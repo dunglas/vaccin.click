@@ -1,15 +1,10 @@
 // Scan périodique des RDV
 (async function () {
-  const MAX_ACTIVITY = 30;
-  const STATUS = {
-    ERROR: "e",
-    SUCCESS: "s",
-    WORKING: "w",
-  };
   const appStatus = new AppStatus();
+  const localStatus = new LocalStatus(30);
   const jobs = new JobQueue(10, 45, (job) => {
-    setStatusOnLocation(job, STATUS.WORKING);
-    addLocationActivity(appStatus.getLocation(job), "Début de la vérification");
+    localStatus.setLocationStatus(job, LocationCheckStatus.WORKING);
+    localStatus.locationLog(appStatus.getLocation(job), "Début de la vérification");
   });
 
   appStatus.onLocationChange(
@@ -37,42 +32,19 @@
     }
   });
 
-  function setStatusOnLocation(loc, status) {
-    browser.storage.local.get({ locations: {} }).then((result) => {
-      result.locations[loc] = {
-        status: status,
-        date: Date.now(),
-      };
-      browser.storage.local.set({ locations: result.locations });
-    });
-  }
-
-  async function addActivity(message) {
-    const { activities } = await browser.storage.local.get({ activities: [] });
-
-    activities.push(new Date().toLocaleTimeString() + " - " + message);
-
-    while (activities.length > MAX_ACTIVITY) {
-      activities.shift();
-    }
-
-    await browser.storage.local.set({ activities: activities });
-  }
-
-  async function addLocationActivity(location, message) {
-    return addActivity(location.name + " - " + message);
-  }
-
   browser.runtime.onMessage.addListener(async (data) => {
     console.info(data);
 
     switch (data.type) {
       case "error":
-        setStatusOnLocation(data.url, STATUS.ERROR);
-        addLocationActivity(data.location, "Echec - " + data.error.message);
+        localStatus.setLocationStatus(data.url, LocationCheckStatus.ERROR);
+        localStatus.locationLog(data.location, "Echec - " + data.error.message);
         break;
 
       case "found":
+        localStatus.setLocationStatus(data.url, LocationCheckStatus.SUCCESS);
+        localStatus.locationLog(data.location, "Succes - Créneau trouvé");
+
         const tabs = await browser.tabs.query({ url: data.url });
 
         // Ne pas réouvrir l'onglet si il est déjà ouvert
@@ -87,13 +59,13 @@
           message: `Cliquez ici pour finaliser la réservation dans le centre "${data.location.name}"`,
           priority: 2,
         });
-
-        setStatusOnLocation(data.url, STATUS.SUCCESS);
-        addLocationActivity(data.location, "Succes - Créneau trouvé");
         break;
 
       case "booked":
         appStatus.stop();
+
+        localStatus.setLocationStatus(data.url, LocationCheckStatus.SUCCESS);
+        localStatus.locationLog(data.location, "Succes - Créneau réservé");
 
         await browser.tabs.create({
           url: "https://twitter.com/intent/tweet?text=J%27ai%20r%C3%A9serv%C3%A9%20automatiquement%20mon%20rendez-vous%20de%20vaccination%20%23COVID19%20gr%C3%A2ce%20%C3%A0%20https%3A%2F%2Fvaccin.click%20de%20%40dunglas",
@@ -104,9 +76,6 @@
           title: "Votre créneau de vaccination a été réservé !",
           message: `Vous avez rendez-vous au centre "${data.location.name}".`,
         });
-
-        setStatusOnLocation(data.url, STATUS.SUCCESS);
-        addLocationActivity(data.location, "Succes - Créneau réservé");
         break;
     }
 
@@ -116,9 +85,6 @@
     }
   });
 
-  // Récupérer le status initial de l'application
-  await appStatus.init();
-
-  // Executer les jobs toutes les TIME_BETWEEN_JOBS sec
-  jobs.start();
+  // Récupérer le status initial de l'application PUIS executer les jobs
+  Promise.all([appStatus.init(), localStatus.init()]).then(jobs.start)
 })();

@@ -5,7 +5,7 @@
   const $template = document.getElementById("location");
   const $debugActivity = document.getElementById("debugActivity");
 
-  function displayActivities(activities) {
+  function displayLogs(activities) {
     $debugActivity.innerHTML = "";
 
     activities.forEach((activity) => {
@@ -72,8 +72,8 @@
 
   browser.storage.onChanged.addListener(async (change, areaName) => {
     if (areaName === "local") {
-      if (change.activities)
-        displayActivities(change.activities.newValue || []);
+      if (change.logs)
+        displayLogs(change.logs.newValue || []);
 
       if (change.locations) {
         localLocations = change.locations.newValue;
@@ -133,5 +133,5 @@
   displayLocations(locations, localLocations);
 
   const { activities } = await browser.storage.local.get({ activities: [] });
-  displayActivities(activities);
+  displayLogs(activities);
 })();
