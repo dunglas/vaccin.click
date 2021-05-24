@@ -1,0 +1,11 @@
+{
+  "name": "vaccin.click",
+  "version": "1.0.0",
+  "repository": "https://github.com/dunglas/vaccin.click",
+  "author": "Kévin Dunglas <dunglas@gmail.com>",
+  "license": " AGPL-3.0-only",
+  "devDependencies": {
+    "prettier": "^2.3.0",
+    "web-ext": "^6.1.0"
+  }
+}
