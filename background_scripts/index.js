@@ -1,14 +1,15 @@
 // Scan périodique des RDV
 (async function () {
   const MAX_ACTIVITY = 30;
-  const TIME_BETWEEN_JOBS = 20;
-  const iframes = {};
-  const jobs = [];
   const STATUS = {
     ERROR: "e",
     SUCCESS: "s",
     WORKING: "w",
   };
+  const jobsQ = new jobQueue(20, (job) => {
+    setStatusOnLocation(job, STATUS.WORKING);
+    addLocationActivity(locations[job], "Début de la vérification");
+  });
 
   async function updateIconStatus() {
     return await browser.browserAction.setIcon({
@@ -17,18 +18,6 @@
         32: `../icons/vaccine-${stopped ? "black" : "color"}.svg`,
       },
     });
-  }
-
-  function createIframe(url) {
-    const $iframe = document.createElement("iframe");
-
-    // On charge l'URL dans une iframe
-    // Ici on laisse la main au content script qui va vérifier si un RDV est disponible
-    $iframe.src = url;
-
-    document.body.appendChild($iframe);
-
-    return $iframe;
   }
 
   async function setStatusOnLocation(loc, status) {
@@ -56,42 +45,6 @@
     return addActivity(location.name + " - " + message);
   }
 
-  async function executeNextJob() {
-    const { stopped } = await browser.storage.sync.get({
-      stopped: false,
-    });
-
-    if (stopped) return;
-
-    const job = jobs.shift();
-    if (job) {
-      setStatusOnLocation(job, STATUS.WORKING);
-      addLocationActivity(locations[job], "Début de la vérification");
-
-      if (iframes.hasOwnProperty(job))
-        // Recharger l'iframe existante
-        iframes[job].contentWindow.postMessage(
-          {
-            type: "retry",
-          },
-          "*"
-        );
-      // Créer une nouvelle iframe
-      else iframes[job] = createIframe(job);
-    }
-  }
-
-  function killJob(url, deleteIframe) {
-    // Supprimer l'iframe si elle existe
-    if (deleteIframe === true && iframes.hasOwnProperty(url)) {
-      iframes[url].remove();
-      delete iframes[url];
-    }
-
-    // Supprime le job si il existe
-    while (jobs.includes(url)) jobs.splice(jobs.indexOf(url), 1);
-  }
-
   browser.storage.onChanged.addListener(async (change, areaName) => {
     if (areaName !== "sync") return;
 
@@ -99,19 +52,28 @@
       Object.keys(locations).forEach((url) => {
         if (!change.locations.newValue[url]) {
           delete locations[url];
-          killJob(url, true);
+          jobsQ.kill(url);
+          jobsQ.remove(url);
         }
       });
 
       Object.keys(change.locations.newValue).forEach((url) => {
         if (!locations[url]) locations[url] = change.locations.newValue[url];
 
-        // Si je job n'est pas déjà en attente ou en cours de traitement
-        if (!jobs.includes(url) && !iframes[url]) jobs.push(url);
+        this.jobsQ.add(url);
       });
     }
 
-    if (change.stopped) return await updateIconStatus(stopped);
+    if (change.stopped !== undefined) {
+      if (change.stopped === true) {
+        jobsQ.stop();
+      }
+      else {
+        jobsQ.start();
+      }
+
+      return await updateIconStatus(stopped);
+    }
   });
 
   browser.runtime.onMessage.addListener(async (data) => {
@@ -162,11 +124,8 @@
     }
 
     if (["error", "found", "booked"].includes(data.type)) {
-      // Nettoyer le job précédent
-      killJob(data.url);
-
       // Prévoir le job suivant
-      jobs.push(data.url);
+      jobsQ.add(data.url);
     }
   });
 
@@ -177,10 +136,9 @@
 
   await updateIconStatus(stopped);
 
-  // On ajoute les iframes pour charger les centres à surveiller en arrière plan
-  Array.prototype.push.apply(jobs, Object.keys(locations));
+  // On initialis tous les jobs à faire
+  Object.keys(locations).forEach(job => jobsQ.add(job));
 
   // Executer les jobs toutes les TIME_BETWEEN_JOBS sec
-  setInterval(executeNextJob, TIME_BETWEEN_JOBS * 1000);
-  executeNextJob();
+  jobsQ.start();
 })();
