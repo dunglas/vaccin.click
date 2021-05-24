@@ -4,7 +4,10 @@
   const localStatus = new LocalStatus(30);
   const jobs = new JobQueue(10, 45, (job) => {
     localStatus.setLocationStatus(job, LocationCheckStatus.WORKING);
-    localStatus.locationLog(appStatus.getLocation(job), "Début de la vérification");
+    localStatus.locationLog(
+      appStatus.getLocation(job),
+      "Début de la vérification"
+    );
   });
 
   appStatus.onLocationChange(
@@ -86,5 +89,5 @@
   });
 
   // Récupérer le status initial de l'application PUIS executer les jobs
-  Promise.all([appStatus.init(), localStatus.init()]).then(jobs.start)
+  Promise.all([appStatus.init(), localStatus.init()]).then(jobs.start);
 })();

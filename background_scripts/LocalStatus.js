@@ -10,10 +10,10 @@
  * @readonly
  * @enum {string}
  */
- const LocationCheckStatus = Object.freeze({
+const LocationCheckStatus = Object.freeze({
   ERROR: "e",
   SUCCESS: "s",
-  WORKING: "w"
+  WORKING: "w",
 });
 
 class LocalStatus {
@@ -38,7 +38,7 @@ class LocalStatus {
     return browser.storage.local
       .get({
         locations: {},
-        logs: []
+        logs: [],
       })
       .then((result) => {
         this.locations = result.locations;
@@ -74,7 +74,7 @@ class LocalStatus {
   setLocationStatus(locationUrl, status) {
     this.locations[locationUrl] = {
       status: status,
-      date: Date.now()
+      date: Date.now(),
     };
 
     browser.storage.local.set({ locations: this.locations });

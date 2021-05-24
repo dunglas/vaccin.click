@@ -72,8 +72,7 @@
 
   browser.storage.onChanged.addListener(async (change, areaName) => {
     if (areaName === "local") {
-      if (change.logs)
-        displayLogs(change.logs.newValue || []);
+      if (change.logs) displayLogs(change.logs.newValue || []);
 
       if (change.locations) {
         localLocations = change.locations.newValue;
