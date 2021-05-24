@@ -6,20 +6,10 @@
     SUCCESS: "s",
     WORKING: "w",
   };
-  const appStatus = new AppStatus({
-    onStoppedChange: (stoppedStatus) => {
-      browser.browserAction.setIcon({
-        path: {
-          16: `../icons/vaccine-${stoppedStatus ? "black" : "color"}.svg`,
-          32: `../icons/vaccine-${stoppedStatus ? "black" : "color"}.svg`,
-        },
-      });
-    }
-  });
-
+  const appStatus = new AppStatus();
   const jobs = new JobQueue(20, (job) => {
     setStatusOnLocation(job, STATUS.WORKING);
-    addLocationActivity(locations[job], "Début de la vérification");
+    addLocationActivity(appStatus.getLocation(job), "Début de la vérification");
   });
 
   appStatus.onLocationChange((url) => {
@@ -29,13 +19,30 @@
     jobs.remove(url);
   });
 
-  async function setStatusOnLocation(loc, status) {
-    const { locations } = await browser.storage.local.get({ locations: {} });
-    locations[loc] = {
-      status: status,
-      date: Date.now(),
-    };
-    await browser.storage.local.set({ locations });
+  appStatus.onStoppedChange((stoppedStatus) => {
+    browser.browserAction.setIcon({
+      path: {
+        16: `../icons/vaccine-${stoppedStatus ? "black" : "color"}.svg`,
+        32: `../icons/vaccine-${stoppedStatus ? "black" : "color"}.svg`,
+      },
+    });
+
+    if (stoppedStatus) {
+      jobs.stop();
+    }
+    else {
+      jobs.start();
+    }
+  });
+
+  function setStatusOnLocation(loc, status) {
+    browser.storage.local.get({ locations: {} }).then((result) => {
+      result.locations[loc] = {
+        status: status,
+        date: Date.now(),
+      };
+      browser.storage.local.set({ locations: result.locations });
+    });
   }
 
   async function addActivity(message) {
@@ -106,6 +113,9 @@
       jobs.add(data.url);
     }
   });
+
+  // Récupérer le status initial de l'application
+  await appStatus.init();
 
   // Executer les jobs toutes les TIME_BETWEEN_JOBS sec
   jobs.start();

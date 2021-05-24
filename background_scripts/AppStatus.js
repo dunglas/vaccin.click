@@ -19,45 +19,53 @@ class AppStatus {
   /** @type {boolean} est-ce que l'app est active ? */
   stopped = false;
   /** @type {(string) => void} callback quand une {@link Location} a été ajouté */
-  onLocationAdded;
+  onLocationAddedCb = (job) => { };
   /** @type {(string) => void} callback quand une {@link Location} a été supprimée */
-  onLocationDeleted;
+  onLocationDeletedCb = (job) => { };
   /** @type {(boolean) => void} callback quand stopped change de valeur */
-  onStoppedChange;
+  onStoppedChangeCb = (newValue) => { };
 
-  /**
-   * 
-   * @param {{ onLocationAdded: (string) => void, onLocationDeleted: (string) => void, onStoppedChange: (boolean) => void }} callbacks map de differents callbacks
-   */
-  constructor(callbacks) {
-    this.onLocationAdded = callbacks.onLocationAdded ? callbacks.onLocationAdded : (job) => { };
-    this.onLocationDeleted = callbacks.onLocationDeleted ? callbacks.onLocationDeleted : (job) => { };
-    this.onStoppedChange = callbacks.onStoppedChange ? callbacks.onStoppedChange : (newValue) => { };
-
+  constructor() {
     browser.storage.onChanged.addListener(this.onStorageChange.bind(this));
+  }
 
-    browser.storage.sync.get({
+  init() {
+    return browser.storage.sync.get({
       locations: {},
       stopped: false,
     }).then((result) => {
       Object.keys(result.locations).forEach((url) => {
         this.locations[url] = new Location(result.locations[url]);
-        this.onLocationAdded(url);
+        this.onLocationAddedCb(url);
       });
 
       this.stopped = result.stopped === true;
-      this.onStoppedChange(this.stopped);
+      this.onStoppedChangeCb(this.stopped);
     });
   }
 
   /**
-   * 
+   * @param {string} url L'url à rechercher
+   * @returns {Location} La {@link Location} correspondante si elle existe, sinon undefined
+   */
+  getLocation(url) {
+    return this.locations[url];
+  }
+
+  /**
    * @param {(string) => void} cbAdd callback quand une {@link Location} a été ajouté
    * @param {(string) => void} cbDelete callback quand une {@link Location} a été supprimée
    */
    onLocationChange(cbAdd, cbDelete) {
-    this.onLocationAdded = cbAdd;
-    this.onLocationDeleted = cbDelete;
+    this.onLocationAddedCb = cbAdd;
+    this.onLocationDeletedCb = cbDelete;
+  }
+
+  /**
+   * @param {(boolean) => void} callback quand stopped change de valeur
+   */
+  onStoppedChange(callback) {
+    this.onStoppedChangeCb = callback;
   }
 
   stop() {
@@ -76,7 +84,7 @@ class AppStatus {
         if (change.locations.newValue[url] === undefined) {
           delete this.locations[url];
 
-          this.onLocationDeleted(url);
+          this.onLocationDeletedCb(url);
         }
       });
 
@@ -85,21 +93,14 @@ class AppStatus {
           this.locations[url] = new Location(change.locations.newValue[url]);
         }
 
-        this.onLocationAdded(url);
+        this.onLocationAddedCb(url);
       });
     }
 
     if (change.stopped) {
       this.stopped = change.stopped.newValue === true;
 
-      if (this.stopped) {
-        jobs.stop();
-      }
-      else {
-        jobs.start();
-      }
-
-      this.onStoppedChange(this.stopped);
+      this.onStoppedChangeCb(this.stopped);
     }
   }
 }
