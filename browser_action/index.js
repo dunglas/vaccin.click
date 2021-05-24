@@ -24,6 +24,10 @@
     });
   }
 
+  /**
+   * @param {Object<string, VaccineLocation>} locations 
+   * @param {Object<string, LocationStatus>} localLocations 
+   */
   function displayLocations(locations, localLocations) {
     $locations.innerHTML = "";
 
@@ -31,6 +35,7 @@
     localLocations = localLocations || {};
 
     Object.entries(locations).forEach(([url, { name, img }]) => {
+      /** @type {LocationStatus} */
       const localLocation = localLocations[url] || {};
 
       const $location = $template.content.cloneNode(true);
@@ -45,6 +50,10 @@
 
       if (localLocation.status)
         $item.classList.add("status-" + localLocation.status);
+
+      if (localLocation.message)
+        $item.title = localLocation.message;
+
       $location.querySelector("img").src = img;
       $location.querySelector("button").onclick = async () => {
         if (

@@ -1,4 +1,4 @@
-class Location {
+class VaccineLocation {
   /**
    * @param {{ name: string, img: string }} attributes Un lieu à surveiller
    */
@@ -12,13 +12,13 @@ class Location {
 
 class AppStatus {
   constructor() {
-    /** @type {Object<string, Location>} map de lieux à vérifier */
+    /** @type {Object<string, VaccineLocation>} map de lieux à vérifier */
     this.locations = {};
     /** @type {boolean} est-ce que l'app est active ? */
     this.stopped = false;
-    /** @type {(string) => void} callback quand une {@link Location} a été ajouté */
+    /** @type {(string) => void} callback quand une {@link VaccineLocation} a été ajouté */
     this.onLocationAddedCb = (job) => {};
-    /** @type {(string) => void} callback quand une {@link Location} a été supprimée */
+    /** @type {(string) => void} callback quand une {@link VaccineLocation} a été supprimée */
     this.onLocationDeletedCb = (job) => {};
     /** @type {(boolean) => void} callback quand stopped change de valeur */
     this.onStoppedChangeCb = (newValue) => {};
@@ -37,7 +37,7 @@ class AppStatus {
       })
       .then((result) => {
         Object.keys(result.locations).forEach((url) => {
-          this.locations[url] = new Location(result.locations[url]);
+          this.locations[url] = new VaccineLocation(result.locations[url]);
           this.onLocationAddedCb(url);
         });
 
@@ -48,15 +48,15 @@ class AppStatus {
 
   /**
    * @param {string} url L'url à rechercher
-   * @returns {Location} La {@link Location} correspondante si elle existe, sinon undefined
+   * @returns {VaccineLocation} Le lieu correspondante si il existe, sinon undefined
    */
   getLocation(url) {
     return this.locations[url];
   }
 
   /**
-   * @param {(string) => void} cbAdd callback quand une {@link Location} a été ajouté
-   * @param {(string) => void} cbDelete callback quand une {@link Location} a été supprimée
+   * @param {(string) => void} cbAdd callback quand une {@link VaccineLocation} a été ajouté
+   * @param {(string) => void} cbDelete callback quand une {@link VaccineLocation} a été supprimée
    */
   onLocationChange(cbAdd, cbDelete) {
     this.onLocationAddedCb = cbAdd;
@@ -92,7 +92,7 @@ class AppStatus {
 
       Object.keys(change.locations.newValue).forEach((url) => {
         if (this.locations[url] === undefined) {
-          this.locations[url] = new Location(change.locations.newValue[url]);
+          this.locations[url] = new VaccineLocation(change.locations.newValue[url]);
         }
 
         this.onLocationAddedCb(url);

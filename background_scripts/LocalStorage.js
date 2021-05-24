@@ -23,7 +23,7 @@ class LocalStorage extends AbstractLocalStorage {
   }
 
   /**
-   * @param {Location} location La {@link Location} concerné
+   * @param {VaccineLocation} location Le lieu concerné
    * @param {string} message Un message à loguer
    */
   locationLog(location, message) {
@@ -31,12 +31,14 @@ class LocalStorage extends AbstractLocalStorage {
   }
 
   /**
-   * @param {string} locationUrl L'url d'une {@link Location} à éditer
+   * @param {string} locationUrl L'url du lieu à éditer
    * @param {LocationCheckStatus} status Le status à associer au lieu
+   * @param {string?} message Un commentaire sur le status
    */
-  setLocationStatus(locationUrl, status) {
+  setLocationStatus(locationUrl, status, message) {
     this.locations[locationUrl] = {
       status: status,
+      message: message,
       date: Date.now(),
     };
 

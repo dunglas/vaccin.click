@@ -12,6 +12,7 @@ const LocationCheckStatus = Object.freeze({
 /**
  * @typedef {{
  *  status: LocationCheckStatus,
+ *  message: string,
  *  date: number
  * }} LocationStatus
  */
@@ -20,7 +21,7 @@ class AbstractLocalStorage {
    * @param {number} maxLogs Nombre maximum de logs à garder
    */
   constructor() {
-    /** @type {Object<string, LocationStatus>} map de status par {@link Location} */
+    /** @type {Object<string, LocationStatus>} map de status par lieu */
     this.locations = {};
     /** @type {string[]} tableau de logs */
     this.logs = [];
