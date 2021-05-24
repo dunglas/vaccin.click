@@ -1,8 +1,8 @@
 class Location {
   /** @type {string} Nom du lieu */
-  name;
+  name
   /** @type {string} Url du logo du lieu */
-  img;
+  img
 
   /**
    * @param {{ name: string, img: string }} attributes Un lieu à surveiller
@@ -15,15 +15,15 @@ class Location {
 
 class AppStatus {
   /** @type {Object<string, Location>} map de lieux à vérifier */
-  locations = {};
+  locations = {}
   /** @type {boolean} est-ce que l'app est active ? */
-  stopped = false;
+  stopped = false
   /** @type {(string) => void} callback quand une {@link Location} a été ajouté */
-  onLocationAddedCb = (job) => { };
+  onLocationAddedCb = (job) => { }
   /** @type {(string) => void} callback quand une {@link Location} a été supprimée */
-  onLocationDeletedCb = (job) => { };
+  onLocationDeletedCb = (job) => { }
   /** @type {(boolean) => void} callback quand stopped change de valeur */
-  onStoppedChangeCb = (newValue) => { };
+  onStoppedChangeCb = (newValue) => { }
 
   constructor() {
     browser.storage.onChanged.addListener(this.onStorageChange.bind(this));

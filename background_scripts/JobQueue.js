@@ -1,10 +1,10 @@
 class JobDeamon {
   /** @type {string} */
-  url;
+  url
   /** @type {HTMLIFrameElement} */
-  iframe;
+  iframe
   /** @type {number} */
-  lastExecutionTimestamp;
+  lastExecutionTimestamp
 
   /**
    * @param {string} job Url d'un job
@@ -34,17 +34,17 @@ class JobDeamon {
 
 class JobQueue {
   /** @type {number} en millisecondes */
-  delayBetweenJobs = 30 * 1000;
+  delayBetweenJobs = 30 * 1000
   /** @type {number} en millisecondes */
-  delayRetryJob = 60 * 1000;
+  delayRetryJob = 60 * 1000
   /** @type {(job: string) => void} Callback quand un job débute */
-  onJobStart = () => { };
+  onJobStart = () => { }
   /** @type {number} */
-  intervalRef = null;
+  intervalRef = null
   /** @type {Object<string, JobDeamon>} map de deamon traitant les jobs */
-  deamons = {};
+  deamons = {}
   /** @type {string[]} tableau d'url de job */
-  jobs = [];
+  jobs = []
 
   /**
    * @param {number} delayBetweenJobs Delais entre deux jobs, en secondes
