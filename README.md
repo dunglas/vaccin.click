@@ -4,7 +4,9 @@ Retrouvez toutes les infos concernant l'extension sur [vaccin.click](https://vac
 
 ## Contribuer à l'extension
 
-Voir [le guide publié par Mozilla](https://extensionworkshop.com/documentation/develop/).
+Merci ! Tout est décrit dans le fichier `CONTRIBUTING.md`.
+
+Voir aussi [le guide publié par Mozilla](https://extensionworkshop.com/documentation/develop/).
 
 ## Crédits
 
