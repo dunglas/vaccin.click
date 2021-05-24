@@ -1,9 +1,6 @@
 // Ce script affiche les boutons dans les résultats de la recherche
 // permettant de sélectionner les centres dans lesquels prendre RDV automatiquement
 (async function () {
-
-
-  
   const $locations = document.getElementById("locations");
   const $template = document.getElementById("location");
   const $debugActivity = document.getElementById("debugActivity");

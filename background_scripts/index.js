@@ -85,5 +85,7 @@
   });
 
   // Récupérer le status initial de l'application PUIS executer les jobs
-  Promise.all([appStatus.init(), localStatus.init()]).then(jobs.start.bind(this));
+  Promise.all([appStatus.init(), localStatus.init()]).then(
+    jobs.start.bind(this)
+  );
 })();

@@ -92,11 +92,11 @@ class JobQueue {
         this.deamons[job].retry();
         return;
       }
-      
+
       this.jobs.push(job);
       return;
     }
-    
+
     this.onJobStart(job);
     this.deamons[job] = new JobDeamon(job);
   }

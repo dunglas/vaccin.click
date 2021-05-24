@@ -27,8 +27,6 @@ class LocalStatus {
     this.locations = {};
     /** @type {string[]} tableau de logs */
     this.logs = [];
-
-    //browser.storage.onChanged.addListener(this.onStorageChange.bind(this));
   }
 
   /**
