@@ -1,17 +1,13 @@
 class JobDeamon {
-  /** @type {string} */
-  url
-  /** @type {HTMLIFrameElement} */
-  iframe
-  /** @type {number} */
-  lastExecutionTimestamp
-
   /**
-   * @param {string} job Url d'un job
+   * @param {string} url Url d'un job
    */
   constructor(url) {
+    /** @type {string} */
     this.url = url;
+    /** @type {HTMLIFrameElement} */
     this.iframe = document.createElement("iframe");
+    /** @type {number} */
     this.lastExecutionTimestamp = Date.now();
 
     // On charge l'URL dans une iframe
@@ -33,18 +29,6 @@ class JobDeamon {
 }
 
 class JobQueue {
-  /** @type {number} en millisecondes */
-  delayBetweenJobs = 30 * 1000
-  /** @type {number} en millisecondes */
-  delayRetryJob = 60 * 1000
-  /** @type {(job: string) => void} Callback quand un job débute */
-  onJobStart = () => { }
-  /** @type {number} */
-  intervalRef = null
-  /** @type {Object<string, JobDeamon>} map de deamon traitant les jobs */
-  deamons = {}
-  /** @type {string[]} tableau d'url de job */
-  jobs = []
 
   /**
    * @param {number} delayBetweenJobs Delais entre deux jobs, en secondes
@@ -52,9 +36,18 @@ class JobQueue {
    * @param {(job: string) => void} onJobStart Callback quand un job débute
    */
   constructor(delayBetweenJobs, minDelayRetryJob, onJobStart) {
+    /** @type {number} en millisecondes */
     this.delayBetweenJobs = delayBetweenJobs * 1000;
-    this.delayRetryJob = minDelayRetryJob * 1000
+    /** @type {number} en millisecondes */
+    this.delayRetryJob = minDelayRetryJob * 1000;
+    /** @type {(job: string) => void} Callback quand un job débute */
     this.onJobStart = onJobStart;
+    /** @type {number} */
+    this.intervalRef = null;
+    /** @type {Object<string, JobDeamon>} map de deamon traitant les jobs */
+    this.deamons = {};
+    /** @type {string[]} tableau d'url de job */
+    this.jobs = [];
   }
 
   /**
