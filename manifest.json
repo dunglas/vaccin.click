@@ -30,8 +30,8 @@
   ],
   "background": {
     "scripts": [
-      "background_scripts/AppStatus.js", 
-      "background_scripts/JobQueue.js", 
+      "background_scripts/AppStatus.js",
+      "background_scripts/JobQueue.js",
       "background_scripts/index.js"
     ]
   },

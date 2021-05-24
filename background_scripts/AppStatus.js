@@ -11,35 +11,36 @@ class Location {
 }
 
 class AppStatus {
-
   constructor() {
     /** @type {Object<string, Location>} map de lieux à vérifier */
     this.locations = {};
     /** @type {boolean} est-ce que l'app est active ? */
     this.stopped = false;
     /** @type {(string) => void} callback quand une {@link Location} a été ajouté */
-    this.onLocationAddedCb = (job) => { };
+    this.onLocationAddedCb = (job) => {};
     /** @type {(string) => void} callback quand une {@link Location} a été supprimée */
-    this.onLocationDeletedCb = (job) => { };
+    this.onLocationDeletedCb = (job) => {};
     /** @type {(boolean) => void} callback quand stopped change de valeur */
-    this.onStoppedChangeCb = (newValue) => { };
+    this.onStoppedChangeCb = (newValue) => {};
 
     browser.storage.onChanged.addListener(this.onStorageChange.bind(this));
   }
 
   init() {
-    return browser.storage.sync.get({
-      locations: {},
-      stopped: false,
-    }).then((result) => {
-      Object.keys(result.locations).forEach((url) => {
-        this.locations[url] = new Location(result.locations[url]);
-        this.onLocationAddedCb(url);
-      });
+    return browser.storage.sync
+      .get({
+        locations: {},
+        stopped: false,
+      })
+      .then((result) => {
+        Object.keys(result.locations).forEach((url) => {
+          this.locations[url] = new Location(result.locations[url]);
+          this.onLocationAddedCb(url);
+        });
 
-      this.stopped = result.stopped === true;
-      this.onStoppedChangeCb(this.stopped);
-    });
+        this.stopped = result.stopped === true;
+        this.onStoppedChangeCb(this.stopped);
+      });
   }
 
   /**

@@ -12,12 +12,15 @@
     addLocationActivity(appStatus.getLocation(job), "Début de la vérification");
   });
 
-  appStatus.onLocationChange((url) => {
-    jobs.add(url);
-  }, (url) => {
-    jobs.kill(url);
-    jobs.remove(url);
-  });
+  appStatus.onLocationChange(
+    (url) => {
+      jobs.add(url);
+    },
+    (url) => {
+      jobs.kill(url);
+      jobs.remove(url);
+    }
+  );
 
   appStatus.onStoppedChange((stoppedStatus) => {
     browser.browserAction.setIcon({
@@ -29,8 +32,7 @@
 
     if (stoppedStatus) {
       jobs.stop();
-    }
-    else {
+    } else {
       jobs.start();
     }
   });

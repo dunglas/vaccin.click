@@ -29,7 +29,6 @@ class JobDeamon {
 }
 
 class JobQueue {
-
   /**
    * @param {number} delayBetweenJobs Delais entre deux jobs, en secondes
    * @param {number} delayRetryJob Delais entre deux executions d'un même jobs, en secondes
@@ -84,15 +83,16 @@ class JobQueue {
     const job = this.jobs.shift();
     if (job) {
       if (this.deamons.hasOwnProperty(job)) {
-        if (Date.now() - this.deamons[job].lastExecutionTimestamp >= this.delayRetryJob) {
+        if (
+          Date.now() - this.deamons[job].lastExecutionTimestamp >=
+          this.delayRetryJob
+        ) {
           this.onJobStart(job);
           this.deamons[job].retry();
-        }
-        else {
+        } else {
           this.jobs.push(job);
         }
-      }
-      else {
+      } else {
         this.onJobStart(job);
         this.deamons[job] = new JobDeamon(job);
       }
@@ -100,7 +100,10 @@ class JobQueue {
   }
 
   start() {
-    this.intervalRef = setInterval(this.executeNextJob.bind(this), this.delayBetweenJobs);
+    this.intervalRef = setInterval(
+      this.executeNextJob.bind(this),
+      this.delayBetweenJobs
+    );
     this.executeNextJob();
   }
 
