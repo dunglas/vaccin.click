@@ -53,9 +53,9 @@ class JobQueue {
    * @param {string} job Url d'un job
    */
   add(job) {
-    if (!this.jobs.includes(job)) {
-      this.jobs.push(job);
-    }
+    if (this.jobs.includes(job)) return;
+
+    this.jobs.push(job);
   }
 
   /**
@@ -73,33 +73,37 @@ class JobQueue {
    */
   kill(job) {
     // Supprimer les deamons existants
-    if (this.deamons.hasOwnProperty(job)) {
-      this.deamons[job].kill();
-      delete this.deamons[job];
-    }
+    if (!this.deamons.hasOwnProperty(job)) return;
+
+    this.deamons[job].kill();
+    delete this.deamons[job];
   }
 
   executeNextJob() {
     const job = this.jobs.shift();
-    if (job) {
-      if (this.deamons.hasOwnProperty(job)) {
-        if (
-          Date.now() - this.deamons[job].lastExecutionTimestamp >=
-          this.delayRetryJob
-        ) {
-          this.onJobStart(job);
-          this.deamons[job].retry();
-        } else {
-          this.jobs.push(job);
-        }
-      } else {
+    if (!job) return;
+
+    if (this.deamons.hasOwnProperty(job)) {
+      if (
+        Date.now() - this.deamons[job].lastExecutionTimestamp >=
+        this.delayRetryJob
+      ) {
         this.onJobStart(job);
-        this.deamons[job] = new JobDeamon(job);
+        this.deamons[job].retry();
+        return;
       }
+      
+      this.jobs.push(job);
+      return;
     }
+    
+    this.onJobStart(job);
+    this.deamons[job] = new JobDeamon(job);
   }
 
   start() {
+    if (this.intervalRef !== null) return;
+
     this.intervalRef = setInterval(
       this.executeNextJob.bind(this),
       this.delayBetweenJobs
@@ -109,5 +113,6 @@ class JobQueue {
 
   stop() {
     clearInterval(this.intervalRef);
+    this.intervalRef = null;
   }
 }

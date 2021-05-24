@@ -28,11 +28,7 @@
       },
     });
 
-    if (stoppedStatus) {
-      jobs.stop();
-    } else {
-      jobs.start();
-    }
+    stoppedStatus ? jobs.stop() : jobs.start();
   });
 
   browser.runtime.onMessage.addListener(async (data) => {
@@ -89,5 +85,5 @@
   });
 
   // Récupérer le status initial de l'application PUIS executer les jobs
-  Promise.all([appStatus.init(), localStatus.init()]).then(jobs.start);
+  Promise.all([appStatus.init(), localStatus.init()]).then(jobs.start.bind(this));
 })();
