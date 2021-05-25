@@ -31,8 +31,7 @@
   "background": {
     "scripts": [
       "background_scripts/AppStatus.js",
-      "commons/AbstractLocalStorage.js",
-      "background_scripts/LocalStorage.js",
+      "commons/VCLocalStorage.js",
       "background_scripts/JobQueue.js",
       "background_scripts/index.js"
     ]

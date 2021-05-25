@@ -6,7 +6,8 @@
   const $debugActivity = document.getElementById("debugActivity");
 
   //const appStatus = new AppStatus();
-  const localStorage = new LocalStorageReader({
+  const vCLStorage = new VCLocalStorage({
+    listenChanges: true,
     onLogsChanged: displayLogs,
     onLocationsChanged: (localLocations) => {
       displayLocations(locations, localLocations);
@@ -84,13 +85,13 @@
     stopped: false,
   });
 
-  await localStorage.init();
+  await vCLStorage.init();
 
   browser.storage.onChanged.addListener(async (change, areaName) => {
     if (areaName === "sync") {
       if (change.locations) {
         locations = change.locations.newValue;
-        displayLocations(locations, localStorage.getLocations());
+        displayLocations(locations, vCLStorage.getLocations());
       }
 
       if (change.stopped) displayStopStart(change.stopped.newValue || false);
@@ -136,5 +137,5 @@
     autoBook ? "enableAutoBook" : "disableAutoBook"
   ).checked = true;
 
-  displayLocations(locations, localStorage.getLocations());
+  displayLocations(locations, vCLStorage.getLocations());
 })();
