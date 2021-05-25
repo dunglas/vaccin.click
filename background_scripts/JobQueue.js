@@ -44,7 +44,7 @@ class JobQueue {
     /** @type {number} */
     this.intervalRef = null;
     /** @type {Object<string, JobDemon>} map de deamon traitant les jobs */
-    this.deamons = {};
+    this.demons = {};
     /** @type {string[]} tableau d'url de job */
     this.jobs = [];
   }
@@ -73,23 +73,23 @@ class JobQueue {
    */
   kill(job) {
     // Supprimer les deamons existants
-    if (!this.deamons.hasOwnProperty(job)) return;
+    if (!this.demons.hasOwnProperty(job)) return;
 
-    this.deamons[job].kill();
-    delete this.deamons[job];
+    this.demons[job].kill();
+    delete this.demons[job];
   }
 
   executeNextJob() {
     const job = this.jobs.shift();
     if (!job) return;
 
-    if (this.deamons.hasOwnProperty(job)) {
+    if (this.demons.hasOwnProperty(job)) {
       if (
-        Date.now() - this.deamons[job].lastExecutionTimestamp >=
+        Date.now() - this.demons[job].lastExecutionTimestamp >=
         this.delayRetryJob
       ) {
         this.onJobStart(job);
-        this.deamons[job].retry();
+        this.demons[job].retry();
         return;
       }
 
@@ -98,7 +98,7 @@ class JobQueue {
     }
 
     this.onJobStart(job);
-    this.deamons[job] = new JobDemon(job);
+    this.demons[job] = new JobDemon(job);
   }
 
   start() {
