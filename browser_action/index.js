@@ -14,6 +14,11 @@
     },
   });
 
+  window.addEventListener("unload", function (e) {
+    vCLStorage.destroy();
+    browser.storage.onChanged.removeListener(onStorageChange);
+  });
+
   function displayLogs(logLines) {
     $debugActivity.innerHTML = "";
 
@@ -79,15 +84,7 @@
     document.getElementById(stopped ? "stop" : "start").style = "display: none";
   }
 
-  let { locations, stopped, autoBook } = await browser.storage.sync.get({
-    locations: {},
-    autoBook: false,
-    stopped: false,
-  });
-
-  await vCLStorage.init();
-
-  browser.storage.onChanged.addListener(async (change, areaName) => {
+  function onStorageChange(change, areaName) {
     if (areaName === "sync") {
       if (change.locations) {
         locations = change.locations.newValue;
@@ -103,7 +100,17 @@
             : "disableAutoBook"
         ).checked = true;
     }
+  }
+
+  let { locations, stopped, autoBook } = await browser.storage.sync.get({
+    locations: {},
+    autoBook: false,
+    stopped: false,
   });
+
+  await vCLStorage.init();
+
+  browser.storage.onChanged.addListener(onStorageChange);
 
   document.getElementById("stop").onclick = async () => {
     await browser.storage.sync.set({ stopped: true });
@@ -115,7 +122,7 @@
     displayStopStart(false);
   };
 
-  document.getElementById("reset").onclick = async () => {
+  document.getElementById("reset").onclick = () => {
     if (
       !confirm(
         "Êtes-vous sur de vouloir supprimer toutes les données de l'extension ?"
@@ -123,7 +130,8 @@
     )
       return;
 
-    await browser.storage.sync.clear();
+    browser.storage.sync.clear();
+    vCLStorage.clear();
   };
 
   document.getElementById("disableAutoBook").onclick = async () =>

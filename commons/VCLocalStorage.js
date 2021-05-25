@@ -25,6 +25,8 @@ class VCLocalStorage {
    * }?} options Options du constructeur
    */
   constructor(options) {
+    /** @type {number} */
+    this.intervalRef = null;
     /** @type {number} Nombre maximum de logs à garder */
     this.maxLogs = 30;
     /** @type {number} Durée de vie en ms du status d'un lieu */
@@ -45,8 +47,10 @@ class VCLocalStorage {
       ? options.onLogsChanged
       : () => {};
 
-    if (options.listenChanges)
-      browser.storage.onChanged.addListener(this.onStorageChange.bind(this));
+    if (options.listenChanges) {
+      this.onStorageChange = this.onStorageChange.bind(this);
+      browser.storage.onChanged.addListener(this.onStorageChange);
+    }
   }
 
   /**
@@ -111,8 +115,42 @@ class VCLocalStorage {
   }
 
   startCheckLocations() {
-    setInterval(this.cleanOutDatedLocations.bind(this), this.statusMaxDuration);
+    if (this.intervalRef !== null) return;
+
+    this.intervalRef = setInterval(this.cleanOutDatedLocations.bind(this), this.statusMaxDuration);
     this.cleanOutDatedLocations();
+  }
+
+  stopCheckLocations() {
+    clearInterval(this.intervalRef);
+    this.intervalRef = null;
+  }
+
+  /**
+   * Gérer le clean complet du stockage de l'application
+   */
+  clear() {
+    browser.storage.local.remove(['locations', 'logs']);
+
+    this.locations = {};
+    this.onLocationsChangedCb(this.locations);
+    this.logs = [];
+    this.onLogsChangedCb(this.logs);
+  }
+
+  /**
+   * Une methode à appeler sur le unload de la page pour détruire ce qu'il y a à détruire !
+   */
+  destroy() {
+    // Stopper les eventHandlers
+    browser.storage.onChanged.removeListener(this.onStorageChange);
+
+    // Detacher les callbacks
+    this.onLocationsChangedCb = () => {};
+    this.onLogsChangedCb = () => {};
+
+    // Stopper les timers
+    this.stopCheckLocations();
   }
 
   /**
