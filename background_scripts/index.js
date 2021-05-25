@@ -41,10 +41,7 @@
           LocationCheckStatus.ERROR,
           data.error.message
         );
-        vCLStorage.locationLog(
-          data.location,
-          "Echec - " + data.error.message
-        );
+        vCLStorage.locationLog(data.location, "Echec - " + data.error.message);
         break;
 
       case "found":

@@ -18,7 +18,7 @@ const LocationCheckStatus = Object.freeze({
  */
 class VCLocalStorage {
   /**
-    * @param {{
+   * @param {{
    *   listenChanges? = false;
    *   onLocationsChanged?: (locations: LocationStatus[]) => void;
    *   onLogsChanged?: (logs: string[]) => void;
@@ -37,9 +37,13 @@ class VCLocalStorage {
     options = options || {};
 
     /** @type {(LocationStatus[]) => void} callback quand une {@link LocationStatus} a changé */
-    this.onLocationsChangedCb = options.onLocationsChanged ? options.onLocationsChanged : () => { };
+    this.onLocationsChangedCb = options.onLocationsChanged
+      ? options.onLocationsChanged
+      : () => {};
     /** @type {(string) => void} callback quand un log a été ajouté */
-    this.onLogsChangedCb = options.onLogsChanged ? options.onLogsChanged : () => { };
+    this.onLogsChangedCb = options.onLogsChanged
+      ? options.onLogsChanged
+      : () => {};
 
     if (options.listenChanges)
       browser.storage.onChanged.addListener(this.onStorageChange.bind(this));
@@ -132,13 +136,13 @@ class VCLocalStorage {
    * @private
    */
   cleanOutDatedLocations() {
-    Object.keys(this.locations).forEach(locUrl => {
+    Object.keys(this.locations).forEach((locUrl) => {
       if (Date.now() - this.locations[locUrl].date > this.statusMaxDuration) {
         delete this.locations[locUrl];
       }
     });
 
     browser.storage.local.set({ locations: this.locations });
-    this.log('Suppression des vieux status');
+    this.log("Suppression des vieux status");
   }
 }
