@@ -1,4 +1,4 @@
-class JobDeamon {
+class JobDemon {
   /**
    * @param {string} url Url d'un job
    */
@@ -43,7 +43,7 @@ class JobQueue {
     this.onJobStart = onJobStart;
     /** @type {number} */
     this.intervalRef = null;
-    /** @type {Object<string, JobDeamon>} map de deamon traitant les jobs */
+    /** @type {Object<string, JobDemon>} map de deamon traitant les jobs */
     this.deamons = {};
     /** @type {string[]} tableau d'url de job */
     this.jobs = [];
@@ -98,7 +98,7 @@ class JobQueue {
     }
 
     this.onJobStart(job);
-    this.deamons[job] = new JobDeamon(job);
+    this.deamons[job] = new JobDemon(job);
   }
 
   start() {
