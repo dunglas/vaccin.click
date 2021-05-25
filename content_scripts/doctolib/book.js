@@ -23,36 +23,34 @@
     decembre: 12,
   };
 
+  async function waitTimeout(timeout) {
+    await new Promise((r) => setTimeout(r, timeout));
+  }
+
   async function waitForSelector(
     selector,
     failSelector,
     wait = true,
     initialWait = true,
-    i = 0,
-    resolve
+    i = 0
   ) {
     // Timeout après ~5 secondes
-    if (i === 10 && resolve) {
-      resolve(null);
-      return;
+    if (i === 10) {
+      console.log(
+        `Le sélecteur "${selector}" n'a pas été trouvé après 5 secondes. Ce n'est pas forcément un bug.`
+      );
+      return null;
     }
     i++;
 
     if (initialWait) {
-      await new Promise((r) =>
-        setTimeout(r, 500 + Math.floor(Math.random() * 3000))
-      );
+      await waitTimeout(500 + Math.floor(Math.random() * 3000));
     }
 
     // On essaie d'échouer rapidement si on nous a donner un failSelector
     if (failSelector) {
       const $elFail = document.querySelector(failSelector);
       if ($elFail !== null) {
-        if (resolve) {
-          resolve(null);
-          return;
-        }
-
         return null;
       }
     }
@@ -61,36 +59,9 @@
     if (!wait) return $el;
 
     if ($el === null) {
-      if (!resolve)
-        return new Promise((resolve) =>
-          setTimeout(
-            waitForSelector,
-            500,
-            selector,
-            failSelector,
-            wait,
-            false,
-            i,
-            resolve
-          )
-        );
-
-      setTimeout(
-        waitForSelector,
-        500,
-        selector,
-        failSelector,
-        wait,
-        false,
-        i,
-        resolve
-      );
-      return;
-    }
-
-    if (resolve) {
-      resolve($el);
-      return;
+      await waitTimeout(500);
+      // C'est reparti pour un tour.
+      return waitForSelector(selector, failSelector, wait, false, i);
     }
 
     return $el;
@@ -308,6 +279,11 @@
       if (DOSE_24H) {
         // format : lun. 17 mai 08:54
         const parts = slot.title.match(/([0-9]+) ([a-z]+) ([0-9]+:[0-9]+)/);
+        if (!parts) {
+          throw new Error(
+            `Impossible de cliquer sur le slot avec le titre ${slot.title}`
+          );
+        }
         const date = new Date(
           `${MONTHS[parts[2]]} ${parts[1]} ${new Date().getFullYear()} ${
             parts[3]
@@ -350,7 +326,16 @@
       }
 
       // Bouton de confirmation de la popup
-      fireFullClick(await waitForSelector(".dl-modal-footer .dl-button-label"));
+      const popupConfirmation = await waitForSelector(
+        ".dl-modal-footer .dl-button-label"
+      );
+      if (!popupConfirmation) {
+        throw new Error(
+          "Impossible de trouver le bouton pour confirmer le dialogue 'à lire'."
+        );
+      }
+
+      fireFullClick(popupConfirmation);
 
       // Pour qui prenez-vous ce rendez-vous ? (moi)
       const masterPatientId = await waitForSelector(
