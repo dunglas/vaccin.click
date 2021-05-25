@@ -117,7 +117,10 @@ class VCLocalStorage {
   startCheckLocations() {
     if (this.intervalRef !== null) return;
 
-    this.intervalRef = setInterval(this.cleanOutDatedLocations.bind(this), this.statusMaxDuration);
+    this.intervalRef = setInterval(
+      this.cleanOutDatedLocations.bind(this),
+      this.statusMaxDuration
+    );
     this.cleanOutDatedLocations();
   }
 
@@ -130,7 +133,7 @@ class VCLocalStorage {
    * Gérer le clean complet du stockage de l'application
    */
   clear() {
-    browser.storage.local.remove(['locations', 'logs']);
+    browser.storage.local.remove(["locations", "logs"]);
 
     this.locations = {};
     this.onLocationsChangedCb(this.locations);
