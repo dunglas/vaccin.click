@@ -8,7 +8,7 @@
       appStatus.getLocation(job),
       "Début de la vérification"
     );
-    
+
     // Prévoir le job suivant
     jobs.add(job);
   });
