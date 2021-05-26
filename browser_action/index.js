@@ -29,7 +29,7 @@
 
     Object.keys(appStatus.getLocations()).forEach((url) => {
       const location = appStatus.getLocation(url);
-      const localLocation = vCLStorage.getLocations(url);
+      const localLocation = vCLStorage.getLocation(url);
 
       const $location = $template.content.cloneNode(true);
       const $item = $location.querySelector(".panel-list-item");
@@ -37,14 +37,14 @@
       $a.innerText = location.name;
       $a.href = url;
 
-      $location.querySelector(".date").innerText = localLocation.date
+      $location.querySelector(".date").innerText = localLocation && localLocation.date
         ? new Date(localLocation.date).toLocaleTimeString()
         : "";
 
-      if (localLocation.status)
+      if (localLocation && localLocation.status)
         $item.classList.add("status-" + localLocation.status);
 
-      if (localLocation.message) $item.title = localLocation.message;
+      if (localLocation && localLocation.message) $item.title = localLocation.message;
 
       $location.querySelector("img").src = location.img;
       $location.querySelector("button").onclick = async () => {
