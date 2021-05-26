@@ -50,9 +50,9 @@ Pas pour l'instant. Si vous êtes un développeur, [vous pouvez contribuer pour 
 
 Pas pour l'instant (même si l'extension devrait fonctionner aussi avec Safari). Si vous êtes un développeur, [vous pouvez contribuer pour ajouter le support d'autres navigateurs](https://github.com/dunglas/vaccin.click).
 
-### Est-ce que la version mobile de Firefox est supportée ?
+### Est-ce que les versions mobiles de Firefox sont supportées ?
 
-Pas pour l'instant, Firefox Mobile n'est pas compatible avec les extensions destiné à Firefox pour ordinateur. Si vous êtes un développeur, [vous pouvez contribuer pour ajouter le support d'autres navigateurs](https://github.com/dunglas/vaccin.click).
+Pas pour l'instant, les versions Android et iOS de Firefox ne sont pas compatibles avec les extensions conçues pour la version pour ordinateur. Si vous êtes un développeur, [vous pouvez contribuer pour ajouter le support de ces plateformes](https://github.com/dunglas/vaccin.click).
 
 ### Combien ça coûte ?
 
