@@ -45,7 +45,7 @@ label a {
 
 #debugActivity {
   list-style: none;
-  max-height: 70px;
+  max-height: 100px;
   overflow: auto;
   padding: 0;
 }

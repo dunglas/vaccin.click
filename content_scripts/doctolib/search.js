@@ -49,7 +49,7 @@
     $btn.onclick = async function (e) {
       e.preventDefault();
 
-      toggleLocation.bind(this, locations)();
+      toggleLocation.call(this, locations);
     };
 
     const $div = document.createElement("div");
@@ -90,7 +90,7 @@
 
   addButtons(locations);
 
-  browser.storage.onChanged.addListener(async (change, areaName) => {
+  browser.storage.onChanged.addListener((change, areaName) => {
     if (areaName !== "sync" || !change.locations) return;
 
     addButtons(change.locations.newValue || {});

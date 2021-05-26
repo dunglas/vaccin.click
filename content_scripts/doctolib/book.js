@@ -67,7 +67,7 @@
     return $el;
   }
 
-  async function selectOption($select, $option) {
+  function selectOption($select, $option) {
     const evt = document.createEvent("HTMLEvents");
     evt.initEvent("change", true, true);
 
@@ -112,7 +112,7 @@
     );
   }
 
-  async function getAvailableSlot() {
+  function getAvailableSlot() {
     return waitForSelector(
       ".availabilities-slot:not([disabled])",
       ".booking-availabilities .booking-message.booking-message-warning"
@@ -352,7 +352,7 @@
       // Confirmation finale
       document.querySelector('button[type="submit"]').click();
 
-      await new Promise((r) => setTimeout(r, 3000));
+      await waitTimeout(3000);
 
       await browser.runtime.sendMessage({
         type: "booked",
@@ -389,7 +389,7 @@
     }
   }
 
-  browser.storage.onChanged.addListener(async (change, areaName) => {
+  browser.storage.onChanged.addListener((change, areaName) => {
     if (
       areaName === "sync" &&
       change.stopped &&

@@ -140,7 +140,7 @@
         });
 
         setStatusOnLocation(data.url, STATUS.SUCCESS);
-        addLocationActivity(data.location, "Succes - Créneau trouvé");
+        addLocationActivity(data.location, "Succès - Créneau trouvé");
         break;
 
       case "booked":
