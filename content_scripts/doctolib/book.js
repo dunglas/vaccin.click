@@ -23,8 +23,8 @@
     decembre: 12,
   };
 
-  function waitTimeout(timeout) {
-    return new Promise((r) => setTimeout(r, timeout));
+  async function waitTimeout(timeout) {
+    await new Promise((r) => setTimeout(r, timeout));
   }
 
   async function waitForSelector(
