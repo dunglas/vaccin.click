@@ -37,14 +37,16 @@
       $a.innerText = location.name;
       $a.href = url;
 
-      $location.querySelector(".date").innerText = localLocation && localLocation.date
-        ? new Date(localLocation.date).toLocaleTimeString()
-        : "";
+      $location.querySelector(".date").innerText =
+        localLocation && localLocation.date
+          ? new Date(localLocation.date).toLocaleTimeString()
+          : "";
 
       if (localLocation && localLocation.status)
         $item.classList.add("status-" + localLocation.status);
 
-      if (localLocation && localLocation.message) $item.title = localLocation.message;
+      if (localLocation && localLocation.message)
+        $item.title = localLocation.message;
 
       $location.querySelector("img").src = location.img;
       $location.querySelector("button").onclick = async () => {
