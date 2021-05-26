@@ -30,7 +30,7 @@
   ],
   "background": {
     "scripts": [
-      "background_scripts/AppStatus.js",
+      "commons/AppStatus.js",
       "commons/VCLocalStorage.js",
       "background_scripts/JobQueue.js",
       "background_scripts/index.js"

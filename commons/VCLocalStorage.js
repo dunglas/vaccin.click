@@ -61,6 +61,14 @@ class VCLocalStorage {
   }
 
   /**
+   * @param {string} url L'url à rechercher
+   * @returns {LocationStatus} Le status correspondante si il existe, sinon undefined
+   */
+  getLocation(url) {
+    return this.locations[url];
+  }
+
+  /**
    * @returns {Promise<void>} Une promesse resolue quand le traitement est fini
    */
   init() {
@@ -162,13 +170,13 @@ class VCLocalStorage {
   onStorageChange(change, areaName) {
     if (areaName !== "local") return;
 
-    if (change.locations && change.locations.newValue) {
-      this.locations = change.locations.newValue;
+    if (change.locations) {
+      this.locations = change.locations.newValue || {};
       this.onLocationsChangedCb(this.locations);
     }
 
     if (change.logs) {
-      this.logs = change.logs.newValue;
+      this.logs = change.logs.newValue || [];
       this.onLogsChangedCb(this.logs);
     }
   }

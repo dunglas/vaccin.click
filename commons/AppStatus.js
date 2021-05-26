@@ -6,7 +6,7 @@ class VaccineLocation {
     /** @type {string} Nom du lieu */
     this.name = attributes.name;
     /** @type {string} Url du logo du lieu */
-    this.url = attributes.url;
+    this.img = attributes.img;
   }
 }
 
@@ -16,14 +16,19 @@ class AppStatus {
     this.locations = {};
     /** @type {boolean} est-ce que l'app est active ? */
     this.stopped = false;
+    /** @type {boolean} est-ce qu'on souhaite réserver le créneau pour le user ? */
+    this.autoBook = false;
     /** @type {(string) => void} callback quand une {@link VaccineLocation} a été ajouté */
     this.onLocationAddedCb = (job) => {};
     /** @type {(string) => void} callback quand une {@link VaccineLocation} a été supprimée */
     this.onLocationDeletedCb = (job) => {};
     /** @type {(boolean) => void} callback quand stopped change de valeur */
     this.onStoppedChangeCb = (newValue) => {};
+    /** @type {(boolean) => void} callback quand autoBook change de valeur */
+    this.onAutoBookChangeCb = (newValue) => {};
 
-    browser.storage.onChanged.addListener(this.onStorageChange.bind(this));
+    this.onStorageChange = this.onStorageChange.bind(this);
+    browser.storage.onChanged.addListener(this.onStorageChange);
   }
 
   /**
@@ -43,7 +48,14 @@ class AppStatus {
 
         this.stopped = result.stopped === true;
         this.onStoppedChangeCb(this.stopped);
+
+        this.autoBook = result.autoBook === true;
+        this.onAutoBookChangeCb(this.autoBook);
       });
+  }
+
+  getLocations() {
+    return this.locations;
   }
 
   /**
@@ -52,6 +64,22 @@ class AppStatus {
    */
   getLocation(url) {
     return this.locations[url];
+  }
+
+  deleteLocation(url) {
+    if (this.locations[url] !== undefined) {
+      delete this.locations[url];
+
+      browser.storage.sync.set({ locations: this.locations });
+    }
+  }
+
+  getStopped() {
+    return this.stopped;
+  }
+
+  getAutoBook() {
+    return this.autoBook;
   }
 
   /**
@@ -70,9 +98,58 @@ class AppStatus {
     this.onStoppedChangeCb = callback;
   }
 
+  /**
+   * @param {(boolean) => void} callback quand autoBook change de valeur
+   */
+  onAutoBookChange(callback) {
+    this.onAutoBookChangeCb = callback;
+  }
+
+  start() {
+    this.stopped = false;
+    browser.storage.sync.set({ stopped: this.stopped });
+  }
+
   stop() {
     this.stopped = true;
     browser.storage.sync.set({ stopped: this.stopped });
+  }
+
+  /**
+   * @param {boolean} value The new autoBook value
+   */
+  setAutoBook(value) {
+    this.autoBook = value === true;
+    browser.storage.sync.set({ autoBook: this.autoBook });
+  }
+
+  /**
+   * Gérer le clean complet du stockage de l'application
+   */
+  clear() {
+    browser.storage.sync.remove(["locations", "stopped", "autoBook"]);
+
+    const oldLocations = this.locations;
+    this.locations = {};
+    Object.keys(oldLocations).forEach(this.onLocationDeletedCb, this);
+    this.stopped = false;
+    this.onStoppedChangeCb(this.stopped);
+    this.autoBook = false;
+    this.onAutoBookChangeCb(this.autoBook);
+  }
+
+  /**
+   * Une methode à appeler sur le unload de la page pour détruire ce qu'il y a à détruire !
+   */
+  destroy() {
+    // Stopper les eventHandlers
+    browser.storage.onChanged.removeListener(this.onStorageChange);
+
+    // Detacher les callbacks
+    this.onLocationAddedCb = () => {};
+    this.onLocationDeletedCb = () => {};
+    this.onStoppedChangeCb = () => {};
+    this.onAutoBookChangeCb = () => {};
   }
 
   /**
@@ -81,7 +158,9 @@ class AppStatus {
   onStorageChange(change, areaName) {
     if (areaName !== "sync") return;
 
-    if (change.locations && change.locations.newValue) {
+    if (change.locations) {
+      change.locations.newValue = change.locations.newValue || {};
+      
       Object.keys(this.locations).forEach((url) => {
         if (change.locations.newValue[url] === undefined) {
           delete this.locations[url];
@@ -105,6 +184,12 @@ class AppStatus {
       this.stopped = change.stopped.newValue === true;
 
       this.onStoppedChangeCb(this.stopped);
+    }
+
+    if (change.autoBook) {
+      this.autoBook = change.autoBook.newValue === true;
+
+      this.onAutoBookChangeCb(this.autoBook);
     }
   }
 }

@@ -1,24 +1,13 @@
 // Ce script affiche les boutons dans les résultats de la recherche
 // permettant de sélectionner les centres dans lesquels prendre RDV automatiquement
 (async function () {
+  // Dom
   const $locations = document.getElementById("locations");
   const $template = document.getElementById("location");
   const $debugActivity = document.getElementById("debugActivity");
 
-  //const appStatus = new AppStatus();
-  const vCLStorage = new VCLocalStorage({
-    listenChanges: true,
-    onLogsChanged: displayLogs,
-    onLocationsChanged: (localLocations) => {
-      displayLocations(locations, localLocations);
-    },
-  });
-
-  window.addEventListener("unload", function (e) {
-    vCLStorage.destroy();
-    browser.storage.onChanged.removeListener(onStorageChange);
-  });
-
+  // Dom manipulation
+  
   function displayLogs(logLines) {
     $debugActivity.innerHTML = "";
 
@@ -35,20 +24,17 @@
    * @param {Object<string, VaccineLocation>} locations
    * @param {Object<string, LocationStatus>} localLocations
    */
-  function displayLocations(locations, localLocations) {
+  function displayLocations() {
     $locations.innerHTML = "";
 
-    locations = locations || {};
-    localLocations = localLocations || {};
-
-    Object.entries(locations).forEach(([url, { name, img }]) => {
-      /** @type {LocationStatus} */
-      const localLocation = localLocations[url] || {};
+    Object.keys(appStatus.getLocations()).forEach(url => {
+      const location = appStatus.getLocation(url);
+      const localLocation = vCLStorage.getLocations(url);
 
       const $location = $template.content.cloneNode(true);
       const $item = $location.querySelector(".panel-list-item");
       const $a = $location.querySelector("a");
-      $a.innerText = name;
+      $a.innerText = location.name;
       $a.href = url;
 
       $location.querySelector(".date").innerText = localLocation.date
@@ -60,19 +46,14 @@
 
       if (localLocation.message) $item.title = localLocation.message;
 
-      $location.querySelector("img").src = img;
+      $location.querySelector("img").src = location.img;
       $location.querySelector("button").onclick = async () => {
         if (
-          !confirm(`Êtes-vous sur de vouloir retirer "${name}" de la liste ?`)
+          !confirm(`Êtes-vous sur de vouloir retirer "${location.name}" de la liste ?`)
         )
           return;
 
-        const { locations } = await browser.storage.sync.get({
-          locations: {},
-        });
-        delete locations[url];
-
-        await browser.storage.sync.set({ locations });
+          appStatus.deleteLocation(url);
       };
 
       $locations.appendChild($location);
@@ -85,43 +66,40 @@
     document.getElementById(stopped ? "stop" : "start").style = "display: none";
   }
 
-  function onStorageChange(change, areaName) {
-    if (areaName === "sync") {
-      if (change.locations) {
-        locations = change.locations.newValue;
-        displayLocations(locations, vCLStorage.getLocations());
-      }
-
-      if (change.stopped) displayStopStart(change.stopped.newValue || false);
-
-      if (change.autoBook)
-        document.getElementById(
-          change.autoBook.newValue || false
-            ? "enableAutoBook"
-            : "disableAutoBook"
-        ).checked = true;
-    }
+  function displayAutoBook(autoBook) {
+    document.getElementById(
+      autoBook ? "enableAutoBook" : "disableAutoBook"
+    ).checked = true;
   }
 
-  let { locations, stopped, autoBook } = await browser.storage.sync.get({
-    locations: {},
-    autoBook: false,
-    stopped: false,
+  // Preparation des données
+  const appStatus = new AppStatus();
+  const vCLStorage = new VCLocalStorage({
+    listenChanges: true,
+    onLogsChanged: displayLogs,
+    onLocationsChanged: () => {
+      displayLocations(appStatus.getLocations());
+    },
+  });
+  appStatus.onLocationChange(displayLocations, displayLocations);
+  appStatus.onStoppedChange(displayStopStart);
+  appStatus.onAutoBookChange(displayAutoBook);
+
+  // Initialisation donnée
+  appStatus.init();
+  vCLStorage.init(); 
+
+  // Set des events
+  window.addEventListener("unload", function (e) {
+    vCLStorage.destroy();
+    appStatus.destroy();
   });
 
-  await vCLStorage.init();
+  document.getElementById("stop").onclick = appStatus.stop;
+  document.getElementById("start").onclick = appStatus.start;
 
-  browser.storage.onChanged.addListener(onStorageChange);
-
-  document.getElementById("stop").onclick = async () => {
-    await browser.storage.sync.set({ stopped: true });
-    displayStopStart(true);
-  };
-
-  document.getElementById("start").onclick = async () => {
-    await browser.storage.sync.set({ stopped: false });
-    displayStopStart(false);
-  };
+  document.getElementById("disableAutoBook").onclick = appStatus.setAutoBook.bind(appStatus, false);
+  document.getElementById("enableAutoBook").onclick = appStatus.setAutoBook.bind(appStatus, true);
 
   document.getElementById("reset").onclick = () => {
     if (
@@ -131,20 +109,12 @@
     )
       return;
 
-    browser.storage.sync.clear();
+    appStatus.clear();
     vCLStorage.clear();
   };
 
-  document.getElementById("disableAutoBook").onclick = async () =>
-    await browser.storage.sync.set({ autoBook: false });
-  document.getElementById("enableAutoBook").onclick = async () =>
-    await browser.storage.sync.set({ autoBook: true });
-
-  displayStopStart(stopped);
-
-  document.getElementById(
-    autoBook ? "enableAutoBook" : "disableAutoBook"
-  ).checked = true;
-
-  displayLocations(locations, vCLStorage.getLocations());
+  // Affichage
+  displayStopStart(appStatus.getStopped());
+  displayAutoBook(appStatus.getAutoBook());
+  displayLocations();
 })();
