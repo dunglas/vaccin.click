@@ -8,6 +8,9 @@
       appStatus.getLocation(job),
       "Début de la vérification"
     );
+    
+    // Prévoir le job suivant
+    jobs.add(job);
   });
 
   appStatus.onLocationChange(
@@ -89,15 +92,11 @@
         });
         break;
     }
-
-    if (["error", "found", "booked"].includes(data.type)) {
-      // Prévoir le job suivant
-      jobs.add(data.url);
-    }
   });
 
   // Récupérer le status initial de l'application PUIS executer les jobs
   Promise.all([appStatus.init(), vCLStorage.init()]).then(() => {
+    vCLStorage.log(`Plugin start with ${jobs.jobs.length} jobs`);
     jobs.start();
     vCLStorage.startCheckLocations();
   });

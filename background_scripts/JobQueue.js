@@ -62,8 +62,8 @@ class JobQueue {
    * @param {string} job Url d'un job
    */
   remove(job) {
-    // Supprime les jobs existants
-    while (this.jobs.includes(job)) {
+    // Supprime un potentiel job existants
+    if (this.jobs.includes(job)) {
       this.jobs.splice(this.jobs.indexOf(job), 1);
     }
   }
@@ -93,7 +93,7 @@ class JobQueue {
         return;
       }
 
-      this.jobs.push(job);
+      this.add(job);
       return;
     }
 
