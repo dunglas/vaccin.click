@@ -352,7 +352,7 @@
       // Confirmation finale
       document.querySelector('button[type="submit"]').click();
 
-      await waitTimeout(3000)
+      await waitTimeout(3000);
 
       await browser.runtime.sendMessage({
         type: "booked",
