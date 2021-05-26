@@ -53,7 +53,7 @@
           LocationCheckStatus.SUCCESS,
           "Créneau trouvé"
         );
-        vCLStorage.locationLog(data.location, "Succes - Créneau trouvé");
+        vCLStorage.locationLog(data.location, "Succès - Créneau trouvé");
 
         const tabs = await browser.tabs.query({ url: data.url });
 
