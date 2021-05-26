@@ -26,8 +26,9 @@
       const $li = document.createElement("li");
       $li.innerText = log;
       $debugActivity.appendChild($li);
-      $debugActivity.scrollTop = $debugActivity.scrollHeight;
     });
+    
+    $debugActivity.scrollTop = $debugActivity.scrollHeight;
   }
 
   /**
