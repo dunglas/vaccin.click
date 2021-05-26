@@ -160,7 +160,7 @@ class AppStatus {
 
     if (change.locations) {
       change.locations.newValue = change.locations.newValue || {};
-      
+
       Object.keys(this.locations).forEach((url) => {
         if (change.locations.newValue[url] === undefined) {
           delete this.locations[url];

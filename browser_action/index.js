@@ -7,7 +7,7 @@
   const $debugActivity = document.getElementById("debugActivity");
 
   // Dom manipulation
-  
+
   function displayLogs(logLines) {
     $debugActivity.innerHTML = "";
 
@@ -16,7 +16,7 @@
       $li.innerText = log;
       $debugActivity.appendChild($li);
     });
-    
+
     $debugActivity.scrollTop = $debugActivity.scrollHeight;
   }
 
@@ -27,7 +27,7 @@
   function displayLocations() {
     $locations.innerHTML = "";
 
-    Object.keys(appStatus.getLocations()).forEach(url => {
+    Object.keys(appStatus.getLocations()).forEach((url) => {
       const location = appStatus.getLocation(url);
       const localLocation = vCLStorage.getLocations(url);
 
@@ -49,11 +49,13 @@
       $location.querySelector("img").src = location.img;
       $location.querySelector("button").onclick = async () => {
         if (
-          !confirm(`Êtes-vous sur de vouloir retirer "${location.name}" de la liste ?`)
+          !confirm(
+            `Êtes-vous sur de vouloir retirer "${location.name}" de la liste ?`
+          )
         )
           return;
 
-          appStatus.deleteLocation(url);
+        appStatus.deleteLocation(url);
       };
 
       $locations.appendChild($location);
@@ -87,7 +89,7 @@
 
   // Initialisation donnée
   appStatus.init();
-  vCLStorage.init(); 
+  vCLStorage.init();
 
   // Set des events
   window.addEventListener("unload", function (e) {
@@ -98,8 +100,10 @@
   document.getElementById("stop").onclick = appStatus.stop;
   document.getElementById("start").onclick = appStatus.start;
 
-  document.getElementById("disableAutoBook").onclick = appStatus.setAutoBook.bind(appStatus, false);
-  document.getElementById("enableAutoBook").onclick = appStatus.setAutoBook.bind(appStatus, true);
+  document.getElementById("disableAutoBook").onclick =
+    appStatus.setAutoBook.bind(appStatus, false);
+  document.getElementById("enableAutoBook").onclick =
+    appStatus.setAutoBook.bind(appStatus, true);
 
   document.getElementById("reset").onclick = () => {
     if (
