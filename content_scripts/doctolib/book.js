@@ -31,8 +31,8 @@
     initialWait = true,
     i = 0
   ) {
-    // Timeout après ~5 secondes
-    if (i === 10) {
+    // Timeout après ~6 secondes
+    if (i === 20) {
       console.log(
         `Le sélecteur "${selector}" n'a pas été trouvé après 5 secondes. Ce n'est pas forcément un bug.`
       );
