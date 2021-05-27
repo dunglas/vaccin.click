@@ -5,9 +5,6 @@
   // Sauvegarde de l'URL originale, avant que l'on change de page
   const url = document.URL;
 
-  // Préparation à la levée de la contrainte des 24h, et debug
-  const DOSE_24H = true;
-
   const MONTHS = {
     janvier: 1,
     fevrier: 2,
@@ -264,8 +261,6 @@
       }
 
       if (slot === null) {
-        if (DOSE_24H) throw new Error("Aucun créneau disponible 1");
-
         const $nextAvailabilities = await waitForSelector(
           ".availabilities-next-slot button"
         );
@@ -276,28 +271,28 @@
         if (slot === null) throw new Error("Aucun créneau disponible 3");
       }
 
-      if (DOSE_24H) {
-        // format : lun. 17 mai 08:54
-        const parts = slot.title.match(/([0-9]+) ([a-z]+) ([0-9]+:[0-9]+)/);
-        if (!parts) {
-          throw new Error(
-            `Impossible de cliquer sur le slot avec le titre ${slot.title}`
-          );
-        }
-        const date = new Date(
-          `${MONTHS[parts[2]]} ${parts[1]} ${new Date().getFullYear()} ${
-            parts[3]
-          }`
+      // format : lun. 17 mai 08:54
+      const parts = slot.title.match(/([0-9]+) ([a-z]+) ([0-9]+:[0-9]+)/);
+      if (!parts) {
+        throw new Error(
+          `Impossible de cliquer sur le slot avec le titre ${slot.title}`
         );
-
-        const tomorrow = new Date();
-        tomorrow.setHours(23);
-        tomorrow.setMinutes(59);
-        tomorrow.setDate(tomorrow.getDate() + 1);
-
-        if (date > tomorrow)
-          throw new Error("Pas de créneau dispo d'ici demain soir");
       }
+      const date = new Date(
+        `${MONTHS[parts[2]]} ${parts[1]} ${new Date().getFullYear()} ${
+          parts[3]
+        }`
+      );
+
+      const tomorrow = new Date();
+      tomorrow.setHours(23);
+      tomorrow.setMinutes(59);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+
+      if (date > tomorrow && date < new Date("2021-05-31T00:20:00"))
+        throw new Error(
+          "Pas de créneau dispo d'ici demain soir ou après le 31 mai"
+        );
 
       if (!autoBook) {
         browser.runtime.sendMessage({
