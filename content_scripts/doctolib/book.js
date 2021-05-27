@@ -44,7 +44,7 @@
     i++;
 
     if (initialWait) {
-      await waitTimeout(500 + Math.floor(Math.random() * 3000));
+      await waitTimeout(500 + Math.floor(Math.random() * 500));
     }
 
     // On essaie d'échouer rapidement si on nous a donner un failSelector
@@ -59,7 +59,7 @@
     if (!wait) return $el;
 
     if ($el === null) {
-      await waitTimeout(500);
+      await waitTimeout(300);
       // C'est reparti pour un tour.
       return waitForSelector(selector, failSelector, wait, false, i);
     }
