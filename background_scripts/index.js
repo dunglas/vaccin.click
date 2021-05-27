@@ -98,7 +98,9 @@
   await Promise.all([appStatus.init(), vCLStorage.init()]);
 
   // Executer les jobs
-  vCLStorage.log(`Démarrage de l'extension avec ${jobs.jobs.length} centres à traiter`);
+  vCLStorage.log(
+    `Démarrage de l'extension avec ${jobs.jobs.length} centres à traiter`
+  );
   jobs.start();
   vCLStorage.startCheckLocations();
 })();

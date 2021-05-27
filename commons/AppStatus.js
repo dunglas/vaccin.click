@@ -19,13 +19,13 @@ class AppStatus {
     /** @type {boolean} est-ce qu'on souhaite réserver le créneau pour le user ? */
     this.autoBook = false;
     /** @type {(string) => void} callback quand une {@link VaccineLocation} a été ajouté */
-    this.onLocationAddedCb = (job) => { };
+    this.onLocationAddedCb = (job) => {};
     /** @type {(string) => void} callback quand une {@link VaccineLocation} a été supprimée */
-    this.onLocationDeletedCb = (job) => { };
+    this.onLocationDeletedCb = (job) => {};
     /** @type {(boolean) => void} callback quand stopped change de valeur */
-    this.onStoppedChangeCb = (newValue) => { };
+    this.onStoppedChangeCb = (newValue) => {};
     /** @type {(boolean) => void} callback quand autoBook change de valeur */
-    this.onAutoBookChangeCb = (newValue) => { };
+    this.onAutoBookChangeCb = (newValue) => {};
 
     this.onStorageChange = this.onStorageChange.bind(this);
     browser.storage.onChanged.addListener(this.onStorageChange);

@@ -41,11 +41,11 @@ class VCLocalStorage {
     /** @type {(LocationStatus[]) => void} callback quand une {@link LocationStatus} a changé */
     this.onLocationsChangedCb = options.onLocationsChanged
       ? options.onLocationsChanged
-      : () => { };
+      : () => {};
     /** @type {(string) => void} callback quand un log a été ajouté */
     this.onLogsChangedCb = options.onLogsChanged
       ? options.onLogsChanged
-      : () => { };
+      : () => {};
 
     if (options.listenChanges) {
       this.onStorageChange = this.onStorageChange.bind(this);
