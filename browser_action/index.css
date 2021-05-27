@@ -1,3 +1,7 @@
+html {
+  min-width: 800px; /* nécessaire pour que Chrome affiche une popup de taille suffisante */
+}
+
 h1 {
   display: flex;
   justify-content: center;

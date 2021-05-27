@@ -14,22 +14,21 @@
   "browser_action": {
     "default_icon": "icons/vaccine-color.svg",
     "default_title": "vaccin.click : mon vaccin COVID-19 en 1 click !",
-    "default_popup": "browser_action/index.html",
-    "browser_style": true
+    "default_popup": "browser_action/index.html"
   },
   "content_scripts": [
     {
       "matches": ["*://*.doctolib.fr/*"],
-      "js": ["content_scripts/doctolib/search.js"]
+      "js": ["browser-polyfill.js", "content_scripts/doctolib/search.js"]
     },
     {
       "matches": ["*://*.doctolib.fr/*"],
-      "js": ["content_scripts/doctolib/book.js"],
+      "js": ["browser-polyfill.js", "content_scripts/doctolib/book.js"],
       "all_frames": true
     }
   ],
   "background": {
-    "scripts": ["background_scripts/index.js"]
+    "scripts": ["browser-polyfill.js", "background_scripts/index.js"]
   },
   "browser_specific_settings": {
     "gecko": {
