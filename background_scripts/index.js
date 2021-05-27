@@ -10,7 +10,7 @@
     WORKING: "w",
   };
 
-  async function updateIconStatus() {
+  async function updateIconStatus(stopped) {
     return await browser.browserAction.setIcon({
       path: {
         16: `../icons/vaccine-${stopped ? "black" : "color"}.svg`,
@@ -57,7 +57,7 @@
   }
 
   async function executeNextJob() {
-    const { stopped } = await browser.storage.sync.get({
+    const { stopped } = await browser.storage.local.get({
       stopped: false,
     });
 
@@ -93,9 +93,7 @@
   }
 
   browser.storage.onChanged.addListener(async (change, areaName) => {
-    if (areaName !== "sync") return;
-
-    if (change.locations && change.locations.newValue) {
+    if (areaName === "sync" && change.locations && change.locations.newValue) {
       Object.keys(locations).forEach((url) => {
         if (!change.locations.newValue[url]) {
           delete locations[url];
@@ -111,7 +109,14 @@
       });
     }
 
-    if (change.stopped) return await updateIconStatus(stopped);
+    if (change.stopped) {
+      await updateIconStatus(change.stopped.newValue);
+      if (areaName === "sync") {
+        // Ça peut arriver de cette instance ou d'une autre instance de Firefox
+        // -> mettons aussi à jour la valeur locale pour arrêter les checks locaux.
+        await browser.storage.local.set({ stopped: true });
+      }
+    }
   });
 
   browser.runtime.onMessage.addListener(async (data) => {
@@ -144,6 +149,7 @@
         break;
 
       case "booked":
+        // Note: on met à jour la valeur locale dans onChanged au-dessus.
         await browser.storage.sync.set({ stopped: true });
 
         await browser.tabs.create({
@@ -170,9 +176,18 @@
     }
   });
 
-  const { locations, stopped } = await browser.storage.sync.get({
-    locations: {},
-    stopped: false,
+  // Le booléan "stopped" est à la fois stocké localement et synchronisé. En
+  // effet, lorsqu'on arrive à booker un rdv dans un Firefox on veut arrêter les
+  // checks dans toutes les instances. Mais un simple clic sur le bouton ne doit
+  // déclencher d'arrêt que localement.
+  const { locations, stopped: stoppedFromSync } =
+    await browser.storage.sync.get({
+      locations: {},
+      stopped: false,
+    });
+
+  const { stopped } = await browser.storage.local.get({
+    stopped: stoppedFromSync,
   });
 
   await updateIconStatus(stopped);

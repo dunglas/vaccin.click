@@ -62,11 +62,12 @@
     document.getElementById(stopped ? "stop" : "start").style = "display: none";
   }
 
-  let { locations, stopped, autoBook } = await browser.storage.sync.get({
+  let { locations, autoBook } = await browser.storage.sync.get({
     locations: {},
     autoBook: false,
-    stopped: false,
   });
+
+  let { stopped } = await browser.storage.local.get({ stopped: false });
 
   let { localLocations } = await browser.storage.local.get({ locations: {} });
 
@@ -79,6 +80,8 @@
         localLocations = change.locations.newValue;
         displayLocations(locations, localLocations);
       }
+
+      if (change.stopped) displayStopStart(change.stopped.newValue || false);
     }
 
     if (areaName === "sync") {
@@ -86,8 +89,6 @@
         locations = change.locations.newValue;
         displayLocations(locations, localLocations);
       }
-
-      if (change.stopped) displayStopStart(change.stopped.newValue || false);
 
       if (change.autoBook)
         document.getElementById(
@@ -99,13 +100,11 @@
   });
 
   document.getElementById("stop").onclick = async () => {
-    await browser.storage.sync.set({ stopped: true });
-    displayStopStart(true);
+    await browser.storage.local.set({ stopped: true });
   };
 
   document.getElementById("start").onclick = async () => {
-    await browser.storage.sync.set({ stopped: false });
-    displayStopStart(false);
+    await browser.storage.local.set({ stopped: false });
   };
 
   document.getElementById("reset").onclick = async () => {
@@ -117,6 +116,7 @@
       return;
 
     await browser.storage.sync.clear();
+    await browser.storage.local.clear();
   };
 
   document.getElementById("disableAutoBook").onclick = async () =>
