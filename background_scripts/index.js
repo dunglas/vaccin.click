@@ -94,12 +94,11 @@
     }
   });
 
-  // Récupérer le status initial de l'application PUIS executer les jobs
-  Promise.all([appStatus.init(), vCLStorage.init()]).then(() => {
-    vCLStorage.log(
-      `Démarrage de l'extension avec ${jobs.jobs.length} centres à traiter`
-    );
-    jobs.start();
-    vCLStorage.startCheckLocations();
-  });
+  // Récupérer le status initial de l'application
+  await Promise.all([appStatus.init(), vCLStorage.init()]);
+
+  // Executer les jobs
+  vCLStorage.log(`Démarrage de l'extension avec ${jobs.jobs.length} centres à traiter`);
+  jobs.start();
+  vCLStorage.startCheckLocations();
 })();

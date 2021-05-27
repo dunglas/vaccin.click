@@ -20,10 +20,6 @@
     $debugActivity.scrollTop = $debugActivity.scrollHeight;
   }
 
-  /**
-   * @param {Object<string, VaccineLocation>} locations
-   * @param {Object<string, LocationStatus>} localLocations
-   */
   function displayLocations() {
     $locations.innerHTML = "";
 
@@ -93,7 +89,7 @@
   appStatus.init();
   vCLStorage.init();
 
-  // Set des events
+  // Installation des évènements
   window.addEventListener("unload", function (e) {
     vCLStorage.destroy();
     appStatus.destroy();

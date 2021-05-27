@@ -41,11 +41,11 @@ class VCLocalStorage {
     /** @type {(LocationStatus[]) => void} callback quand une {@link LocationStatus} a changé */
     this.onLocationsChangedCb = options.onLocationsChanged
       ? options.onLocationsChanged
-      : () => {};
+      : () => { };
     /** @type {(string) => void} callback quand un log a été ajouté */
     this.onLogsChangedCb = options.onLogsChanged
       ? options.onLogsChanged
-      : () => {};
+      : () => { };
 
     if (options.listenChanges) {
       this.onStorageChange = this.onStorageChange.bind(this);
@@ -71,19 +71,17 @@ class VCLocalStorage {
   /**
    * @returns {Promise<void>} Une promesse resolue quand le traitement est fini
    */
-  init() {
-    return browser.storage.local
-      .get({
-        locations: {},
-        logs: [],
-      })
-      .then((result) => {
-        this.locations = result.locations;
-        this.logs = result.logs;
+  async init() {
+    const result = await browser.storage.local.get({
+      locations: {},
+      logs: [],
+    });
 
-        this.onLocationsChangedCb(this.locations);
-        this.onLogsChangedCb(this.logs);
-      });
+    this.locations = result.locations;
+    this.logs = result.logs;
+
+    this.onLocationsChangedCb(this.locations);
+    this.onLogsChangedCb(this.logs);
   }
 
   /**
@@ -153,15 +151,15 @@ class VCLocalStorage {
    * Une methode à appeler sur le unload de la page pour détruire ce qu'il y a à détruire !
    */
   destroy() {
+    // Stopper les timers
+    this.stopCheckLocations();
+
     // Stopper les eventHandlers
     browser.storage.onChanged.removeListener(this.onStorageChange);
 
     // Detacher les callbacks
-    this.onLocationsChangedCb = () => {};
-    this.onLogsChangedCb = () => {};
-
-    // Stopper les timers
-    this.stopCheckLocations();
+    this.onLocationsChangedCb = null;
+    this.onLogsChangedCb = null;
   }
 
   /**

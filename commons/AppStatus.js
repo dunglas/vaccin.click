@@ -19,13 +19,13 @@ class AppStatus {
     /** @type {boolean} est-ce qu'on souhaite réserver le créneau pour le user ? */
     this.autoBook = false;
     /** @type {(string) => void} callback quand une {@link VaccineLocation} a été ajouté */
-    this.onLocationAddedCb = (job) => {};
+    this.onLocationAddedCb = (job) => { };
     /** @type {(string) => void} callback quand une {@link VaccineLocation} a été supprimée */
-    this.onLocationDeletedCb = (job) => {};
+    this.onLocationDeletedCb = (job) => { };
     /** @type {(boolean) => void} callback quand stopped change de valeur */
-    this.onStoppedChangeCb = (newValue) => {};
+    this.onStoppedChangeCb = (newValue) => { };
     /** @type {(boolean) => void} callback quand autoBook change de valeur */
-    this.onAutoBookChangeCb = (newValue) => {};
+    this.onAutoBookChangeCb = (newValue) => { };
 
     this.onStorageChange = this.onStorageChange.bind(this);
     browser.storage.onChanged.addListener(this.onStorageChange);
@@ -34,24 +34,22 @@ class AppStatus {
   /**
    * @returns {Promise<void>} Une promesse resolue quand le traitement est fini
    */
-  init() {
-    return browser.storage.sync
-      .get({
-        locations: {},
-        stopped: false,
-      })
-      .then((result) => {
-        Object.keys(result.locations).forEach((url) => {
-          this.locations[url] = new VaccineLocation(result.locations[url]);
-          this.onLocationAddedCb(url);
-        });
+  async init() {
+    const result = await browser.storage.sync.get({
+      locations: {},
+      stopped: false,
+    });
 
-        this.stopped = result.stopped === true;
-        this.onStoppedChangeCb(this.stopped);
+    Object.keys(result.locations).forEach((url) => {
+      this.locations[url] = new VaccineLocation(result.locations[url]);
+      this.onLocationAddedCb(url);
+    });
 
-        this.autoBook = result.autoBook === true;
-        this.onAutoBookChangeCb(this.autoBook);
-      });
+    this.stopped = result.stopped === true;
+    this.onStoppedChangeCb(this.stopped);
+
+    this.autoBook = result.autoBook === true;
+    this.onAutoBookChangeCb(this.autoBook);
   }
 
   getLocations() {
@@ -146,10 +144,10 @@ class AppStatus {
     browser.storage.onChanged.removeListener(this.onStorageChange);
 
     // Detacher les callbacks
-    this.onLocationAddedCb = () => {};
-    this.onLocationDeletedCb = () => {};
-    this.onStoppedChangeCb = () => {};
-    this.onAutoBookChangeCb = () => {};
+    this.onLocationAddedCb = null;
+    this.onLocationDeletedCb = null;
+    this.onStoppedChangeCb = null;
+    this.onAutoBookChangeCb = null;
   }
 
   /**
