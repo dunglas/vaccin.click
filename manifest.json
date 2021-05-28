@@ -29,7 +29,12 @@
     }
   ],
   "background": {
-    "scripts": ["background_scripts/index.js"]
+    "scripts": [
+      "commons/AppStatus.js",
+      "commons/VCLocalStorage.js",
+      "background_scripts/JobQueue.js",
+      "background_scripts/index.js"
+    ]
   },
   "browser_specific_settings": {
     "gecko": {
