@@ -39,15 +39,15 @@ class JobDemon {
 class JobQueue {
   // TODO: passer en secondes
   /**
-   * @param {number} delayBetweenJobs Delais entre deux jobs, en secondes
-   * @param {number} delayRetryJob Delais entre deux executions d'un même jobs, en secondes
+   * @param {number} delayBetweenJobs Delais entre deux jobs, en millisecondes
+   * @param {number} delayRetryJob Delais entre deux executions d'un même jobs, en millisecondes
    * @param {(job: string) => void} onJobStart Callback quand un job débute
    */
   constructor(delayBetweenJobs, minDelayRetryJob, onJobStart) {
     /** @type {number} en millisecondes */
-    this.delayBetweenJobs = delayBetweenJobs * 1000;
+    this.delayBetweenJobs = delayBetweenJobs;
     /** @type {number} en millisecondes */
-    this.delayRetryJob = minDelayRetryJob * 1000;
+    this.delayRetryJob = minDelayRetryJob;
     /** @type {(job: string) => void} Callback quand un job débute */
     this.onJobStart = onJobStart;
     /** @type {number} */
