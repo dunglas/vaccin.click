@@ -9,16 +9,18 @@
   // Dom manipulation
 
   /**
-   * @param {string[]} logLines 
+   * @param {string[]} logLines
    */
   function displayLogs(logLines) {
     // Preparer les nouveaux logs
     /** @type {HTMLLIElement[]} */
-    const newLogsList = logLines.map((log) => {
-      const $li = document.createElement("li");
-      $li.innerText = log;
-      return $li;
-    }).reverse();
+    const newLogsList = logLines
+      .map((log) => {
+        const $li = document.createElement("li");
+        $li.innerText = log;
+        return $li;
+      })
+      .reverse();
 
     // Vider les vieux logs
     while ($debugActivity.firstChild) {
