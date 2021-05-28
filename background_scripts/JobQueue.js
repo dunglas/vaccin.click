@@ -37,7 +37,6 @@ class JobDemon {
 }
 
 class JobQueue {
-  // TODO: passer en secondes
   /**
    * @param {number} delayBetweenJobs Delais entre deux jobs, en millisecondes
    * @param {number} delayRetryJob Delais entre deux executions d'un même jobs, en millisecondes
