@@ -2,7 +2,7 @@
 (async function () {
   const appStatus = new AppStatus();
   const vCLStorage = new VCLocalStorage();
-  const jobs = new JobQueue(10, 45, (job) => {
+  const jobs = new JobQueue(10 * 1000, 45 * 1000, (job) => {
     vCLStorage.setLocationStatus(job, LocationCheckStatus.WORKING, "En cours");
     vCLStorage.locationLog(
       appStatus.getLocation(job),
