@@ -8,16 +8,27 @@
 
   // Dom manipulation
 
+  /**
+   * @param {string[]} logLines
+   */
   function displayLogs(logLines) {
-    $debugActivity.innerHTML = "";
+    // Preparer les nouveaux logs
+    /** @type {HTMLLIElement[]} */
+    const newLogsList = logLines
+      .map((log) => {
+        const $li = document.createElement("li");
+        $li.innerText = log;
+        return $li;
+      })
+      .reverse();
 
-    logLines.forEach((log) => {
-      const $li = document.createElement("li");
-      $li.innerText = log;
-      $debugActivity.appendChild($li);
-    });
+    // Vider les vieux logs
+    while ($debugActivity.firstChild) {
+      $debugActivity.removeChild($debugActivity.lastChild);
+    }
 
-    $debugActivity.scrollTop = $debugActivity.scrollHeight;
+    // Afficher les nouveaux logs
+    $debugActivity.append(...newLogsList);
   }
 
   function displayLocations() {
