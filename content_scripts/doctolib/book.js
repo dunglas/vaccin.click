@@ -97,15 +97,20 @@
     // * "Patients de moins 50 ans"
     // * "Patients de moins de 50 ans"
     // * "Grand public"
+    // * "Patient de plus de 18 ans" (Centre de Nogent-sur-Marne)
     //
     // Ne doit pas matcher :
     // * "plus de 18 ans avec comorbidité"
     // * "Patients de plus de 50 ans"
+    // * "Patient de 16 à 18 ans de très haute priorité"
     //
     // Oui, ça mériterait un test unitaire !
     return (
-      /(?:18 à|particulier|éligibles|moins (?:de )?50|public)/i.test(text) &&
-      !text.includes("comorb")
+      /(?:18 à|plus de 18|particulier|éligibles|moins (?:de )?50|public)/i.test(
+        text
+      ) &&
+      !text.includes("comorb") &&
+      !text.includes("haute priorité")
     );
   }
 
