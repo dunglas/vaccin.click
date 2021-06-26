@@ -85,7 +85,8 @@
       (text.includes("Pfizer") || text.includes("Moderna")) && // On ne veut que du Pifzer ou du Moderna, seuls ouverts à la population générale
       !(
         (text.startsWith("2") || text.startsWith("3")) // La deuxième et la troisième dose doivent être exclue (ex : https://www.doctolib.fr/vaccination-covid-19/lille/centre-de-vaccination-covid-19-centre-de-vaccination-covid-19-zenith-de-lille?highlight%5Bspeciality_ids%5D%5B%5D=5494)
-      )
+      ) &&
+      !text.includes("unique") // On ne veut pas sélectionner l'injection unique mais la double injection (ex: https://www.doctolib.fr/vaccination-covid-19/lyon/vaccinationhcl?highlight%5Bspeciality_ids%5D%5B%5D=5494&pid=practice-163796)
     );
   }
 
