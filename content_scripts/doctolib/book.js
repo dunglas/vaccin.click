@@ -86,7 +86,8 @@
       !(
         (text.startsWith("2") || text.startsWith("3")) // La deuxième et la troisième dose doivent être exclue (ex : https://www.doctolib.fr/vaccination-covid-19/lille/centre-de-vaccination-covid-19-centre-de-vaccination-covid-19-zenith-de-lille?highlight%5Bspeciality_ids%5D%5B%5D=5494)
       ) &&
-      !text.includes("unique") // On ne veut pas sélectionner l'injection unique mais la double injection (ex: https://www.doctolib.fr/vaccination-covid-19/lyon/vaccinationhcl?highlight%5Bspeciality_ids%5D%5B%5D=5494&pid=practice-163796)
+      !text.includes("unique") && // On ne veut pas sélectionner l'injection unique mais la double injection (ex: https://www.doctolib.fr/vaccination-covid-19/lyon/vaccinationhcl?highlight%5Bspeciality_ids%5D%5B%5D=5494&pid=practice-163796)
+      !text.includes("sans rappel") // idem (ex: https://www.doctolib.fr/pharmacie/savigneux/pharmacie-de-savigneux, https://www.doctolib.fr/vaccination-covid-19/montbrison/centre-de-vaccination-covid-ville-de-montbrison?highlight%5Bspeciality_ids%5D%5B%5D=5494)
     );
   }
 
@@ -182,7 +183,10 @@
         let optionFound = false;
         for (const $option of $bookingSpecialty.querySelectorAll("option")) {
           options.push($option.textContent);
-          if (!/vaccination/i.test($option.textContent)) continue;
+          // Voir
+          // https://www.doctolib.fr/pharmacie/savigneux/pharmacie-de-savigneux
+          // pour "Pharmacien".
+          if (!/vaccination|pharmacien/i.test($option.textContent)) continue;
           selectOption($bookingSpecialty, $option);
           optionFound = true;
           wait = true;
