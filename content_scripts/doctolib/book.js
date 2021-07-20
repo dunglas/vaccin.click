@@ -278,7 +278,9 @@
       }
 
       // format : lun. 17 mai 08:54
-      const parts = slot.title.match(/([0-9]+) ([a-z]+) ([0-9]+:[0-9]+)/);
+      const parts = slot.title.match(
+        /([0-9]+) [\p{Letter}]+\.? ([0-9]+:[0-9]+)/gu
+      );
       if (!parts) {
         throw new Error(
           `Impossible de cliquer sur le slot avec le titre ${slot.title}`
