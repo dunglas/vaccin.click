@@ -64,6 +64,32 @@
     return $el;
   }
 
+  // La logique de cette fonction a été partiellement piquée à la librairie
+  // dom-testing-library.
+  async function waitForElementToBeRemoved(element) {
+    let i = 0;
+
+    if (!element) {
+      throw new Error(
+        "L'élement demandé pour waitForElementToBeRemoved était déjà absent avant de commencer ! L'élément doit exister."
+      );
+    }
+
+    let parent = element.parentElement;
+    if (parent === null) return; // déjà disparu
+    // Recherchons le parent le plus haut
+    while (parent.parentElement) parent = parent.parentElement;
+
+    while (parent.contains(element)) {
+      if (++i > 20) {
+        throw new Error(
+          "L'élement demandé n'a pas disparu au bout de 5 secondes"
+        );
+      }
+      await waitTimeout(300);
+    }
+  }
+
   function selectOption($select, $option) {
     const evt = document.createEvent("HTMLEvents");
     evt.initEvent("change", true, true);
@@ -283,7 +309,10 @@
         if (slot === null) throw new Error("Aucun créneau disponible 3");
       }
 
-      // format : lun. 17 mai 08:54
+      // formats :
+      // lun. 17 mai 08:54
+      // ven. 13 août 09:10
+      // jeu. 29 juil. 13:25
       const parts = slot.title.match(
         /([0-9]+) [\p{Letter}]+\.? ([0-9]+:[0-9]+)/gu
       );
@@ -323,8 +352,19 @@
       slot.click();
 
       // Sélection du 2ème RDV
+      const overlay = document.querySelector(
+        ".dl-desktop-availabilities-overlay"
+      );
+      if (overlay) {
+        await waitForElementToBeRemoved(overlay);
+      }
+
       const slot2 = await getAvailableSlot();
-      if (slot2) slot2.click();
+      if (slot2) {
+        slot2.click();
+      } else {
+        throw new Error("Pas de créneau trouvé pour le second rendez-vous.");
+      }
 
       // Boutons "J'accepte" dans la popup "À lire avant de prendre un rendez-vous"
       let el;
