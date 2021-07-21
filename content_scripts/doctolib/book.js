@@ -359,12 +359,27 @@
         await waitForElementToBeRemoved(overlay);
       }
 
-      const slot2 = await getAvailableSlot();
-      if (slot2) {
-        slot2.click();
-      } else {
-        throw new Error("Pas de créneau trouvé pour le second rendez-vous.");
+      let slot2 = await getAvailableSlot();
+      if (slot2 === null) {
+        // Dans de rares cas, il faut cliquer sur "Prochain RDV" aussi pour le
+        // second rendez-vous
+        const $nextAvailabilities = await waitForSelector(
+          ".availabilities-next-slot button"
+        );
+        if (!$nextAvailabilities)
+          throw new Error(
+            "Aucun créneau disponible pour le second rendez-vous 1"
+          );
+        $nextAvailabilities.click();
+
+        slot2 = await getAvailableSlot();
+        if (slot2 === null)
+          throw new Error(
+            "Aucun créneau disponible pour le second rendez-vous 2"
+          );
       }
+
+      slot2.click();
 
       // Boutons "J'accepte" dans la popup "À lire avant de prendre un rendez-vous"
       let el;
