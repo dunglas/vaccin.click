@@ -101,6 +101,7 @@
     // * "Grand public"
     // * "Patient de plus de 18 ans" (Centre de Nogent-sur-Marne)
     // * "Personnes de plus de 12 ans" (CHU de Caen)
+    // * "Personnes de 18 ans et plus" (GH Saint-Vincent de Strasbourg)
     //
     // Ne doit pas matcher :
     // * "plus de 18 ans avec comorbidité"
@@ -109,7 +110,7 @@
     //
     // Oui, ça mériterait un test unitaire !
     return (
-      /(?:18 à|plus de (?:12|18)|particulier|éligibles|moins (?:de )?50|public)/i.test(
+      /(?:18 à|plus de (?:12|18)|18 ans et plus|particulier|éligibles|moins (?:de )?50|public)/i.test(
         text
       ) &&
       !text.includes("comorb") &&
