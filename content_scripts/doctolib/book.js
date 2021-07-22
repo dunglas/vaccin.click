@@ -64,6 +64,32 @@
     return $el;
   }
 
+  // La logique de cette fonction a été partiellement piquée à la librairie
+  // dom-testing-library.
+  async function waitForElementToBeRemoved(element) {
+    let i = 0;
+
+    if (!element) {
+      throw new Error(
+        "L'élement demandé pour waitForElementToBeRemoved était déjà absent avant de commencer ! L'élément doit exister."
+      );
+    }
+
+    let parent = element.parentElement;
+    if (parent === null) return; // déjà disparu
+    // Recherchons le parent le plus haut
+    while (parent.parentElement) parent = parent.parentElement;
+
+    while (parent.contains(element)) {
+      if (++i > 20) {
+        throw new Error(
+          "L'élement demandé n'a pas disparu au bout de 5 secondes"
+        );
+      }
+      await waitTimeout(300);
+    }
+  }
+
   function selectOption($select, $option) {
     const evt = document.createEvent("HTMLEvents");
     evt.initEvent("change", true, true);
@@ -86,7 +112,8 @@
       !(
         (text.startsWith("2") || text.startsWith("3")) // La deuxième et la troisième dose doivent être exclue (ex : https://www.doctolib.fr/vaccination-covid-19/lille/centre-de-vaccination-covid-19-centre-de-vaccination-covid-19-zenith-de-lille?highlight%5Bspeciality_ids%5D%5B%5D=5494)
       ) &&
-      !text.includes("unique") // On ne veut pas sélectionner l'injection unique mais la double injection (ex: https://www.doctolib.fr/vaccination-covid-19/lyon/vaccinationhcl?highlight%5Bspeciality_ids%5D%5B%5D=5494&pid=practice-163796)
+      !text.includes("unique") && // On ne veut pas sélectionner l'injection unique mais la double injection (ex: https://www.doctolib.fr/vaccination-covid-19/lyon/vaccinationhcl?highlight%5Bspeciality_ids%5D%5B%5D=5494&pid=practice-163796)
+      !text.includes("sans rappel") // idem (ex: https://www.doctolib.fr/pharmacie/savigneux/pharmacie-de-savigneux, https://www.doctolib.fr/vaccination-covid-19/montbrison/centre-de-vaccination-covid-ville-de-montbrison?highlight%5Bspeciality_ids%5D%5B%5D=5494)
     );
   }
 
@@ -99,6 +126,8 @@
     // * "Patients de moins de 50 ans"
     // * "Grand public"
     // * "Patient de plus de 18 ans" (Centre de Nogent-sur-Marne)
+    // * "Personnes de plus de 12 ans" (CHU de Caen)
+    // * "Personnes de 18 ans et plus" (GH Saint-Vincent de Strasbourg)
     //
     // Ne doit pas matcher :
     // * "plus de 18 ans avec comorbidité"
@@ -107,7 +136,7 @@
     //
     // Oui, ça mériterait un test unitaire !
     return (
-      /(?:18 à|plus de 18|particulier|éligibles|moins (?:de )?50|public)/i.test(
+      /(?:18 à|plus de (?:12|18)|18 ans et plus|particulier|éligibles|moins (?:de )?50|public)/i.test(
         text
       ) &&
       !text.includes("comorb") &&
@@ -182,7 +211,10 @@
         let optionFound = false;
         for (const $option of $bookingSpecialty.querySelectorAll("option")) {
           options.push($option.textContent);
-          if (!/vaccination/i.test($option.textContent)) continue;
+          // Voir
+          // https://www.doctolib.fr/pharmacie/savigneux/pharmacie-de-savigneux
+          // pour "Pharmacien".
+          if (!/vaccination|pharmacien/i.test($option.textContent)) continue;
           selectOption($bookingSpecialty, $option);
           optionFound = true;
           wait = true;
@@ -277,7 +309,10 @@
         if (slot === null) throw new Error("Aucun créneau disponible 3");
       }
 
-      // format : lun. 17 mai 08:54
+      // formats :
+      // lun. 17 mai 08:54
+      // ven. 13 août 09:10
+      // jeu. 29 juil. 13:25
       const parts = slot.title.match(
         /([0-9]+) [\p{Letter}]+\.? ([0-9]+:[0-9]+)/gu
       );
@@ -317,8 +352,34 @@
       slot.click();
 
       // Sélection du 2ème RDV
-      const slot2 = await getAvailableSlot();
-      if (slot2) slot2.click();
+      const overlay = document.querySelector(
+        ".dl-desktop-availabilities-overlay"
+      );
+      if (overlay) {
+        await waitForElementToBeRemoved(overlay);
+      }
+
+      let slot2 = await getAvailableSlot();
+      if (slot2 === null) {
+        // Dans de rares cas, il faut cliquer sur "Prochain RDV" aussi pour le
+        // second rendez-vous
+        const $nextAvailabilities = await waitForSelector(
+          ".availabilities-next-slot button"
+        );
+        if (!$nextAvailabilities)
+          throw new Error(
+            "Aucun créneau disponible pour le second rendez-vous 1"
+          );
+        $nextAvailabilities.click();
+
+        slot2 = await getAvailableSlot();
+        if (slot2 === null)
+          throw new Error(
+            "Aucun créneau disponible pour le second rendez-vous 2"
+          );
+      }
+
+      slot2.click();
 
       // Boutons "J'accepte" dans la popup "À lire avant de prendre un rendez-vous"
       let el;
