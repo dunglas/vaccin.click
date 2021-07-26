@@ -38,6 +38,7 @@ class AppStatus {
     const result = await browser.storage.sync.get({
       locations: {},
       stopped: false,
+      autoBook: false,
     });
 
     Object.keys(result.locations).forEach((url) => {
