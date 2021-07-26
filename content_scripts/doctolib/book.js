@@ -384,7 +384,13 @@
       // Boutons "J'accepte" dans la popup "À lire avant de prendre un rendez-vous"
       let el;
       while (
-        (el = await waitForSelector(".dl-button-check-inner:not([disabled])"))
+        (el = await waitForSelector(
+          ".dl-button-check-inner:not([disabled])"
+        )) ||
+        // Bouton radio "J'ai 18 ans ou plus", dernièr élément qui nécessite un traitement spécial avant l'apparition du bouton de confirmation
+        (el = await waitForSelector(
+          ".dl-appointment-rule-radio-group .dl-radio-button-label:nth-child(2) input:not(:checked)"
+        ))
       ) {
         el.click();
       }
