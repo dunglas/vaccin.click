@@ -106,15 +106,48 @@
     });
   }
 
-  function isARNmMotive(text) {
+  /**
+   * @param {string} text La description de la dose venant de Doctolib
+   * @param {'fullServiceInjection' | 'firstInjectionOnly' | 'secondInjectionOnly' | 'thirdInjectionOnly'} injectionType Le type d'injection choisi par le user
+   */
+  function isARNmMotive(text, injectionType) {
     return (
       (text.includes("Pfizer") || text.includes("Moderna")) && // On ne veut que du Pifzer ou du Moderna, seuls ouverts à la population générale
+      (injectionType === "fullServiceInjection"
+        ? isfullServiceInjection(text)
+        : injectionType === "firstInjectionOnly"
+        ? firstInjectionOnly(text)
+        : injectionType === "secondInjectionOnly"
+        ? secondInjectionOnly(text)
+        : injectionType === "thirdInjectionOnly"
+        ? thirdInjectionOnly(text)
+        : false)
+    );
+  }
+
+  function isfullServiceInjection(text) {
+    return (
       !(
         (text.startsWith("2") || text.startsWith("3")) // La deuxième et la troisième dose doivent être exclue (ex : https://www.doctolib.fr/vaccination-covid-19/lille/centre-de-vaccination-covid-19-centre-de-vaccination-covid-19-zenith-de-lille?highlight%5Bspeciality_ids%5D%5B%5D=5494)
       ) &&
       !text.includes("unique") && // On ne veut pas sélectionner l'injection unique mais la double injection (ex: https://www.doctolib.fr/vaccination-covid-19/lyon/vaccinationhcl?highlight%5Bspeciality_ids%5D%5B%5D=5494&pid=practice-163796)
       !text.includes("sans rappel") // idem (ex: https://www.doctolib.fr/pharmacie/savigneux/pharmacie-de-savigneux, https://www.doctolib.fr/vaccination-covid-19/montbrison/centre-de-vaccination-covid-ville-de-montbrison?highlight%5Bspeciality_ids%5D%5B%5D=5494)
     );
+  }
+
+  function firstInjectionOnly(text) {
+    return (
+      !(text.startsWith("2") || text.startsWith("3")) &&
+      (text.includes("unique") || text.includes("sans rappel"))
+    );
+  }
+
+  function secondInjectionOnly(text) {
+    return text.startsWith("2");
+  }
+
+  function thirdInjectionOnly(text) {
+    return text.startsWith("3");
   }
 
   function isGeneralPopulationMotive(text) {
@@ -153,11 +186,13 @@
 
   let running = false;
   async function checkAvailability() {
-    const { locations, stopped, autoBook } = await browser.storage.sync.get({
-      locations: {},
-      stopped: false,
-      autoBook: false,
-    });
+    const { locations, stopped, autoBook, injectionType } =
+      await browser.storage.sync.get({
+        locations: {},
+        stopped: false,
+        autoBook: false,
+        injectionType: "fullServiceInjection",
+      });
 
     if (stopped || !locations[url]) {
       running = false;
@@ -245,7 +280,7 @@
         )) {
           options.push($option.textContent);
           if (
-            !isARNmMotive($option.textContent) &&
+            !isARNmMotive($option.textContent, injectionType) &&
             !isGeneralPopulationMotive($option.textContent)
           )
             continue;
@@ -275,7 +310,7 @@
         for (const $option of $bookingMotive.querySelectorAll("option")) {
           // On ne s'occupe que de Pfizer et Moderna
           // Pour le reste pas besoin de l'extension, de nombreux RDV sont disponibles
-          if (!isARNmMotive($option.textContent)) continue;
+          if (!isARNmMotive($option.textContent, injectionType)) continue;
 
           selectOption($bookingMotive, $option);
           optionFound = true;
@@ -292,7 +327,7 @@
         const $bookingContent = document.getElementById("booking-content");
         if (
           $bookingContent === null ||
-          !isARNmMotive($bookingContent.textContent)
+          !isARNmMotive($bookingContent.textContent, injectionType)
         )
           throw new Error("Injection ARNm non disponible 2");
         slot = await getAvailableSlot();
@@ -352,34 +387,36 @@
       slot.click();
 
       // Sélection du 2ème RDV
-      const overlay = document.querySelector(
-        ".dl-desktop-availabilities-overlay"
-      );
-      if (overlay) {
-        await waitForElementToBeRemoved(overlay);
-      }
-
-      let slot2 = await getAvailableSlot();
-      if (slot2 === null) {
-        // Dans de rares cas, il faut cliquer sur "Prochain RDV" aussi pour le
-        // second rendez-vous
-        const $nextAvailabilities = await waitForSelector(
-          ".availabilities-next-slot button"
+      if (injectionType === "fullServiceInjection") {
+        const overlay = document.querySelector(
+          ".dl-desktop-availabilities-overlay"
         );
-        if (!$nextAvailabilities)
-          throw new Error(
-            "Aucun créneau disponible pour le second rendez-vous 1"
-          );
-        $nextAvailabilities.click();
+        if (overlay) {
+          await waitForElementToBeRemoved(overlay);
+        }
 
-        slot2 = await getAvailableSlot();
-        if (slot2 === null)
-          throw new Error(
-            "Aucun créneau disponible pour le second rendez-vous 2"
+        let slot2 = await getAvailableSlot();
+        if (slot2 === null) {
+          // Dans de rares cas, il faut cliquer sur "Prochain RDV" aussi pour le
+          // second rendez-vous
+          const $nextAvailabilities = await waitForSelector(
+            ".availabilities-next-slot button"
           );
+          if (!$nextAvailabilities)
+            throw new Error(
+              "Aucun créneau disponible pour le second rendez-vous 1"
+            );
+          $nextAvailabilities.click();
+
+          slot2 = await getAvailableSlot();
+          if (slot2 === null)
+            throw new Error(
+              "Aucun créneau disponible pour le second rendez-vous 2"
+            );
+        }
+
+        slot2.click();
       }
-
-      slot2.click();
 
       // Boutons "J'accepte" dans la popup "À lire avant de prendre un rendez-vous"
       let el;
