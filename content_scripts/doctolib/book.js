@@ -5,20 +5,28 @@
   // Sauvegarde de l'URL originale, avant que l'on change de page
   const url = document.URL;
 
-  const MONTHS = {
-    janvier: 1,
-    fevrier: 2,
-    mars: 3,
-    avril: 4,
-    mai: 5,
-    juin: 6,
-    juillet: 7,
-    aout: 8,
-    septembre: 9,
-    octobre: 10,
-    novembre: 11,
-    decembre: 12,
-  };
+  // Convertit le nom du mois dans le nombre
+  function monthToNumber(month) {
+    if (/jan/i.test(month)) return 1;
+    if (/fev|feb/i.test(month)) return 2;
+    if (/mar|mär/i.test(month)) return 3;
+    if (/avr|apr/i.test(month)) return 4;
+    if (/mai/i.test(month)) return 5;
+    if (/jun/i.test(month)) return 6;
+    if (/jul/i.test(month)) return 7;
+    if (/aou|aug/i.test(month)) return 8;
+    if (/sep/i.test(month)) return 9;
+    if (/oct|okt/i.test(month)) return 10;
+    if (/nov/i.test(month)) return 11;
+    if (/dec|dez/i.test(month)) return 12;
+    return null;
+  }
+
+  // Si le mois selectionné est plus grand que le mois actuel, on ajoute un an
+  function estimateYear(currentMonth, selectedMonth) {
+    if (currentMonth > selectedMonth) return new Date().getFullYear() + 1;
+    return new Date().getFullYear();
+  }
 
   async function waitTimeout(timeout) {
     await new Promise((r) => setTimeout(r, timeout));
@@ -364,17 +372,23 @@
       // ven. 13 août 09:10
       // jeu. 29 juil. 13:25
       const parts = slot.title.match(
-        /([0-9]+) [\p{Letter}]+\.? ([0-9]+:[0-9]+)/gu
+        /([0-9]+)\.? ([\p{Letter}]+)\.? ([0-9]+:[0-9]+)/u
       );
       if (!parts) {
         throw new Error(
           `Impossible de cliquer sur le slot avec le titre ${slot.title}`
         );
       }
+
+      const currentMonth = new Date().getMonth();
+      const selectedMonth = monthToNumber(parts[2]);
+      const selectedDay = parseInt(parts[1]);
+      const selectedYear = estimateYear(currentMonth, selectedMonth);
+      const selectedTime = parts[3];
+
       const date = new Date(
-        `${MONTHS[parts[2]]} ${parts[1]} ${new Date().getFullYear()} ${
-          parts[3]
-        }`
+        `${selectedMonth} ${selectedDay} ${selectedYear} ${selectedTime}`
+      );
       );
 
       const tomorrow = new Date();
