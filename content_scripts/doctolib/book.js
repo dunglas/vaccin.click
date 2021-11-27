@@ -407,6 +407,10 @@
 
       fireFullClick(popupConfirmation);
 
+      // Ici la page entière recharge et le script ne peut pas continuer avec le choix du patient
+      // TODO: fix issue #70 see PR #81 for more information
+      throw new Error("Confirmation manuelle du RDV nécessaire");
+
       // Pour qui prenez-vous ce rendez-vous ? (moi)
       const masterPatientId = await waitForSelector(
         'input[name="masterPatientId"]'
