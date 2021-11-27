@@ -222,6 +222,78 @@
     );
   }
 
+  async function answerNoForPreviousPatient() {
+    let success = false;
+
+    const $questionPreviousPatient = await waitForSelector(
+      ".dl-new-patient-option",
+      undefined,
+      false,
+      true
+    );
+
+    if ($questionPreviousPatient) {
+      $button = document.querySelector("#all_visit_motives-1"); // On choisit "Non"
+
+      if ($button != null) {
+        fireFullClick($button);
+        success = true;
+      } else {
+        console.debug(
+          "N'a pas pu répondre 'Non' à la question de nouveau patient"
+        );
+      }
+    }
+
+    return success;
+  }
+
+  async function chooseSpeciality() {
+    let success = false;
+
+    const $bookingSpecialty = await waitForSelector(
+      "#booking_speciality",
+      undefined,
+      false,
+      true
+    );
+    if ($bookingSpecialty) {
+      const { options, optionFound } = selectOptionInSelect(
+        $bookingSpecialty,
+        testIsVaccinationMotive
+      );
+
+      if (optionFound) {
+        success = true;
+      } else {
+        throw new Error(
+          `Spécialité non trouvée. Spécialités disponibles : ${options.join(
+            ", "
+          )}`
+        );
+      }
+    }
+
+    return success;
+  }
+
+  async function choosePhysicalAppointement() {
+    let success = false;
+
+    const $teleHealth = await waitForSelector(
+      `input[name="telehealth"]`,
+      undefined,
+      false,
+      false
+    );
+    if ($teleHealth) {
+      fireFullClick($teleHealth);
+      success = true;
+    }
+
+    return success;
+  }
+
   let running = false;
   async function checkAvailability() {
     const { locations, stopped, autoBook, injectionType, injectionVaccine } =
@@ -245,47 +317,21 @@
     console.info(`Vérification de ${url}`);
 
     try {
-      let wait = true;
+      let wait = false;
 
-      // On doctolib.de this questions can be either asked before or after the speciality, that's why we need to run it async here and let the follow up selector wait by default
-      // Possible étape 1 ou 2 : "Avez-vous déjà consulté un praticien de cet établissement ?" (non)
-      const $questionPreviousPatient = waitForSelector(
-        ".dl-new-patient-option",
-        undefined,
-        true,
-        true
-      ).then(() => {
-        $button = document.querySelector("#all_visit_motives-1"); // On choisit "Non"
-
-        if ($button != null) {
-          fireFullClick($button);
-        } else {
-          console.debug(
-            "N'a pas pu répondre 'Non' à la question de nouveau patient, ce n'est pas forcément un bug"
-          );
-        }
-      });
-
-      // Possible étape 1 ou 2 : spécialité (ex : https://www.doctolib.fr/centre-de-sante/paris/sos-medecins-paris?pid=practice-165129)
-      const $bookingSpecialty = await waitForSelector(
-        "#booking_speciality",
-        undefined,
-        true,
-        true
-      );
-      if ($bookingSpecialty) {
-        const { options, optionFound } = selectOptionInSelect(
-          $bookingSpecialty,
-          testIsVaccinationMotive
-        );
-
-        if (!optionFound) {
-          throw new Error(
-            `Spécialité non trouvée. Spécialités disponibles : ${options.join(
-              ", "
-            )}`
-          );
-        }
+      // Suite d'étapes possibles :
+      // 1. On répond à la question si on est un nouveau patient
+      // 2. (Optionel) On choisit un RDV sur place et non vidéo (très courant sur doctolib.de) -> https://www.doctolib.de/orthopadie/berlin/detlef-kaleth
+      // 3. On choisit la spécialité (vaccination covid-19)
+      // Ou alors:
+      // 1. On choisit la specialité (vaccination covid-19)
+      // 2. On répond à la question si on est un nouveau patient
+      if (await answerNoForPreviousPatient()) {
+        await choosePhysicalAppointement();
+        await chooseSpeciality();
+      } else {
+        await chooseSpeciality();
+        await answerNoForPreviousPatient();
       }
 
       // Possible étape 3 : catégorie de motif
