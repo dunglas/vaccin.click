@@ -96,6 +96,29 @@
         <summary>Options avancées</summary>
 
         <div class="panel-formElements-item">
+          <div>
+            <input
+              type="radio"
+              name="injectionType"
+              id="fullServiceInjection"
+              checked
+            />
+            <label for="fullServiceInjection">1ère dose (avec rappel)</label>
+          </div>
+          <div>
+            <input type="radio" name="injectionType" id="firstInjectionOnly" />
+            <label for="firstInjectionOnly">1ère dose (sans rappel)</label>
+          </div>
+          <div>
+            <input type="radio" name="injectionType" id="secondInjectionOnly" />
+            <label for="secondInjectionOnly">2ème dose</label>
+          </div>
+          <div>
+            <input type="radio" name="injectionType" id="thirdInjectionOnly" />
+            <label for="thirdInjectionOnly">3ème dose</label>
+          </div>
+        </div>
+        <div class="panel-formElements-item">
           <button id="reset" class="expander">
             Remise à zéro (effacera toutes les données)
           </button>

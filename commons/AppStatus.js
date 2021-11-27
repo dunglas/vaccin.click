@@ -18,6 +18,8 @@ class AppStatus {
     this.stopped = false;
     /** @type {boolean} est-ce qu'on souhaite réserver le créneau pour le user ? */
     this.autoBook = false;
+    /** @type {'fullServiceInjection' | 'firstInjectionOnly' | 'secondInjectionOnly' | 'thirdInjectionOnly'} type d'injection souhaité par le user */
+    this.injectionType = "fullServiceInjection";
     /** @type {(string) => void} callback quand une {@link VaccineLocation} a été ajouté */
     this.onLocationAddedCb = (job) => {};
     /** @type {(string) => void} callback quand une {@link VaccineLocation} a été supprimée */
@@ -26,6 +28,8 @@ class AppStatus {
     this.onStoppedChangeCb = (newValue) => {};
     /** @type {(boolean) => void} callback quand autoBook change de valeur */
     this.onAutoBookChangeCb = (newValue) => {};
+    /** @type {('fullServiceInjection' | 'firstInjectionOnly' | 'secondInjectionOnly' | 'thirdInjectionOnly') => void} callback quand injectionType change de valeur */
+    this.onInjectionTypeCb = (newValue) => {};
 
     this.onStorageChange = this.onStorageChange.bind(this);
     browser.storage.onChanged.addListener(this.onStorageChange);
@@ -38,6 +42,8 @@ class AppStatus {
     const result = await browser.storage.sync.get({
       locations: {},
       stopped: false,
+      autoBook: false,
+      injectionType: "fullServiceInjection",
     });
 
     Object.keys(result.locations).forEach((url) => {
@@ -50,6 +56,9 @@ class AppStatus {
 
     this.autoBook = result.autoBook === true;
     this.onAutoBookChangeCb(this.autoBook);
+
+    this.injectionType = result.injectionType;
+    this.onInjectionTypeCb(this.injectionType);
   }
 
   getLocations() {
@@ -80,6 +89,10 @@ class AppStatus {
     return this.autoBook;
   }
 
+  getInjectionType() {
+    return this.injectionType;
+  }
+
   /**
    * @param {(string) => void} cbAdd callback quand une {@link VaccineLocation} a été ajouté
    * @param {(string) => void} cbDelete callback quand une {@link VaccineLocation} a été supprimée
@@ -103,6 +116,13 @@ class AppStatus {
     this.onAutoBookChangeCb = callback;
   }
 
+  /**
+   * @param {('fullServiceInjection' | 'firstInjectionOnly' | 'secondInjectionOnly' | 'thirdInjectionOnly') => void} callback quand injectionType change de valeur
+   */
+  onInjectionTypeChange(callback) {
+    this.onInjectionTypeCb = callback;
+  }
+
   start() {
     this.stopped = false;
     browser.storage.sync.set({ stopped: this.stopped });
@@ -122,6 +142,14 @@ class AppStatus {
   }
 
   /**
+   * @param {'fullServiceInjection' | 'firstInjectionOnly' | 'secondInjectionOnly' | 'thirdInjectionOnly'} value The new injectionType value
+   */
+  setInjectionType(value) {
+    this.injectionType = value;
+    browser.storage.sync.set({ injectionType: this.injectionType });
+  }
+
+  /**
    * Gérer le clean complet du stockage de l'application
    */
   clear() {
@@ -134,6 +162,8 @@ class AppStatus {
     this.onStoppedChangeCb(this.stopped);
     this.autoBook = false;
     this.onAutoBookChangeCb(this.autoBook);
+    this.injectionType = "fullServiceInjection";
+    this.onInjectionTypeCb(this.injectionType);
   }
 
   /**
@@ -148,6 +178,7 @@ class AppStatus {
     this.onLocationDeletedCb = null;
     this.onStoppedChangeCb = null;
     this.onAutoBookChangeCb = null;
+    this.onInjectionTypeCb = null;
   }
 
   /**
@@ -188,6 +219,12 @@ class AppStatus {
       this.autoBook = change.autoBook.newValue === true;
 
       this.onAutoBookChangeCb(this.autoBook);
+    }
+
+    if (change.injectionType) {
+      this.injectionType = change.injectionType.newValue;
+
+      this.onInjectionTypeCb(this.injectionType);
     }
   }
 }

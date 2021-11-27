@@ -83,6 +83,11 @@
     ).checked = true;
   }
 
+  /** @param {'fullServiceInjection' | 'firstInjectionOnly' | 'secondInjectionOnly' | 'thirdInjectionOnly'} injectionType Le type d'injection souhaité par le user */
+  function displayInjectionType(injectionType) {
+    document.getElementById(injectionType).checked = true;
+  }
+
   // Preparation des données
   const appStatus = new AppStatus();
   const vCLStorage = new VCLocalStorage({
@@ -95,6 +100,7 @@
   appStatus.onLocationChange(displayLocations, displayLocations);
   appStatus.onStoppedChange(displayStopStart);
   appStatus.onAutoBookChange(displayAutoBook);
+  appStatus.onInjectionTypeChange(displayInjectionType);
 
   // Initialisation donnée
   appStatus.init();
@@ -114,6 +120,15 @@
   document.getElementById("enableAutoBook").onclick =
     appStatus.setAutoBook.bind(appStatus, true);
 
+  document.getElementById("fullServiceInjection").onclick =
+    appStatus.setInjectionType.bind(appStatus, "fullServiceInjection");
+  document.getElementById("firstInjectionOnly").onclick =
+    appStatus.setInjectionType.bind(appStatus, "firstInjectionOnly");
+  document.getElementById("secondInjectionOnly").onclick =
+    appStatus.setInjectionType.bind(appStatus, "secondInjectionOnly");
+  document.getElementById("thirdInjectionOnly").onclick =
+    appStatus.setInjectionType.bind(appStatus, "thirdInjectionOnly");
+
   document.getElementById("reset").onclick = () => {
     if (
       !confirm(
@@ -129,5 +144,6 @@
   // Affichage
   displayStopStart(appStatus.getStopped());
   displayAutoBook(appStatus.getAutoBook());
+  displayInjectionType(appStatus.getInjectionType());
   displayLocations();
 })();
