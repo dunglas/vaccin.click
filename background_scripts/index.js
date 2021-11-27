@@ -64,7 +64,7 @@
 
         await browser.notifications.create(data.url, {
           type: "basic",
-          iconUrl: browser.extension.getURL("icons/vaccine-color.svg"),
+          iconUrl: browser.runtime.getURL("icons/vaccine-color.svg"),
           title: "Un créneau de vaccination est disponible !",
           message: `Cliquez ici pour finaliser la réservation dans le centre "${data.location.name}"`,
           priority: 2,
@@ -86,7 +86,7 @@
         });
         await browser.notifications.create({
           type: "basic",
-          iconUrl: browser.extension.getURL("icons/vaccine-color.svg"),
+          iconUrl: browser.runtime.getURL("icons/vaccine-color.svg"),
           title: "Votre créneau de vaccination a été réservé !",
           message: `Vous avez rendez-vous au centre "${data.location.name}".`,
         });
