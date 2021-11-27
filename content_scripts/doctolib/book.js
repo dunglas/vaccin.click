@@ -106,6 +106,48 @@
     $select.dispatchEvent(evt);
   }
 
+  /**
+   * @param {Element} $select
+   * @param {($option: Element) => boolean} matchOption
+   */
+  function selectOptionInSelect($select, matchOption) {
+    let optionFound = false;
+    const options = [];
+
+    for (const $option of $select.querySelectorAll("option")) {
+      options.push($option.textContent);
+      if (!matchOption($option)) continue;
+      selectOption($select, $option);
+      optionFound = true;
+      break;
+    }
+
+    return { options, optionFound };
+  }
+
+  /**
+   * @param {Element} $option
+   */
+  function testIsVaccinationMotive($option) {
+    // Voir
+    // https://www.doctolib.fr/pharmacie/savigneux/pharmacie-de-savigneux
+    // pour "Pharmacien".
+    return /vaccination|pharmacien|impfung/i.test($option.textContent);
+  }
+
+  /**
+   * @param {'fullServiceInjection' | 'firstInjectionOnly' | 'secondInjectionOnly' | 'thirdInjectionOnly'} injectionType
+   * @param {'modernaInjection' | 'pfizerInjection'} injectionVaccine
+   */
+  function testIsARNmMotive(injectionType, injectionVaccine) {
+    /**
+     * @param {Element} $option
+     */
+    return function ($option) {
+      return isARNmMotive($option.textContent, injectionType, injectionVaccine);
+    };
+  }
+
   // Parfois on doit envoyer un vrai click avec tous les événements.
   function fireFullClick(target) {
     ["mousedown", "mouseup", "click"].forEach((type) => {
@@ -138,53 +180,38 @@
 
   function isfullServiceInjection(text) {
     return (
-      !(
-        (text.startsWith("2") || text.startsWith("3")) // La deuxième et la troisième dose doivent être exclue (ex : https://www.doctolib.fr/vaccination-covid-19/lille/centre-de-vaccination-covid-19-centre-de-vaccination-covid-19-zenith-de-lille?highlight%5Bspeciality_ids%5D%5B%5D=5494)
-      ) &&
-      !text.includes("unique") && // On ne veut pas sélectionner l'injection unique mais la double injection (ex: https://www.doctolib.fr/vaccination-covid-19/lyon/vaccinationhcl?highlight%5Bspeciality_ids%5D%5B%5D=5494&pid=practice-163796)
-      !text.includes("sans rappel") // idem (ex: https://www.doctolib.fr/pharmacie/savigneux/pharmacie-de-savigneux, https://www.doctolib.fr/vaccination-covid-19/montbrison/centre-de-vaccination-covid-ville-de-montbrison?highlight%5Bspeciality_ids%5D%5B%5D=5494)
+      // doctolib.de search conditions
+      (text.includes("Erstimpfung") && text.includes("Zweittermin")) ||
+      // docotolib.fr search conditions
+      (text.startsWith("1") && text.includes("avec rappel"))
     );
   }
 
   function firstInjectionOnly(text) {
     return (
-      !(text.startsWith("2") || text.startsWith("3")) &&
-      (text.includes("unique") || text.includes("sans rappel"))
+      // doctolib.de search conditions
+      (text.includes("Erstimpfung") && !text.includes("Zweittermin")) ||
+      // doctolib.fr search conditions
+      (text.startsWith("1") && text.includes("sans rappel"))
     );
   }
 
   function secondInjectionOnly(text) {
-    return text.startsWith("2");
+    return (
+      // doctolib.de search conditions
+      text.startsWith("Zweitimpfung") ||
+      // doctolib.fr search conditions
+      text.startsWith("2")
+    );
   }
 
   function thirdInjectionOnly(text) {
-    return text.startsWith("3");
-  }
-
-  function isGeneralPopulationMotive(text) {
-    // Doit matcher :
-    // * "Patients de 18 à 50 ans"
-    // * "Je suis un particulier"
-    // * "Patients éligibles" (Centre Air France)
-    // * "Patients de moins 50 ans"
-    // * "Patients de moins de 50 ans"
-    // * "Grand public"
-    // * "Patient de plus de 18 ans" (Centre de Nogent-sur-Marne)
-    // * "Personnes de plus de 12 ans" (CHU de Caen)
-    // * "Personnes de 18 ans et plus" (GH Saint-Vincent de Strasbourg)
-    //
-    // Ne doit pas matcher :
-    // * "plus de 18 ans avec comorbidité"
-    // * "Patients de plus de 50 ans"
-    // * "Patient de 16 à 18 ans de très haute priorité"
-    //
-    // Oui, ça mériterait un test unitaire !
     return (
-      /(?:18 à|plus de (?:12|18)|18 ans et plus|particulier|éligibles|moins (?:de )?50|public)/i.test(
-        text
-      ) &&
-      !text.includes("comorb") &&
-      !text.includes("haute priorité")
+      // doctolib.de search conditions
+      text.startsWith("Auffrischungsimpfung") ||
+      // doctolib.fr search conditions
+      text.startsWith("3") ||
+      text.includes("dose de rappel")
     );
   }
 
@@ -218,62 +245,47 @@
     console.info(`Vérification de ${url}`);
 
     try {
-      let wait = false;
+      let wait = true;
 
-      // Possible étape 1 : "Avez-vous déjà consulté un praticien de cet établissement ?" (non)
-      const $questionPreviousPatient = await waitForSelector(
+      // On doctolib.de this questions can be either asked before or after the speciality, that's why we need to run it async here and let the follow up selector wait by default
+      // Possible étape 1 ou 2 : "Avez-vous déjà consulté un praticien de cet établissement ?" (non)
+      const $questionPreviousPatient = waitForSelector(
         ".dl-new-patient-option",
         undefined,
         true,
-        false
-      );
-      if ($questionPreviousPatient) {
-        let optionFound = false;
-        for (const $button of document.querySelectorAll(
-          ".dl-new-patient-option"
-        )) {
-          if ($button.textContent.includes("Non")) {
-            fireFullClick($button);
-            optionFound = true;
-            wait = true;
-            break;
-          }
-        }
-        if (!optionFound)
-          throw new Error(
-            "N'a pas pu répondre 'Non' à la question de nouveau patient"
-          );
-      }
+        true
+      ).then(() => {
+        $button = document.querySelector("#all_visit_motives-1"); // On choisit "Non"
 
-      // Possible étape 2 : spécialité (ex : https://www.doctolib.fr/centre-de-sante/paris/sos-medecins-paris?pid=practice-165129)
+        if ($button != null) {
+          fireFullClick($button);
+        } else {
+          console.debug(
+            "N'a pas pu répondre 'Non' à la question de nouveau patient, ce n'est pas forcément un bug"
+          );
+        }
+      });
+
+      // Possible étape 1 ou 2 : spécialité (ex : https://www.doctolib.fr/centre-de-sante/paris/sos-medecins-paris?pid=practice-165129)
       const $bookingSpecialty = await waitForSelector(
         "#booking_speciality",
         undefined,
-        wait,
-        wait
+        true,
+        true
       );
-      wait = false;
       if ($bookingSpecialty) {
-        const options = [];
-        let optionFound = false;
-        for (const $option of $bookingSpecialty.querySelectorAll("option")) {
-          options.push($option.textContent);
-          // Voir
-          // https://www.doctolib.fr/pharmacie/savigneux/pharmacie-de-savigneux
-          // pour "Pharmacien".
-          if (!/vaccination|pharmacien/i.test($option.textContent)) continue;
-          selectOption($bookingSpecialty, $option);
-          optionFound = true;
-          wait = true;
-          break;
-        }
+        const { options, optionFound } = selectOptionInSelect(
+          $bookingSpecialty,
+          testIsVaccinationMotive
+        );
 
-        if (!optionFound)
+        if (!optionFound) {
           throw new Error(
             `Spécialité non trouvée. Spécialités disponibles : ${options.join(
               ", "
             )}`
           );
+        }
       }
 
       // Possible étape 3 : catégorie de motif
@@ -285,33 +297,25 @@
       );
       wait = false;
       if ($bookingCategoryMotive) {
-        const options = [];
-        let optionFound = false;
-        for (const $option of $bookingCategoryMotive.querySelectorAll(
-          "option"
-        )) {
-          options.push($option.textContent);
-          if (
-            !isARNmMotive(
-              $option.textContent,
-              injectionType,
-              injectionVaccine
-            ) &&
-            !isGeneralPopulationMotive($option.textContent)
-          )
-            continue;
-          selectOption($bookingCategoryMotive, $option);
-          optionFound = true;
-          wait = true;
-          break;
-        }
+        const vaccinationMotive = selectOptionInSelect(
+          $bookingCategoryMotive,
+          testIsVaccinationMotive
+        );
 
-        if (!optionFound)
+        const arnMotive = selectOptionInSelect(
+          $bookingCategoryMotive,
+          testIsARNmMotive(injectionType, injectionVaccine)
+        );
+
+        if (!vaccinationMotive.optionFound && !arnMotive.optionFound) {
           throw new Error(
-            `Catégorie de motif non trouvé. Motifs disponibles : ${options.join(
+            `Catégorie de motif non trouvé. Motifs disponibles : ${vaccinationMotive.options.join(
               ", "
             )}`
           );
+        } else {
+          wait = true;
+        }
       }
 
       // Possible étape 4 : motif de consultation
@@ -367,10 +371,15 @@
         if (slot === null) throw new Error("Aucun créneau disponible 3");
       }
 
-      // formats :
+      // formats france:
       // lun. 17 mai 08:54
       // ven. 13 août 09:10
       // jeu. 29 juil. 13:25
+
+      // formats allemagne:
+      // Do., 3. Feb., 08:25
+      slot.title = slot.title.replace(/,/giu, "");
+
       const parts = slot.title.match(
         /([0-9]+)\.? ([\p{Letter}]+)\.? ([0-9]+:[0-9]+)/u
       );
@@ -388,7 +397,6 @@
 
       const date = new Date(
         `${selectedMonth} ${selectedDay} ${selectedYear} ${selectedTime}`
-      );
       );
 
       const tomorrow = new Date();
