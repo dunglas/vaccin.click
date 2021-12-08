@@ -20,6 +20,8 @@ class AppStatus {
     this.autoBook = false;
     /** @type {'fullServiceInjection' | 'firstInjectionOnly' | 'secondInjectionOnly' | 'thirdInjectionOnly'} type d'injection souhaité par le user */
     this.injectionType = "fullServiceInjection";
+    /** @type {'modernaInjection' | 'pfizerInjection'} vaccin d'injection souhaité par le user */
+    this.injectionVaccine = "modernaInjection";
     /** @type {(string) => void} callback quand une {@link VaccineLocation} a été ajouté */
     this.onLocationAddedCb = (job) => {};
     /** @type {(string) => void} callback quand une {@link VaccineLocation} a été supprimée */
@@ -30,6 +32,8 @@ class AppStatus {
     this.onAutoBookChangeCb = (newValue) => {};
     /** @type {('fullServiceInjection' | 'firstInjectionOnly' | 'secondInjectionOnly' | 'thirdInjectionOnly') => void} callback quand injectionType change de valeur */
     this.onInjectionTypeCb = (newValue) => {};
+    /** @type {'modernaInjection' | 'pfizerInjection'} callback quand injectionType change de valeur */
+    this.onInjectionVaccineCb = (newValue) => {};
 
     this.onStorageChange = this.onStorageChange.bind(this);
     browser.storage.onChanged.addListener(this.onStorageChange);
@@ -93,6 +97,10 @@ class AppStatus {
     return this.injectionType;
   }
 
+  getInjectionVaccine() {
+    return this.injectionVaccine;
+  }
+
   /**
    * @param {(string) => void} cbAdd callback quand une {@link VaccineLocation} a été ajouté
    * @param {(string) => void} cbDelete callback quand une {@link VaccineLocation} a été supprimée
@@ -123,6 +131,13 @@ class AppStatus {
     this.onInjectionTypeCb = callback;
   }
 
+  /**
+   * @param {('modernaInjection' | 'pfizerInjection') => void} callback quand injectionVaccine change de valeur
+   */
+  onInjectionVaccineChange(callback) {
+    this.onInjectionTypeCb = callback;
+  }
+
   start() {
     this.stopped = false;
     browser.storage.sync.set({ stopped: this.stopped });
@@ -147,6 +162,14 @@ class AppStatus {
   setInjectionType(value) {
     this.injectionType = value;
     browser.storage.sync.set({ injectionType: this.injectionType });
+  }
+
+  /**
+   * @param {'modernaInjection' | 'pfizerInjection'} value The new injectionVaccine value
+   */
+  setInjectionVaccine(value) {
+    this.injectionVaccine = value;
+    browser.storage.sync.set({ injectionVaccine: this.injectionVaccine });
   }
 
   /**

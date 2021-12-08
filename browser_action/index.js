@@ -88,6 +88,11 @@
     document.getElementById(injectionType).checked = true;
   }
 
+  /** @param {'modernaInjection' | 'pfizerInjection'} injectionVaccine Le vaccin d'injection souhaité par le user */
+  function displayInjectionVaccine(injectionVaccine) {
+    document.getElementById(injectionVaccine).checked = true;
+  }
+
   // Preparation des données
   const appStatus = new AppStatus();
   const vCLStorage = new VCLocalStorage({
@@ -101,6 +106,7 @@
   appStatus.onStoppedChange(displayStopStart);
   appStatus.onAutoBookChange(displayAutoBook);
   appStatus.onInjectionTypeChange(displayInjectionType);
+  appStatus.onInjectionVaccineChange(displayInjectionVaccine);
 
   // Initialisation donnée
   appStatus.init();
@@ -129,6 +135,11 @@
   document.getElementById("thirdInjectionOnly").onclick =
     appStatus.setInjectionType.bind(appStatus, "thirdInjectionOnly");
 
+  document.getElementById("modernaInjection").onclick =
+    appStatus.setInjectionVaccine.bind(appStatus, "pfizerInjection");
+  document.getElementById("pfizerInjection").onclick =
+    appStatus.setInjectionVaccine.bind(appStatus, "pfizerInjection");
+
   document.getElementById("reset").onclick = () => {
     if (
       !confirm(
@@ -145,5 +156,6 @@
   displayStopStart(appStatus.getStopped());
   displayAutoBook(appStatus.getAutoBook());
   displayInjectionType(appStatus.getInjectionType());
+  displayInjectionVaccine(appStatus.getInjectionVaccine());
   displayLocations();
 })();
