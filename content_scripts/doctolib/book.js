@@ -109,10 +109,13 @@
   /**
    * @param {string} text La description de la dose venant de Doctolib
    * @param {'fullServiceInjection' | 'firstInjectionOnly' | 'secondInjectionOnly' | 'thirdInjectionOnly'} injectionType Le type d'injection choisi par le user
+   * @param {'modernaInjection' | 'pfizerInjection'} injectionVaccine Le vaccin d'injection choisi par le user
    */
-  function isARNmMotive(text, injectionType) {
+  function isARNmMotive(text, injectionType, injectionVaccine) {
     return (
-      (text.includes("Pfizer") || text.includes("Moderna")) && // On ne veut que du Pifzer ou du Moderna, seuls ouverts à la population générale
+      text.includes(
+        injectionVaccine === "modernaInjection" ? "Moderna" : "Pfizer"
+      ) &&
       (injectionType === "fullServiceInjection"
         ? isfullServiceInjection(text)
         : injectionType === "firstInjectionOnly"
@@ -186,12 +189,13 @@
 
   let running = false;
   async function checkAvailability() {
-    const { locations, stopped, autoBook, injectionType } =
+    const { locations, stopped, autoBook, injectionType, injectionVaccine } =
       await browser.storage.sync.get({
         locations: {},
         stopped: false,
         autoBook: false,
         injectionType: "fullServiceInjection",
+        injectionVaccine: "modernaInjection",
       });
 
     if (stopped || !locations[url]) {
@@ -280,7 +284,11 @@
         )) {
           options.push($option.textContent);
           if (
-            !isARNmMotive($option.textContent, injectionType) &&
+            !isARNmMotive(
+              $option.textContent,
+              injectionType,
+              injectionVaccine
+            ) &&
             !isGeneralPopulationMotive($option.textContent)
           )
             continue;
@@ -310,7 +318,10 @@
         for (const $option of $bookingMotive.querySelectorAll("option")) {
           // On ne s'occupe que de Pfizer et Moderna
           // Pour le reste pas besoin de l'extension, de nombreux RDV sont disponibles
-          if (!isARNmMotive($option.textContent, injectionType)) continue;
+          if (
+            !isARNmMotive($option.textContent, injectionType, injectionVaccine)
+          )
+            continue;
 
           selectOption($bookingMotive, $option);
           optionFound = true;
@@ -327,7 +338,11 @@
         const $bookingContent = document.getElementById("booking-content");
         if (
           $bookingContent === null ||
-          !isARNmMotive($bookingContent.textContent, injectionType)
+          !isARNmMotive(
+            $bookingContent.textContent,
+            injectionType,
+            injectionVaccine
+          )
         )
           throw new Error("Injection ARNm non disponible 2");
         slot = await getAvailableSlot();
