@@ -104,6 +104,11 @@
     document.getElementById(injectionVaccine).checked = true;
   }
 
+  function displayDateMaxSearch(dateMaxSearch) {
+    const date = new Date(dateMaxSearch);
+    document.getElementById('dateMax').value = date.toISOString().split('T')[0]
+  }
+
   // Preparation des données
   const appStatus = new AppStatus();
   const vCLStorage = new VCLocalStorage({
@@ -118,6 +123,7 @@
   appStatus.onAutoBookChange(displayAutoBook);
   appStatus.onInjectionTypeChange(displayInjectionType);
   appStatus.onInjectionVaccineChange(displayInjectionVaccine);
+  appStatus.onDateMaxSearchChange(displayDateMaxSearch);
 
   // Initialisation donnée
   appStatus.init();
@@ -150,6 +156,8 @@
     appStatus.setInjectionVaccine.bind(appStatus, "modernaInjection");
   document.getElementById("pfizerInjection").onclick =
     appStatus.setInjectionVaccine.bind(appStatus, "pfizerInjection");
+  document.getElementById("dateMax").onblur =
+    appStatus.setDateMaxSearch.bind(appStatus, document.getElementById('dateMax'));
 
   document.getElementById("reset").onclick = () => {
     if (
@@ -169,5 +177,6 @@
   displayAutoBook(appStatus.getAutoBook());
   displayInjectionType(appStatus.getInjectionType());
   displayInjectionVaccine(appStatus.getInjectionVaccine());
+  displayDateMaxSearch(appStatus.getDateMaxSearch());
   displayLocations();
 })();

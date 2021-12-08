@@ -27,6 +27,20 @@
     if (currentMonth > selectedMonth) return new Date().getFullYear() + 1;
     return new Date().getFullYear();
   }
+  const MONTHS = {
+    'janv.': 1,
+    'févr.': 2,
+    'mars': 3,
+    'avr.': 4,
+    'mai': 5,
+    'juin': 6,
+    'juil.': 7,
+    'aout': 8,
+    'sept.': 9,
+    'oct.': 10,
+    'nov.': 11,
+    'déc.': 12,
+  };
 
   async function waitTimeout(timeout) {
     await new Promise((r) => setTimeout(r, timeout));
@@ -295,14 +309,18 @@
 
   let running = false;
   async function checkAvailability() {
-    const { locations, stopped, autoBook, injectionType, injectionVaccine } =
+    const { locations, stopped, autoBook, injectionType, injectionVaccine, dateMaxSearch } =
       await browser.storage.sync.get({
         locations: {},
         stopped: false,
         autoBook: false,
         injectionType: "fullServiceInjection",
         injectionVaccine: "pfizerInjection",
+        dateMaxSearch: new Date(2022, 1, 15)
       });
+
+    const dateMaxSearchDate = typeof(dateMaxSearch) === 'string' ? new Date(dateMaxSearch) : dateMaxSearch;
+    console.log(dateMaxSearchDate)
 
     if (stopped || !locations[url]) {
       running = false;
@@ -421,6 +439,8 @@
       const parts = slot.title.match(
         /([0-9]+)\.? ([\p{Letter}]+)\.? ([0-9]+:[0-9]+)/u
       );
+        // /([0-9]+) [\p{Letter}]+\.? ([0-9]+:[0-9]+)/gu
+      // )[0].split(' ');
       if (!parts) {
         throw new Error(
           browser.i18n.getMessage("slotDateFormatNotFound", slot.title)
@@ -434,18 +454,27 @@
       const selectedTime = parts[3];
 
       const date = new Date(
-        `${selectedMonth} ${selectedDay} ${selectedYear} ${selectedTime}`
-      );
+        `${selectedMonth} ${selectedDay} ${selectedYear} ${selectedTime}`);
+      // console.log(parts)
+      // const year = parts[1] === 'decembre' ? 2021 : 2022;
+      // const date = new Date(
+      //   `${MONTHS[parts[1]]} ${parts[0]} ${year} ${
+      //     parts[2]
+      //   }`
+      // );
 
       const tomorrow = new Date();
       tomorrow.setHours(23);
       tomorrow.setMinutes(59);
       tomorrow.setDate(tomorrow.getDate() + 1);
 
-      if (date > tomorrow && date < new Date("2021-05-31T00:20:00"))
+
+      if (date > dateMaxSearchDate) {
+        const formatedDate = dateMaxSearchDate.toLocaleDateString();
         throw new Error(
-          "Pas de créneau dispo d'ici demain soir ou après le 31 mai"
+          `Pas de créneau dispo d'ici demain soir ou avant le ${formatedDate}`
         );
+  }
 
       if (!autoBook) {
         browser.runtime.sendMessage({

@@ -22,6 +22,7 @@ class AppStatus {
     this.injectionType = "fullServiceInjection";
     /** @type {'modernaInjection' | 'pfizerInjection'} vaccin d'injection souhaité par le user */
     this.injectionVaccine = "pfizerInjection";
+    this.dateMaxSearch = new Date(2022, 1, 15);
     /** @type {(string) => void} callback quand une {@link VaccineLocation} a été ajouté */
     this.onLocationAddedCb = (job) => {};
     /** @type {(string) => void} callback quand une {@link VaccineLocation} a été supprimée */
@@ -34,6 +35,7 @@ class AppStatus {
     this.onInjectionTypeCb = (newValue) => {};
     /** @type {'modernaInjection' | 'pfizerInjection'} callback quand injectionVaccine change de valeur */
     this.onInjectionVaccineCb = (newValue) => {};
+    this.onDateMaxSearchCb = (newValue) => {};
 
     this.onStorageChange = this.onStorageChange.bind(this);
     browser.storage.onChanged.addListener(this.onStorageChange);
@@ -49,6 +51,7 @@ class AppStatus {
       autoBook: false,
       injectionType: "fullServiceInjection",
       injectionVaccine: "pfizerInjection",
+      dateMaxSearch: new Date(2022, 1, 15),
     });
 
     Object.keys(result.locations).forEach((url) => {
@@ -67,6 +70,9 @@ class AppStatus {
 
     this.injectionVaccine = result.injectionVaccine;
     this.onInjectionVaccineCb(this.injectionVaccine);
+
+    this.dateMaxSearch = result.dateMaxSearch;
+    this.onDateMaxSearchCb(this.dateMaxSearch);
   }
 
   getLocations() {
@@ -105,6 +111,10 @@ class AppStatus {
     return this.injectionVaccine;
   }
 
+  getDateMaxSearch() {
+    return this.dateMaxSearch;
+  }
+
   /**
    * @param {(string) => void} cbAdd callback quand une {@link VaccineLocation} a été ajouté
    * @param {(string) => void} cbDelete callback quand une {@link VaccineLocation} a été supprimée
@@ -141,6 +151,9 @@ class AppStatus {
   onInjectionVaccineChange(callback) {
     this.onInjectionVaccineCb = callback;
   }
+  onDateMaxSearchChange(callback) {
+    this.onDateMaxSearchCb = callback;
+  }
 
   start() {
     this.stopped = false;
@@ -168,6 +181,11 @@ class AppStatus {
     browser.storage.sync.set({ injectionType: this.injectionType });
   }
 
+  setDateMaxSearch(value) {
+    this.dateMaxSearch = new Date(value.value);
+    browser.storage.sync.set({ dateMaxSearch: this.dateMaxSearch });
+  }
+
   /**
    * @param {'modernaInjection' | 'pfizerInjection'} value The new injectionVaccine value
    */
@@ -193,6 +211,8 @@ class AppStatus {
     this.onInjectionTypeCb(this.injectionType);
     this.injectionVaccine = "pfizerInjection";
     this.onInjectionTypeCb(this.injectionVaccine);
+    this.dateMaxSearch = new Date(2022, 1, 15);
+    this.onDateMaxSearchCb(this.dateMaxSearch);
   }
 
   /**
@@ -209,6 +229,7 @@ class AppStatus {
     this.onAutoBookChangeCb = null;
     this.onInjectionTypeCb = null;
     this.onInjectionVaccineCb = null;
+    this.onDateMaxSearchCb = null;
   }
 
   /**
@@ -261,6 +282,11 @@ class AppStatus {
       this.injectionVaccine = change.injectionVaccine.newValue;
 
       this.onInjectionVaccineCb(this.injectionVaccine);
+    }
+    if (change.dateMaxSearch) {
+      this.dateMaxSearch = change.dateMaxSearch.newValue;
+
+      this.onDateMaxSearchCb(this.dateMaxSearch);
     }
   }
 }
