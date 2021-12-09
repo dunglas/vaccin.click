@@ -136,7 +136,7 @@
     appStatus.setInjectionType.bind(appStatus, "thirdInjectionOnly");
 
   document.getElementById("modernaInjection").onclick =
-    appStatus.setInjectionVaccine.bind(appStatus, "pfizerInjection");
+    appStatus.setInjectionVaccine.bind(appStatus, "modernaInjection");
   document.getElementById("pfizerInjection").onclick =
     appStatus.setInjectionVaccine.bind(appStatus, "pfizerInjection");
 

@@ -32,7 +32,7 @@ class AppStatus {
     this.onAutoBookChangeCb = (newValue) => {};
     /** @type {('fullServiceInjection' | 'firstInjectionOnly' | 'secondInjectionOnly' | 'thirdInjectionOnly') => void} callback quand injectionType change de valeur */
     this.onInjectionTypeCb = (newValue) => {};
-    /** @type {'modernaInjection' | 'pfizerInjection'} callback quand injectionType change de valeur */
+    /** @type {'modernaInjection' | 'pfizerInjection'} callback quand injectionVaccine change de valeur */
     this.onInjectionVaccineCb = (newValue) => {};
 
     this.onStorageChange = this.onStorageChange.bind(this);
@@ -48,6 +48,7 @@ class AppStatus {
       stopped: false,
       autoBook: false,
       injectionType: "fullServiceInjection",
+      injectionVaccine: "modernaInjection",
     });
 
     Object.keys(result.locations).forEach((url) => {
@@ -63,6 +64,9 @@ class AppStatus {
 
     this.injectionType = result.injectionType;
     this.onInjectionTypeCb(this.injectionType);
+
+    this.injectionVaccine = result.injectionVaccine;
+    this.onInjectionVaccineCb(this.injectionVaccine);
   }
 
   getLocations() {
@@ -135,7 +139,7 @@ class AppStatus {
    * @param {('modernaInjection' | 'pfizerInjection') => void} callback quand injectionVaccine change de valeur
    */
   onInjectionVaccineChange(callback) {
-    this.onInjectionTypeCb = callback;
+    this.onInjectionVaccineCb = callback;
   }
 
   start() {
@@ -187,6 +191,8 @@ class AppStatus {
     this.onAutoBookChangeCb(this.autoBook);
     this.injectionType = "fullServiceInjection";
     this.onInjectionTypeCb(this.injectionType);
+    this.injectionVaccine = "modernaInjection";
+    this.onInjectionTypeCb(this.injectionVaccine);
   }
 
   /**
@@ -202,6 +208,7 @@ class AppStatus {
     this.onStoppedChangeCb = null;
     this.onAutoBookChangeCb = null;
     this.onInjectionTypeCb = null;
+    this.onInjectionVaccineCb = null;
   }
 
   /**
@@ -248,6 +255,12 @@ class AppStatus {
       this.injectionType = change.injectionType.newValue;
 
       this.onInjectionTypeCb(this.injectionType);
+    }
+
+    if (change.injectionVaccine) {
+      this.injectionVaccine = change.injectionVaccine.newValue;
+
+      this.onInjectionVaccineCb(this.injectionVaccine);
     }
   }
 }
