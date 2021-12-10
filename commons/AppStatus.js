@@ -21,7 +21,7 @@ class AppStatus {
     /** @type {'fullServiceInjection' | 'firstInjectionOnly' | 'secondInjectionOnly' | 'thirdInjectionOnly'} type d'injection souhaité par le user */
     this.injectionType = "fullServiceInjection";
     /** @type {'modernaInjection' | 'pfizerInjection'} vaccin d'injection souhaité par le user */
-    this.injectionVaccine = "modernaInjection";
+    this.injectionVaccine = "pfizerInjection";
     /** @type {(string) => void} callback quand une {@link VaccineLocation} a été ajouté */
     this.onLocationAddedCb = (job) => {};
     /** @type {(string) => void} callback quand une {@link VaccineLocation} a été supprimée */
@@ -48,7 +48,7 @@ class AppStatus {
       stopped: false,
       autoBook: false,
       injectionType: "fullServiceInjection",
-      injectionVaccine: "modernaInjection",
+      injectionVaccine: "pfizerInjection",
     });
 
     Object.keys(result.locations).forEach((url) => {
@@ -191,7 +191,7 @@ class AppStatus {
     this.onAutoBookChangeCb(this.autoBook);
     this.injectionType = "fullServiceInjection";
     this.onInjectionTypeCb(this.injectionType);
-    this.injectionVaccine = "modernaInjection";
+    this.injectionVaccine = "pfizerInjection";
     this.onInjectionTypeCb(this.injectionVaccine);
   }
 

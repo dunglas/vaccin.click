@@ -302,7 +302,7 @@
         stopped: false,
         autoBook: false,
         injectionType: "fullServiceInjection",
-        injectionVaccine: "modernaInjection",
+        injectionVaccine: "pfizerInjection",
       });
 
     if (stopped || !locations[url]) {
