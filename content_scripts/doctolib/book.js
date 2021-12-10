@@ -372,24 +372,13 @@
         wait
       );
       if ($bookingMotive) {
-        let optionFound = false;
-        for (const $option of $bookingMotive.querySelectorAll("option")) {
-          // On ne s'occupe que de Pfizer et Moderna
-          // Pour le reste pas besoin de l'extension, de nombreux RDV sont disponibles
-          if (
-            !isARNmMotive($option.textContent, injectionType, injectionVaccine)
-          )
-            continue;
+        const arnMotive = selectOptionInSelect(
+          $bookingMotive,
+          testIsARNmMotive(injectionType, injectionVaccine)
+        );
 
-          selectOption($bookingMotive, $option);
-          optionFound = true;
-
-          // Il peut y avoir des places pour Moderna mais pas pour Pfizer, ou inversement, il faut tester les deux
-          slot = await getAvailableSlot();
-          if (slot !== null) break;
-        }
-
-        if (!optionFound) throw new Error("Injection ARNm non disponible 1");
+        if (!arnMotive.optionFound)
+          throw new Error("Injection ARNm non disponible 1");
       } else {
         // On a peut-être directement la boite "pas de créneaux possibles"
         // Cas où il n'y a qu'un choix
