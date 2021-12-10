@@ -5,20 +5,28 @@
   // Sauvegarde de l'URL originale, avant que l'on change de page
   const url = document.URL;
 
-  const MONTHS = {
-    janvier: 1,
-    fevrier: 2,
-    mars: 3,
-    avril: 4,
-    mai: 5,
-    juin: 6,
-    juillet: 7,
-    aout: 8,
-    septembre: 9,
-    octobre: 10,
-    novembre: 11,
-    decembre: 12,
-  };
+  // Convertit le nom du mois dans le nombre
+  function monthToNumber(month) {
+    if (/jan/i.test(month)) return 1;
+    if (/fev|feb/i.test(month)) return 2;
+    if (/mar|mär/i.test(month)) return 3;
+    if (/avr|apr/i.test(month)) return 4;
+    if (/mai/i.test(month)) return 5;
+    if (/jun/i.test(month)) return 6;
+    if (/jul/i.test(month)) return 7;
+    if (/aou|aug/i.test(month)) return 8;
+    if (/sep/i.test(month)) return 9;
+    if (/oct|okt/i.test(month)) return 10;
+    if (/nov/i.test(month)) return 11;
+    if (/dec|dez/i.test(month)) return 12;
+    return null;
+  }
+
+  // Si le mois selectionné est plus grand que le mois actuel, on ajoute un an
+  function estimateYear(currentMonth, selectedMonth) {
+    if (currentMonth > selectedMonth) return new Date().getFullYear() + 1;
+    return new Date().getFullYear();
+  }
 
   async function waitTimeout(timeout) {
     await new Promise((r) => setTimeout(r, timeout));
@@ -98,6 +106,48 @@
     $select.dispatchEvent(evt);
   }
 
+  /**
+   * @param {Element} $select
+   * @param {($option: Element) => boolean} matchOption
+   */
+  function selectOptionInSelect($select, matchOption) {
+    let optionFound = false;
+    const options = [];
+
+    for (const $option of $select.querySelectorAll("option")) {
+      options.push($option.textContent);
+      if (!matchOption($option)) continue;
+      selectOption($select, $option);
+      optionFound = true;
+      break;
+    }
+
+    return { options, optionFound };
+  }
+
+  /**
+   * @param {Element} $option
+   */
+  function testIsVaccinationMotive($option) {
+    // Voir
+    // https://www.doctolib.fr/pharmacie/savigneux/pharmacie-de-savigneux
+    // pour "Pharmacien".
+    return /vaccination|pharmacien|impfung/i.test($option.textContent);
+  }
+
+  /**
+   * @param {'fullServiceInjection' | 'firstInjectionOnly' | 'secondInjectionOnly' | 'thirdInjectionOnly'} injectionType
+   * @param {'modernaInjection' | 'pfizerInjection'} injectionVaccine
+   */
+  function testIsARNmMotive(injectionType, injectionVaccine) {
+    /**
+     * @param {Element} $option
+     */
+    return function ($option) {
+      return isARNmMotive($option.textContent, injectionType, injectionVaccine);
+    };
+  }
+
   // Parfois on doit envoyer un vrai click avec tous les événements.
   function fireFullClick(target) {
     ["mousedown", "mouseup", "click"].forEach((type) => {
@@ -130,53 +180,38 @@
 
   function isfullServiceInjection(text) {
     return (
-      !(
-        (text.startsWith("2") || text.startsWith("3")) // La deuxième et la troisième dose doivent être exclue (ex : https://www.doctolib.fr/vaccination-covid-19/lille/centre-de-vaccination-covid-19-centre-de-vaccination-covid-19-zenith-de-lille?highlight%5Bspeciality_ids%5D%5B%5D=5494)
-      ) &&
-      !text.includes("unique") && // On ne veut pas sélectionner l'injection unique mais la double injection (ex: https://www.doctolib.fr/vaccination-covid-19/lyon/vaccinationhcl?highlight%5Bspeciality_ids%5D%5B%5D=5494&pid=practice-163796)
-      !text.includes("sans rappel") // idem (ex: https://www.doctolib.fr/pharmacie/savigneux/pharmacie-de-savigneux, https://www.doctolib.fr/vaccination-covid-19/montbrison/centre-de-vaccination-covid-ville-de-montbrison?highlight%5Bspeciality_ids%5D%5B%5D=5494)
+      // doctolib.de search conditions
+      (text.includes("Erstimpfung") && text.includes("Zweittermin")) ||
+      // docotolib.fr search conditions
+      (text.startsWith("1") && text.includes("avec rappel"))
     );
   }
 
   function firstInjectionOnly(text) {
     return (
-      !(text.startsWith("2") || text.startsWith("3")) &&
-      (text.includes("unique") || text.includes("sans rappel"))
+      // doctolib.de search conditions
+      (text.includes("Erstimpfung") && !text.includes("Zweittermin")) ||
+      // doctolib.fr search conditions
+      (text.startsWith("1") && text.includes("sans rappel"))
     );
   }
 
   function secondInjectionOnly(text) {
-    return text.startsWith("2");
+    return (
+      // doctolib.de search conditions
+      text.startsWith("Zweitimpfung") ||
+      // doctolib.fr search conditions
+      text.startsWith("2")
+    );
   }
 
   function thirdInjectionOnly(text) {
-    return text.startsWith("3");
-  }
-
-  function isGeneralPopulationMotive(text) {
-    // Doit matcher :
-    // * "Patients de 18 à 50 ans"
-    // * "Je suis un particulier"
-    // * "Patients éligibles" (Centre Air France)
-    // * "Patients de moins 50 ans"
-    // * "Patients de moins de 50 ans"
-    // * "Grand public"
-    // * "Patient de plus de 18 ans" (Centre de Nogent-sur-Marne)
-    // * "Personnes de plus de 12 ans" (CHU de Caen)
-    // * "Personnes de 18 ans et plus" (GH Saint-Vincent de Strasbourg)
-    //
-    // Ne doit pas matcher :
-    // * "plus de 18 ans avec comorbidité"
-    // * "Patients de plus de 50 ans"
-    // * "Patient de 16 à 18 ans de très haute priorité"
-    //
-    // Oui, ça mériterait un test unitaire !
     return (
-      /(?:18 à|plus de (?:12|18)|18 ans et plus|particulier|éligibles|moins (?:de )?50|public)/i.test(
-        text
-      ) &&
-      !text.includes("comorb") &&
-      !text.includes("haute priorité")
+      // doctolib.de search conditions
+      text.startsWith("Auffrischungsimpfung") ||
+      // doctolib.fr search conditions
+      text.startsWith("3") ||
+      text.includes("dose de rappel")
     );
   }
 
@@ -185,6 +220,78 @@
       ".availabilities-slot:not([disabled])",
       ".booking-availabilities .booking-message.booking-message-warning"
     );
+  }
+
+  async function answerNoForPreviousPatient() {
+    let success = false;
+
+    const $questionPreviousPatient = await waitForSelector(
+      ".dl-new-patient-option",
+      undefined,
+      false,
+      true
+    );
+
+    if ($questionPreviousPatient) {
+      $button = document.querySelector("#all_visit_motives-1"); // On choisit "Non"
+
+      if ($button != null) {
+        fireFullClick($button);
+        success = true;
+      } else {
+        console.debug(
+          "N'a pas pu répondre 'Non' à la question de nouveau patient"
+        );
+      }
+    }
+
+    return success;
+  }
+
+  async function chooseSpeciality() {
+    let success = false;
+
+    const $bookingSpecialty = await waitForSelector(
+      "#booking_speciality",
+      undefined,
+      false,
+      true
+    );
+    if ($bookingSpecialty) {
+      const { options, optionFound } = selectOptionInSelect(
+        $bookingSpecialty,
+        testIsVaccinationMotive
+      );
+
+      if (optionFound) {
+        success = true;
+      } else {
+        throw new Error(
+          `Spécialité non trouvée. Spécialités disponibles : ${options.join(
+            ", "
+          )}`
+        );
+      }
+    }
+
+    return success;
+  }
+
+  async function choosePhysicalAppointement() {
+    let success = false;
+
+    const $teleHealth = await waitForSelector(
+      `input[name="telehealth"]`,
+      undefined,
+      false,
+      false
+    );
+    if ($teleHealth) {
+      fireFullClick($teleHealth);
+      success = true;
+    }
+
+    return success;
   }
 
   let running = false;
@@ -212,60 +319,19 @@
     try {
       let wait = false;
 
-      // Possible étape 1 : "Avez-vous déjà consulté un praticien de cet établissement ?" (non)
-      const $questionPreviousPatient = await waitForSelector(
-        ".dl-new-patient-option",
-        undefined,
-        true,
-        false
-      );
-      if ($questionPreviousPatient) {
-        let optionFound = false;
-        for (const $button of document.querySelectorAll(
-          ".dl-new-patient-option"
-        )) {
-          if ($button.textContent.includes("Non")) {
-            fireFullClick($button);
-            optionFound = true;
-            wait = true;
-            break;
-          }
-        }
-        if (!optionFound)
-          throw new Error(
-            "N'a pas pu répondre 'Non' à la question de nouveau patient"
-          );
-      }
-
-      // Possible étape 2 : spécialité (ex : https://www.doctolib.fr/centre-de-sante/paris/sos-medecins-paris?pid=practice-165129)
-      const $bookingSpecialty = await waitForSelector(
-        "#booking_speciality",
-        undefined,
-        wait,
-        wait
-      );
-      wait = false;
-      if ($bookingSpecialty) {
-        const options = [];
-        let optionFound = false;
-        for (const $option of $bookingSpecialty.querySelectorAll("option")) {
-          options.push($option.textContent);
-          // Voir
-          // https://www.doctolib.fr/pharmacie/savigneux/pharmacie-de-savigneux
-          // pour "Pharmacien".
-          if (!/vaccination|pharmacien/i.test($option.textContent)) continue;
-          selectOption($bookingSpecialty, $option);
-          optionFound = true;
-          wait = true;
-          break;
-        }
-
-        if (!optionFound)
-          throw new Error(
-            `Spécialité non trouvée. Spécialités disponibles : ${options.join(
-              ", "
-            )}`
-          );
+      // Suite d'étapes possibles :
+      // 1. On répond à la question si on est un nouveau patient
+      // 2. (Optionel) On choisit un RDV sur place et non vidéo (très courant sur doctolib.de) -> https://www.doctolib.de/orthopadie/berlin/detlef-kaleth
+      // 3. On choisit la spécialité (vaccination covid-19)
+      // Ou alors:
+      // 1. On choisit la specialité (vaccination covid-19)
+      // 2. On répond à la question si on est un nouveau patient
+      if (await answerNoForPreviousPatient()) {
+        await choosePhysicalAppointement();
+        await chooseSpeciality();
+      } else {
+        await chooseSpeciality();
+        await answerNoForPreviousPatient();
       }
 
       // Possible étape 3 : catégorie de motif
@@ -277,33 +343,25 @@
       );
       wait = false;
       if ($bookingCategoryMotive) {
-        const options = [];
-        let optionFound = false;
-        for (const $option of $bookingCategoryMotive.querySelectorAll(
-          "option"
-        )) {
-          options.push($option.textContent);
-          if (
-            !isARNmMotive(
-              $option.textContent,
-              injectionType,
-              injectionVaccine
-            ) &&
-            !isGeneralPopulationMotive($option.textContent)
-          )
-            continue;
-          selectOption($bookingCategoryMotive, $option);
-          optionFound = true;
-          wait = true;
-          break;
-        }
+        const vaccinationMotive = selectOptionInSelect(
+          $bookingCategoryMotive,
+          testIsVaccinationMotive
+        );
 
-        if (!optionFound)
+        const arnMotive = selectOptionInSelect(
+          $bookingCategoryMotive,
+          testIsARNmMotive(injectionType, injectionVaccine)
+        );
+
+        if (!vaccinationMotive.optionFound && !arnMotive.optionFound) {
           throw new Error(
-            `Catégorie de motif non trouvé. Motifs disponibles : ${options.join(
+            `Catégorie de motif non trouvé. Motifs disponibles : ${vaccinationMotive.options.join(
               ", "
             )}`
           );
+        } else {
+          wait = true;
+        }
       }
 
       // Possible étape 4 : motif de consultation
@@ -314,24 +372,13 @@
         wait
       );
       if ($bookingMotive) {
-        let optionFound = false;
-        for (const $option of $bookingMotive.querySelectorAll("option")) {
-          // On ne s'occupe que de Pfizer et Moderna
-          // Pour le reste pas besoin de l'extension, de nombreux RDV sont disponibles
-          if (
-            !isARNmMotive($option.textContent, injectionType, injectionVaccine)
-          )
-            continue;
+        const arnMotive = selectOptionInSelect(
+          $bookingMotive,
+          testIsARNmMotive(injectionType, injectionVaccine)
+        );
 
-          selectOption($bookingMotive, $option);
-          optionFound = true;
-
-          // Il peut y avoir des places pour Moderna mais pas pour Pfizer, ou inversement, il faut tester les deux
-          slot = await getAvailableSlot();
-          if (slot !== null) break;
-        }
-
-        if (!optionFound) throw new Error("Injection ARNm non disponible 1");
+        if (!arnMotive.optionFound)
+          throw new Error("Injection ARNm non disponible 1");
       } else {
         // On a peut-être directement la boite "pas de créneaux possibles"
         // Cas où il n'y a qu'un choix
@@ -345,8 +392,9 @@
           )
         )
           throw new Error("Injection ARNm non disponible 2");
-        slot = await getAvailableSlot();
       }
+
+      slot = await getAvailableSlot();
 
       if (slot === null) {
         const $nextAvailabilities = await waitForSelector(
@@ -359,22 +407,32 @@
         if (slot === null) throw new Error("Aucun créneau disponible 3");
       }
 
-      // formats :
+      // formats france:
       // lun. 17 mai 08:54
       // ven. 13 août 09:10
       // jeu. 29 juil. 13:25
+
+      // formats allemagne:
+      // Do., 3. Feb., 08:25
+      slot.title = slot.title.replace(/,/giu, "");
+
       const parts = slot.title.match(
-        /([0-9]+) [\p{Letter}]+\.? ([0-9]+:[0-9]+)/gu
+        /([0-9]+)\.? ([\p{Letter}]+)\.? ([0-9]+:[0-9]+)/u
       );
       if (!parts) {
         throw new Error(
           `Impossible de cliquer sur le slot avec le titre ${slot.title}`
         );
       }
+
+      const currentMonth = new Date().getMonth();
+      const selectedMonth = monthToNumber(parts[2]);
+      const selectedDay = parseInt(parts[1]);
+      const selectedYear = estimateYear(currentMonth, selectedMonth);
+      const selectedTime = parts[3];
+
       const date = new Date(
-        `${MONTHS[parts[2]]} ${parts[1]} ${new Date().getFullYear()} ${
-          parts[3]
-        }`
+        `${selectedMonth} ${selectedDay} ${selectedYear} ${selectedTime}`
       );
 
       const tomorrow = new Date();
