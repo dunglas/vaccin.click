@@ -190,6 +190,6 @@ class VCLocalStorage {
     });
 
     browser.storage.local.set({ locations: this.locations });
-    this.log("Suppression des vieux status");
+    this.log(browser.i18n.getMessage("clearOutdatedLocations"));
   }
 }

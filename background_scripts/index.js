@@ -3,10 +3,14 @@
   const appStatus = new AppStatus();
   const vCLStorage = new VCLocalStorage();
   const jobs = new JobQueue(10000, 45000, (job) => {
-    vCLStorage.setLocationStatus(job, LocationCheckStatus.WORKING, "En cours");
+    vCLStorage.setLocationStatus(
+      job,
+      LocationCheckStatus.WORKING,
+      browser.i18n.getMessage("locationCheckInProgress")
+    );
     vCLStorage.locationLog(
       appStatus.getLocation(job),
-      "Début de la vérification"
+      browser.i18n.getMessage("locationCheckStarted")
     );
 
     // Prévoir le job suivant
@@ -44,7 +48,10 @@
           LocationCheckStatus.ERROR,
           data.error.message
         );
-        vCLStorage.locationLog(data.location, "Echec - " + data.error.message);
+        vCLStorage.locationLog(
+          data.location,
+          browser.i18n.getMessage("fail") + " - " + data.error.message
+        );
         break;
 
       case "found":
@@ -53,7 +60,10 @@
           LocationCheckStatus.SUCCESS,
           "Créneau trouvé"
         );
-        vCLStorage.locationLog(data.location, "Succès - Créneau trouvé");
+        vCLStorage.locationLog(
+          data.location,
+          browser.i18n.getMessage("successSlotFound")
+        );
 
         const tabs = await browser.tabs.query({ url: data.url });
 
@@ -65,8 +75,11 @@
         await browser.notifications.create(data.url, {
           type: "basic",
           iconUrl: browser.runtime.getURL("icons/vaccine-color.svg"),
-          title: "Un créneau de vaccination est disponible !",
-          message: `Cliquez ici pour finaliser la réservation dans le centre "${data.location.name}"`,
+          title: browser.i18n.getMessage("notificationTitleSlotFound"),
+          message: browser.i18n.getMessage(
+            "notificationBodySlotFound",
+            data.location.name
+          ),
           priority: 2,
         });
         break;
@@ -87,8 +100,11 @@
         await browser.notifications.create({
           type: "basic",
           iconUrl: browser.runtime.getURL("icons/vaccine-color.svg"),
-          title: "Votre créneau de vaccination a été réservé !",
-          message: `Vous avez rendez-vous au centre "${data.location.name}".`,
+          title: browser.i18n.getMessage("notificationTitleSlotBooked"),
+          message: browser.i18n.getMessage(
+            "notificationBodySlotBooked",
+            data.location.name
+          ),
         });
         break;
     }
@@ -99,7 +115,7 @@
 
   // Executer les jobs
   vCLStorage.log(
-    `Démarrage de l'extension avec ${jobs.jobs.length} centres à traiter`
+    browser.i18n.getMessage("extensionStartMessage", jobs.jobs.length)
   );
   jobs.start();
   vCLStorage.startCheckLocations();

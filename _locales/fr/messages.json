@@ -1,0 +1,247 @@
+{
+  "extensionName": {
+    "message": "vaccin.click",
+    "description": "Nom de l'extension."
+  },
+  "extensionDescription": {
+    "message": "Trouvez et réservez automatiquement votre créneau de vaccination COVID-19.",
+    "description": "Description de l'extension."
+  },
+  "extensionShortDescription": {
+    "message": "mon vaccin COVID-19 en 1 click !",
+    "description": "Description courte de l'extension."
+  },
+  "resumeScan": {
+    "message": "Reprendre la surveillance des RDV",
+    "description": "Text du bouton pour reprendre la surveillance des RDV."
+  },
+  "pauseScan": {
+    "message": "Mettre en pause la surveillance des RDV",
+    "description": "Text du bouton pour mettre en pause la surveillance des RDV."
+  },
+  "firstAndSecondInjection": {
+    "message": "Première et deuxième dose",
+    "description": "Text qui décrit une première injection avec une dose de rappel."
+  },
+  "firstInjection": {
+    "message": "Première dose (sans rappel)",
+    "description": "Text qui décrit une première injection sans dose de rappel."
+  },
+  "secondInjection": {
+    "message": "Deuxième dose",
+    "description": "Text qui décrit une deuxième injection sans dose de rappel."
+  },
+  "additionalInjection": {
+    "message": "Troisième dose",
+    "description": "Text qui décrit une injection de rappel au dela de la deuxième dose."
+  },
+  "modernaVaccine": {
+    "message": "Vaccin Moderna",
+    "description": "Text qui décrit un vaccin Moderna."
+  },
+  "pfizerVaccine": {
+    "message": "Vaccin Pfizer",
+    "description": "Text qui décrit un vaccin Pfizer."
+  },
+  "disableAutoBook": {
+    "message": "Ouvrir un onglet lorsqu'une réservation est disponible",
+    "description": "Text qui décrit la fonctionalité lorsque la réservation automatique est désactivé."
+  },
+  "enableAutoBook": {
+    "message": "Réserver automatiquement (vous devez être <a href=\"https://www.doctolib.fr/sessions/new\" target=\"_blank\">connecté à Doctolib</a>)",
+    "description": "Text qui décrit la fonctionalité lorsque la réservation automatique est activé."
+  },
+  "myVaccinationCenters": {
+    "message": "Mes centres de vaccination en réservation automatique",
+    "description": "Text qui décrit la liste des centres de vaccination choisis."
+  },
+  "findVaccinationCenters": {
+    "message": "<a href=\"https://www.doctolib.fr/vaccination-covid-19\" target=\"_blank\">Trouver des centres de vaccination sur Doctolib</a>",
+    "description": "Text qui décrit la fonctionalité de recherche de centre de vaccination."
+  },
+  "shareOnTwitter": {
+    "message": "Partager vaccin.click sur Twitter",
+    "description": "Text qui décrit la fonctionalité de partage sur Twitter."
+  },
+  "advancedConfiguration": {
+    "message": "Options avancées",
+    "description": "Text qui décrit la fonctionalité de configuration avancée."
+  },
+  "resetEverything": {
+    "message": "Remise à zéro (effacera toutes les données)",
+    "description": "Text qui décrit la fonctionalité de réinitialisation."
+  },
+  "activityLog": {
+    "message": "Journal d'activité",
+    "description": "Text qui décrit la fonctionalité de journal d'activité."
+  },
+  "addToMyList": {
+    "message": "Ajouter à ma liste",
+    "description": "Text qui décrit la fonctionalité d'ajout à ma liste."
+  },
+  "removeFromMyList": {
+    "message": "Retirer de ma liste",
+    "description": "Text qui décrit la fonctionalité de suppression de ma liste."
+  },
+  "alertWatchlistSizeExceeded": {
+    "message": "Pour ne pas trop charger les serveurs de Doctolib, il n'est pas possible de surveiller plus de 24 centres en même temps. Supprimez des centres de votre liste pour en ajouter d'autres.",
+    "description": "Alerte quand trop de centres de vaccination sont surveillés."
+  },
+  "clearOutdatedLocations": {
+    "message": "Suppression des vieux status",
+    "description": "Message log quand on supprime les vieux status de recherche."
+  },
+  "selectorTimeout": {
+    "message": "Le sélecteur \"$SELECTOR$\" n'a pas été trouvé après 5 secondes. Ce n'est pas forcément un bug.",
+    "description": "Message log quand le temps d'attente pour un sélecteur est dépassé.",
+    "placeholders": {
+      "selector": {
+        "content": "$1",
+        "example": ".some-css-class"
+      }
+    }
+  },
+  "waitForElementToBeRemovedNoElement": {
+    "message": "L'élement demandé pour waitForElementToBeRemoved était déjà absent avant de commencer ! L'élément doit exister.",
+    "description": "Message log quand le script attend pour supprimer un élément qui n'existe pas."
+  },
+  "waitForElementToBeRemovedTimeout": {
+    "message": "L'élement demandé n'a pas disparu au bout de 5 secondes",
+    "description": "Message log quand un élément n'a pas disparu au bout de 5 secondes."
+  },
+  "answerNoForPreviousPatientButtonNotFound": {
+    "message": "N'a pas pu répondre 'Non' à la question de nouveau patient",
+    "description": "Message log quand le script ne peut pas automatiquement répondre 'Non' à la question de nouveau patient."
+  },
+  "chooseSpecialityOptionNotFound": {
+    "message": "Spécialité non trouvée. Spécialités disponibles : $SPECIALITIES$",
+    "description": "Message log quand le script ne sait pas choisir une spécialité.",
+    "placeholders": {
+      "specialities": {
+        "content": "$1",
+        "example": "Cardiologue, Dentiste, Médecin généraliste, Médecin spécialiste, Pédiatre, Psychiatre, Urologue"
+      }
+    }
+  },
+  "checkAvailabilityStarted": {
+    "message": "Vérification de $URL$",
+    "description": "Message log quand le script commence la vérification d'un centre de vaccination.",
+    "placeholders": {
+      "url": {
+        "content": "$1",
+        "example": "https://www.doctolib.fr/vaccination-covid-19/centre-vaccination-covid-19-paris-75-9-avenue-de-la-reunion-75016"
+      }
+    }
+  },
+  "chooseMotiveCategoryOptionNotFound": {
+    "message": "Catégorie de motif non trouvé. Motifs disponibles : $CATEGORIES$",
+    "description": "Message log quand le script ne sait pas choisir une catégorie de motif.",
+    "placeholders": {
+      "categories": {
+        "content": "$1",
+        "example": "Consultation, Examen, Hospitalisation, Traitement"
+      }
+    }
+  },
+  "injectionNotFound": {
+    "message": "Injection ARNm non disponible $NUMBER$",
+    "description": "Message log quand le script ne trouve pas d'injection ARNm.",
+    "placeholders": {
+      "number": {
+        "content": "$1",
+        "example": "1"
+      }
+    }
+  },
+  "noSlot": {
+    "message": "Aucun créneau disponible $NUMBER$",
+    "description": "Message log quand le script ne trouve pas de slot disponible.",
+    "placeholders": {
+      "number": {
+        "content": "$1",
+        "example": "1"
+      }
+    }
+  },
+  "slotDateFormatNotFound": {
+    "message": "Impossible de cliquer sur le slot avec le titre $TITLE$",
+    "description": "Message log quand le script ne peut pas parser une date lors la selection d'un slot.",
+    "placeholders": {
+      "title": {
+        "content": "$1",
+        "example": "Mardi, 14 juin 2020"
+      }
+    }
+  },
+  "noSecondSlot": {
+    "message": "Aucun créneau disponible pour le second rendez-vous $NUMBER$",
+    "description": "Message log quand le script ne trouve pas de slot disponible pour le second rendez-vous.",
+    "placeholders": {
+      "number": {
+        "content": "$1",
+        "example": "1"
+      }
+    }
+  },
+  "popupConfirmationNotFound": {
+    "message": "Impossible de trouver le bouton pour confirmer le dialogue 'à lire'.",
+    "description": "Message log quand le script ne peut pas automatiquement valider le dialogue 'à lire'."
+  },
+  "manualConfirmationRequired": {
+    "message": "Confirmation manuelle du RDV nécessaire",
+    "description": "Message log quand le script ne peut pas terminer la réservation automatique."
+  },
+  "locationCheckInProgress": {
+    "message": "En cours",
+    "description": "Message log quand le script est en cours de vérification d'un centre de vaccination."
+  },
+  "locationCheckStarted": {
+    "message": "Début de la vérification",
+    "description": "Message log quand le script commence la vérification d'un centre de vaccination."
+  },
+  "fail": {
+    "message": "Echec"
+  },
+  "successSlotFound": {
+    "message": "Succès - Créneau trouvé",
+    "description": "Message log quand le script trouve un slot disponible."
+  },
+  "notificationTitleSlotFound": {
+    "message": "Un créneau de vaccination est disponible !",
+    "description": "Titre de la notification quand le script trouve un slot disponible."
+  },
+  "notificationBodySlotFound": {
+    "message": "Cliquez ici pour finaliser la réservation dans le centre \"$VACCINATIONCENTER$\"",
+    "description": "Message de la notification quand le script trouve un slot disponible.",
+    "placeholders": {
+      "vaccinationcenter": {
+        "content": "$1",
+        "example": "Centre de vaccination de la Réunion"
+      }
+    }
+  },
+  "notificationTitleSlotBooked": {
+    "message": "Votre créneau de vaccination a été réservé !",
+    "description": "Titre de la notification quand le script réserve un slot."
+  },
+  "notificationBodySlotBooked": {
+    "message": "Vous avez rendez-vous au centre \"$VACCINATIONCENTER$\".",
+    "description": "Message de la notification quand le script réserve un slot.",
+    "placeholders": {
+      "vaccinationcenter": {
+        "content": "$1",
+        "example": "Centre de vaccination de la Réunion"
+      }
+    }
+  },
+  "extensionStartMessage": {
+    "message": "Démarrage de l'extension avec $NUMBER$ centres à traiter",
+    "description": "Message log quand le script démarre l'extension.",
+    "placeholders": {
+      "number": {
+        "content": "$1",
+        "example": "1"
+      }
+    }
+  }
+}

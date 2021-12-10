@@ -1,0 +1,247 @@
+{
+  "extensionName": {
+    "message": "vaccin.click",
+    "description": "Name der Erweiterung."
+  },
+  "extensionDescription": {
+    "message": "Automatisch einen Corona-Impftermin finden und reservieren.",
+    "description": "Beschreibung der Erweiterung."
+  },
+  "extensionShortDescription": {
+    "message": "meine Coronaimpfung in einem Klick !",
+    "description": "Kurzbeschreibung der Erweiterung."
+  },
+  "resumeScan": {
+    "message": "Terminsuche wiederaufnehmen",
+    "description": "Text um die Terminsuche fortzusetzen."
+  },
+  "pauseScan": {
+    "message": "Terminsuche pausieren",
+    "description": "Text um die Terminsuche zu pausieren."
+  },
+  "firstAndSecondInjection": {
+    "message": "Erst-und Zweitimpfung",
+    "description": "Text der eine kombinierte Erst-und Zweitimpfung definiert."
+  },
+  "firstInjection": {
+    "message": "Einzelimpfung",
+    "description": "Text der eine einzelne Impfung beschreibt."
+  },
+  "secondInjection": {
+    "message": "Zweitimpfung",
+    "description": "Text der eine zweite Impfung beschreibt."
+  },
+  "additionalInjection": {
+    "message": "Auffrischimpfung",
+    "description": "Text der alle Auffrischimpfungen beschreibt."
+  },
+  "modernaVaccine": {
+    "message": "Moderna Impfstoff",
+    "description": "Beschreibung des Moderna Impfstoffes."
+  },
+  "pfizerVaccine": {
+    "message": "Pfizer-BioNTech Impfstoff",
+    "description": "Beschreibung des Pfizer Impfstoffes."
+  },
+  "disableAutoBook": {
+    "message": "Einen Tab öffnen sobald eine Reservierung verfügbar ist.",
+    "description": "Beschreibung der Funktionalität wenn die automatische Reservierung deaktiviert ist."
+  },
+  "enableAutoBook": {
+    "message": "Automatisch reservieren (hierfür müssen Sie auf <a href=\"https://www.doctolib.de/sessions/new\" target=\"_blank\">Doctolib eingeloggt sein</a>)",
+    "description": "Beschreibung der Funktionalität wenn die automatische Reservierung aktiviert ist."
+  },
+  "myVaccinationCenters": {
+    "message": "Meine Impfzentren Liste",
+    "description": "Überschrift der Liste aller ausgewählten Impfzentren."
+  },
+  "findVaccinationCenters": {
+    "message": "<a href=\"https://www.doctolib.de/impfung-covid-19-corona\" target=\"_blank\">Impfzentren oder Ärzte auf Doctolib finden</a>",
+    "description": "Überschrift der Suchfunktion auf Doctolib."
+  },
+  "shareOnTwitter": {
+    "message": "vaccin.click auf Twitter teilen",
+    "description": "Twitter Share Beschreibung."
+  },
+  "advancedConfiguration": {
+    "message": "Erweiterte Einstellungen",
+    "description": "Überschrift der Erweiterten Einstellungen."
+  },
+  "resetEverything": {
+    "message": "Zurücksetzen (löscht alle Daten)",
+    "description": "Beschreibung was beim zurücksetzen passiert."
+  },
+  "activityLog": {
+    "message": "Aktivitätsprotokoll",
+    "description": "Text der das Aktivitätsprotokoll beschreibt."
+  },
+  "addToMyList": {
+    "message": "Zur Liste hinzufügen",
+    "description": "Text des Buttons zum Hinzufügen zur Liste."
+  },
+  "removeFromMyList": {
+    "message": "Von der Liste entfernen",
+    "description": "Text des Buttons zum Entfernen von der Liste."
+  },
+  "alertWatchlistSizeExceeded": {
+    "message": "Um die Server von Doctolib nicht zu Überlasten ist es nicht möglich Termine in mehr als 24 Impfzentren gleichzeitig zu suchen. Löschen Sie zuerst Einträge von Ihrer Liste um weitere hinzuzufügen.",
+    "description": "Alert wenn zu viele Einträge auf der Watchlist sind."
+  },
+  "clearOutdatedLocations": {
+    "message": "Lösche veraltete Einträge",
+    "description": "Log Nachricht wenn ein Cleanup stattfindet."
+  },
+  "selectorTimeout": {
+    "message": "Der Selektor \"$SELECTOR$\" konnte nach 5 Sekunden nicht gefunden werden. Das ist nicht immer ein Bug.",
+    "description": "Log Nachricht wenn ein Selektor nicht gefunden werden konnte.",
+    "placeholders": {
+      "selector": {
+        "content": "$1",
+        "example": ".some-css-class"
+      }
+    }
+  },
+  "waitForElementToBeRemovedNoElement": {
+    "message": "Des angefragte Element in waitForElementToBeRemoved existierte nicht vor dem Funktionsaufruf. Das Element muss existieren.",
+    "description": "Log Nachricht wenn ein Element nicht entfernt werden kann."
+  },
+  "waitForElementToBeRemovedTimeout": {
+    "message": "Das angefragt Element konnte auch nach 5 Sekunden nicht entfernt werden.",
+    "description": "Log Nachricht wenn ein Element auch nach Timeout nicht gelöscht werden kann."
+  },
+  "answerNoForPreviousPatientButtonNotFound": {
+    "message": "Konnte die Frage neuer Patient nicht mit 'Nein' beantworten.",
+    "description": "Log Nachricht wenn die Frage ob der Patient die Praxis bereits aufgesucht hat nicht mit 'Nein' beantwortet werden konnte."
+  },
+  "chooseSpecialityOptionNotFound": {
+    "message": "Keine Übereinstimmung im Fachbereich gefunden. Verfügbare Fachbereiche : $SPECIALITIES$",
+    "description": "Log Nachricht wenn das Skript keine Übereinstimmung im Fachbereich gefunden hat.",
+    "placeholders": {
+      "specialities": {
+        "content": "$1",
+        "example": "Cardiologue, Dentiste, Médecin généraliste, Médecin spécialiste, Pédiatre, Psychiatre, Urologue"
+      }
+    }
+  },
+  "checkAvailabilityStarted": {
+    "message": "Prüfe $URL$",
+    "description": "Log Nachricht wenn das Skript die Prüfung der Verfügbarkeit von einem Testzentrum startet",
+    "placeholders": {
+      "url": {
+        "content": "$1",
+        "example": "https://www.doctolib.fr/vaccination-covid-19/centre-vaccination-covid-19-paris-75-9-avenue-de-la-reunion-75016"
+      }
+    }
+  },
+  "chooseMotiveCategoryOptionNotFound": {
+    "message": "Keine Übereinstimmung in der Besuchskategorie gefunden. Verfügbare Optionen : $CATEGORIES$",
+    "description": "Log Nachricht wenn das Skript keine Übereinstimmung in der Besuchskategorie gefunden hat.",
+    "placeholders": {
+      "categories": {
+        "content": "$1",
+        "example": "Consultation, Examen, Hospitalisation, Traitement"
+      }
+    }
+  },
+  "injectionNotFound": {
+    "message": "mRNA Impfstoff nicht verfügbar $NUMBER$",
+    "description": "Log Nachricht wenn kein mRNA Impfstoff verfügbar ist.",
+    "placeholders": {
+      "number": {
+        "content": "$1",
+        "example": "1"
+      }
+    }
+  },
+  "noSlot": {
+    "message": "Kein Termin verfügbar $NUMBER$",
+    "description": "Log Nachricht wenn kein Termin verfügbar ist.",
+    "placeholders": {
+      "number": {
+        "content": "$1",
+        "example": "1"
+      }
+    }
+  },
+  "slotDateFormatNotFound": {
+    "message": "Termin kann nicht ausgewählt werden \"$TITLE$\"",
+    "description": "Log Nachricht wenn ein Termin ein nicht parsbares Datums Format hat.",
+    "placeholders": {
+      "title": {
+        "content": "$1",
+        "example": "Mardi, 14 juin 2020"
+      }
+    }
+  },
+  "noSecondSlot": {
+    "message": "Kein verfügbarer Termin für die Zweitimpfung $NUMBER$",
+    "description": "Log Nachricht wenn ein Erst- aber kein Zweitermin verfügbar ist.",
+    "placeholders": {
+      "number": {
+        "content": "$1",
+        "example": "1"
+      }
+    }
+  },
+  "popupConfirmationNotFound": {
+    "message": "Kann den Button 'Ich habe den Hinweis gelesen und akzeptiert' nicht finden.",
+    "description": "Log Nachricht wenn das Skript nicht automatisch den Hinweisen zustimmen kann."
+  },
+  "manualConfirmationRequired": {
+    "message": "Manuelle validierung des Termins notwendig",
+    "description": "Log Nachricht wenn das Skript die Reservierung nicht automatisch abschließen kann, und manuell bestätigt werden muss."
+  },
+  "locationCheckInProgress": {
+    "message": "Suche läuft",
+    "description": "Log Nachricht wenn das Skript eine Testzentrum Suche laufen lässt."
+  },
+  "locationCheckStarted": {
+    "message": "Start der Überprüfung",
+    "description": "Log Nachricht wenn das Skript eine Testzentrum Suche startet."
+  },
+  "fail": {
+    "message": "Fehlgeschlagen"
+  },
+  "successSlotFound": {
+    "message": "Termin gefunden",
+    "description": "Log Nachricht wenn erfolgreich ein Termin gefunden wurde."
+  },
+  "notificationTitleSlotFound": {
+    "message": "Ein Impftermin ist verfügbar!",
+    "description": "Notification Titel wenn ein Impftermin verfügbar ist."
+  },
+  "notificationBodySlotFound": {
+    "message": "Klicken Sie hier um Ihre Reservierung bei \"$VACCINATIONCENTER$\" abzuschließen.",
+    "description": "Notification Nachricht wenn ein Impftermin verfügbar ist.",
+    "placeholders": {
+      "vaccinationcenter": {
+        "content": "$1",
+        "example": "Centre de vaccination de la Réunion"
+      }
+    }
+  },
+  "notificationTitleSlotBooked": {
+    "message": "Ihr Impftermin wurde gebucht!",
+    "description": "Notification Titel wenn ein Impftermin gebucht wurde."
+  },
+  "notificationBodySlotBooked": {
+    "message": "Sie haben einen Termin bei \"$VACCINATIONCENTER$\".",
+    "description": "Notification Nachricht wenn ein Impftermin gebucht wurde.",
+    "placeholders": {
+      "vaccinationcenter": {
+        "content": "$1",
+        "example": "Centre de vaccination de la Réunion"
+      }
+    }
+  },
+  "extensionStartMessage": {
+    "message": "Starte Extension mit $NUMBER$ Testzentren",
+    "description": "Log Nachricht wenn die Extension startet",
+    "placeholders": {
+      "number": {
+        "content": "$1",
+        "example": "1"
+      }
+    }
+  }
+}
