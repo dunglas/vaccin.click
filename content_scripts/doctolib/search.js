@@ -8,8 +8,12 @@
   const MSG_DELETE = " Retirer de ma liste";
   const ICON_URL = browser.runtime.getURL("icons/vaccine-color.svg");
   const MAX_LOCATIONS = 24; // Limite de storage.sync
+  let observerList = [];
 
   function addButtons(locations) {
+    observerList.forEach((observer) => observer.disconnect());
+    observerList = [];
+
     document
       .querySelectorAll(".div-vaccin-click")
       .forEach(($el) => $el.remove());
@@ -61,8 +65,8 @@
       .querySelector(".dl-search-result-presentation > div:last-child")
       .insertAdjacentElement("beforebegin", $div);
 
-    // Callback function to execute when mutations on the href attribute are observed
-    const callback = (mutationsList, observer) => {
+    // Create an observer instance that watches for changes in the href attribute
+    const observer = new MutationObserver((mutationsList, observer) => {
       for (const mutation of mutationsList) {
         if (
           mutation.type === "attributes" &&
@@ -74,10 +78,9 @@
           addButton($el, locations);
         }
       }
-    };
+    });
 
-    // Create an observer instance linked to the callback function
-    const observer = new MutationObserver(callback);
+    observerList.push(observer);
 
     // Start observing the a element for href changes
     observer.observe($a, {
