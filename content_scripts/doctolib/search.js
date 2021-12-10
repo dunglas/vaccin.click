@@ -60,6 +60,31 @@
     $el
       .querySelector(".dl-search-result-presentation > div:last-child")
       .insertAdjacentElement("beforebegin", $div);
+
+    // Callback function to execute when mutations on the href attribute are observed
+    const callback = (mutationsList, observer) => {
+      for (const mutation of mutationsList) {
+        if (
+          mutation.type === "attributes" &&
+          mutation.attributeName === "href"
+        ) {
+          // Stop observing, we are re-rendering the button here
+          observer.disconnect();
+          $btn.remove();
+          addButton($el, locations);
+        }
+      }
+    };
+
+    // Create an observer instance linked to the callback function
+    const observer = new MutationObserver(callback);
+
+    // Start observing the a element for href changes
+    observer.observe($a, {
+      attributes: true,
+      childList: false,
+      subtree: false,
+    });
   }
 
   async function toggleLocation(locations) {
