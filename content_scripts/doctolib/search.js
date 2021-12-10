@@ -8,8 +8,12 @@
   const MSG_DELETE = " Retirer de ma liste";
   const ICON_URL = browser.runtime.getURL("icons/vaccine-color.svg");
   const MAX_LOCATIONS = 24; // Limite de storage.sync
+  let observerList = [];
 
   function addButtons(locations) {
+    observerList.forEach((observer) => observer.disconnect());
+    observerList = [];
+
     document
       .querySelectorAll(".div-vaccin-click")
       .forEach(($el) => $el.remove());
@@ -60,6 +64,30 @@
     $el
       .querySelector(".dl-search-result-presentation > div:last-child")
       .insertAdjacentElement("beforebegin", $div);
+
+    // Create an observer instance that watches for changes in the href attribute
+    const observer = new MutationObserver((mutationsList, observer) => {
+      for (const mutation of mutationsList) {
+        if (
+          mutation.type === "attributes" &&
+          mutation.attributeName === "href"
+        ) {
+          // Stop observing, we are re-rendering the button here
+          observer.disconnect();
+          $btn.remove();
+          addButton($el, locations);
+        }
+      }
+    });
+
+    observerList.push(observer);
+
+    // Start observing the a element for href changes
+    observer.observe($a, {
+      attributes: true,
+      childList: false,
+      subtree: false,
+    });
   }
 
   async function toggleLocation(locations) {
