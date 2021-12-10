@@ -392,8 +392,9 @@
           )
         )
           throw new Error("Injection ARNm non disponible 2");
-        slot = await getAvailableSlot();
       }
+
+      slot = await getAvailableSlot();
 
       if (slot === null) {
         const $nextAvailabilities = await waitForSelector(
