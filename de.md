@@ -1,3 +1,9 @@
+---
+layout: default
+lang: de
+permalink: /de
+---
+
 ## Automatisiert einen Corona-Impftermin finden und reservieren
 
 Die Corona-Impfung ist mittlweile für alle Personen ab 18 Jahren freigegeben, aber es ist nicht immer einfach einen Termin zu finden. Wenn Sie es satt haben permanent die Impfzentren oder die [Doctolib zu aktualisieren](https://twitter.com/marine_roussill/status/1393185768219287552) um einen Termin zu finden, dann ist diese [Firefox](https://www.mozilla.org/fr/firefox/new/) Extension genau das richtige für Sie!

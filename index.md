@@ -1,6 +1,10 @@
 ---
 layout: default
+lang: fr
+permalink: /
 ---
+
+## Trouvez et réservez automatiquement votre créneau de vaccination COVID-19
 
 **_vaccin.click_ supporte désormais la 3ème dose !**
 

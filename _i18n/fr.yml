@@ -1,8 +1,0 @@
-languages: Langues
-global:
-  french: Français
-  german: Deutsch
-description: Une extension Firefox pour trouver et réserver automatiquement votre créneau de vaccination COVID-19.
-sidebar:
-  see_source: Voir le code source
-  credits: Un projet par <a href="https://twitter.com/dunglas">Kévin Dunglas</a> et Anne Lesouef
