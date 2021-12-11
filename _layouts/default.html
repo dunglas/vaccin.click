@@ -54,10 +54,10 @@
         <p>{{ site.t[page.lang].languages }}</p>
         <ul>
           <li>
-            <a href="/" >{{ site.global.french }}</a>
+            <a href="{{ "/" | relative_url }}" >{{ site.global.french }}</a>
           </li>
           <li>
-            <a href="/de" >{{ site.global.german }}</a>
+            <a href="{{ "/de" | relative_url }}" >{{ site.global.german }}</a>
           </li>
         </ul>
       </footer>
