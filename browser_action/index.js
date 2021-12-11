@@ -8,6 +8,17 @@
 
   // Dom manipulation
 
+  // Translate the text of all html elements with the attribute "data-i18n"
+  function translateDom() {
+    const elements = document.querySelectorAll("[data-i18n]");
+
+    elements.forEach(function (element) {
+      const key = element.getAttribute("data-i18n");
+      const value = browser.i18n.getMessage(key);
+      element.innerHTML = value;
+    });
+  }
+
   /**
    * @param {string[]} logLines
    */
@@ -153,6 +164,7 @@
   };
 
   // Affichage
+  translateDom();
   displayStopStart(appStatus.getStopped());
   displayAutoBook(appStatus.getAutoBook());
   displayInjectionType(appStatus.getInjectionType());

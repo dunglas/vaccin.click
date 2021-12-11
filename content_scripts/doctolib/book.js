@@ -41,9 +41,7 @@
   ) {
     // Timeout après ~6 secondes
     if (i === 20) {
-      console.log(
-        `Le sélecteur "${selector}" n'a pas été trouvé après 5 secondes. Ce n'est pas forcément un bug.`
-      );
+      console.log(browser.i18n.getMessage("selectorTimeout", selector));
       return null;
     }
     i++;
@@ -79,7 +77,7 @@
 
     if (!element) {
       throw new Error(
-        "L'élement demandé pour waitForElementToBeRemoved était déjà absent avant de commencer ! L'élément doit exister."
+        browser.i18n.getMessage("waitForElementToBeRemovedNoElement")
       );
     }
 
@@ -91,7 +89,7 @@
     while (parent.contains(element)) {
       if (++i > 20) {
         throw new Error(
-          "L'élement demandé n'a pas disparu au bout de 5 secondes"
+          browser.i18n.getMessage("waitForElementToBeRemovedTimeout")
         );
       }
       await waitTimeout(300);
@@ -240,7 +238,7 @@
         success = true;
       } else {
         console.debug(
-          "N'a pas pu répondre 'Non' à la question de nouveau patient"
+          browser.i18n.getMessage("answerNoForPreviousPatientButtonNotFound")
         );
       }
     }
@@ -267,9 +265,10 @@
         success = true;
       } else {
         throw new Error(
-          `Spécialité non trouvée. Spécialités disponibles : ${options.join(
-            ", "
-          )}`
+          browser.i18n.getMessage(
+            "chooseSpecialityOptionNotFound",
+            options.join(", ")
+          )
         );
       }
     }
@@ -314,7 +313,7 @@
     let found = false,
       slot = null;
 
-    console.info(`Vérification de ${url}`);
+    console.info(browser.i18n.getMessage("checkAvailabilityStarted", url));
 
     try {
       let wait = false;
@@ -355,9 +354,10 @@
 
         if (!vaccinationMotive.optionFound && !arnMotive.optionFound) {
           throw new Error(
-            `Catégorie de motif non trouvé. Motifs disponibles : ${vaccinationMotive.options.join(
-              ", "
-            )}`
+            browser.i18n.getMessage(
+              "chooseMotiveCategoryOptionNotFound",
+              vaccinationMotive.options.join(", ")
+            )
           );
         } else {
           wait = true;
@@ -378,7 +378,7 @@
         );
 
         if (!arnMotive.optionFound)
-          throw new Error("Injection ARNm non disponible 1");
+          throw new Error(browser.i18n.getMessage("injectionNotFound", 1));
       } else {
         // On a peut-être directement la boite "pas de créneaux possibles"
         // Cas où il n'y a qu'un choix
@@ -391,7 +391,7 @@
             injectionVaccine
           )
         )
-          throw new Error("Injection ARNm non disponible 2");
+          throw new Error(browser.i18n.getMessage("injectionNotFound", 2));
       }
 
       slot = await getAvailableSlot();
@@ -400,11 +400,13 @@
         const $nextAvailabilities = await waitForSelector(
           ".availabilities-next-slot button"
         );
-        if (!$nextAvailabilities) throw new Error("Aucun créneau disponible 2");
+        if (!$nextAvailabilities)
+          throw new Error(browser.i18n.getMessage("noSlot", 2));
         $nextAvailabilities.click();
 
         slot = await getAvailableSlot();
-        if (slot === null) throw new Error("Aucun créneau disponible 3");
+        if (slot === null)
+          throw new Error(browser.i18n.getMessage("noSlot", 3));
       }
 
       // formats france:
@@ -421,7 +423,7 @@
       );
       if (!parts) {
         throw new Error(
-          `Impossible de cliquer sur le slot avec le titre ${slot.title}`
+          browser.i18n.getMessage("slotDateFormatNotFound", slot.title)
         );
       }
 
@@ -476,16 +478,13 @@
             ".availabilities-next-slot button"
           );
           if (!$nextAvailabilities)
-            throw new Error(
-              "Aucun créneau disponible pour le second rendez-vous 1"
-            );
+            throw new Error(browser.i18n.getMessage("noSecondSlot", 1));
+
           $nextAvailabilities.click();
 
           slot2 = await getAvailableSlot();
           if (slot2 === null)
-            throw new Error(
-              "Aucun créneau disponible pour le second rendez-vous 2"
-            );
+            throw new Error(browser.i18n.getMessage("noSecondSlot", 2));
         }
 
         slot2.click();
@@ -510,16 +509,14 @@
         ".dl-modal-footer .dl-button-label"
       );
       if (!popupConfirmation) {
-        throw new Error(
-          "Impossible de trouver le bouton pour confirmer le dialogue 'à lire'."
-        );
+        throw new Error(browser.i18n.getMessage("popupConfirmationNotFound"));
       }
 
       fireFullClick(popupConfirmation);
 
       // Ici la page entière recharge et le script ne peut pas continuer avec le choix du patient
       // TODO: fix issue #70 see PR #81 for more information
-      throw new Error("Confirmation manuelle du RDV nécessaire");
+      throw new Error(browser.i18n.getMessage("manualConfirmationRequired"));
 
       // Pour qui prenez-vous ce rendez-vous ? (moi)
       const masterPatientId = await waitForSelector(

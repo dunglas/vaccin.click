@@ -14,17 +14,22 @@
         <img src="/icons/vaccine-color.svg" />
       </div>
       <div class="text-section-header">
-        <a href="https://vaccin.click" target="_blank">vaccin.click</a> : mon
-        vaccin COVID-19 en 1 click !
+        <a href="https://vaccin.click" target="_blank" data-i18n="extensionName"
+          >vaccin.click</a
+        >
+        :
+        <span data-i18n="extensionShortDescription"
+          >mon vaccin COVID-19 en 1 click !</span
+        >
       </div>
     </header>
 
     <div class="panel-section panel-section-formElements">
       <div class="panel-formElements-item">
-        <button id="stop" class="expander">
+        <button id="stop" class="expander" data-i18n="pauseScan">
           Mettre en pause la surveillance des RDV
         </button>
-        <button id="start" class="expander">
+        <button id="start" class="expander" data-i18n="resumeScan">
           Reprendre la surveillance des RDV
         </button>
       </div>
@@ -39,22 +44,30 @@
             id="fullServiceInjection"
             checked
           />
-          <label for="fullServiceInjection">1ère dose (avec rappel)</label>
+          <label for="fullServiceInjection" data-i18n="firstAndSecondInjection"
+            >1ère dose (avec rappel)</label
+          >
         </div>
 
         <div>
           <input type="radio" name="injectionType" id="firstInjectionOnly" />
-          <label for="firstInjectionOnly">1ère dose (sans rappel)</label>
+          <label for="firstInjectionOnly" data-i18n="firstInjection"
+            >1ère dose (sans rappel)</label
+          >
         </div>
 
         <div>
           <input type="radio" name="injectionType" id="secondInjectionOnly" />
-          <label for="secondInjectionOnly">2ème dose</label>
+          <label for="secondInjectionOnly" data-i18n="secondInjection"
+            >2ème dose</label
+          >
         </div>
 
         <div>
           <input type="radio" name="injectionType" id="thirdInjectionOnly" />
-          <label for="thirdInjectionOnly">3ème dose</label>
+          <label for="thirdInjectionOnly" data-i18n="additionalInjection"
+            >3ème dose</label
+          >
         </div>
       </div>
 
@@ -68,11 +81,15 @@
             id="pfizerInjection"
             checked
           />
-          <label for="pfizerInjection">Pfizer-BioNTech</label>
+          <label for="pfizerInjection" data-i18n="pfizerVaccine"
+            >Pfizer-BioNTech</label
+          >
         </div>
         <div>
           <input type="radio" name="injectionVaccine" id="modernaInjection" />
-          <label for="modernaInjection">Moderna</label>
+          <label for="modernaInjection" data-i18n="modernaVaccine"
+            >Moderna</label
+          >
         </div>
       </div>
 
@@ -81,14 +98,14 @@
       <div class="panel-formElements-item">
         <div>
           <input type="radio" name="autoBook" id="disableAutoBook" checked />
-          <label for="disableAutoBook"
+          <label for="disableAutoBook" data-i18n="disableAutoBook"
             >Ouvrir un onglet lorsqu'une réservation est disponible</label
           >
         </div>
 
         <div>
           <input type="radio" name="autoBook" id="enableAutoBook" />
-          <label for="enableAutoBook"
+          <label for="enableAutoBook" data-i18n="enableAutoBook"
             >Réserver automatiquement (vous devez être
             <a href="https://www.doctolib.fr/sessions/new" target="_blank"
               >connecté à Doctolib</a
@@ -101,7 +118,7 @@
     <div class="panel-section panel-section-list">
       <div class="panel-list-item disabled">
         <div class="icon"></div>
-        <div class="text">
+        <div class="text" data-i18n="myVaccinationCenters">
           Mes centres de vaccination en réservation automatique
         </div>
         <div class="text-shortcut"></div>
@@ -113,7 +130,7 @@
 
       <div class="panel-list-item">
         <div class="icon"></div>
-        <div class="text">
+        <div class="text" data-i18n="findVaccinationCenters">
           <a
             href="https://www.doctolib.fr/vaccination-covid-19"
             target="_blank"
@@ -132,6 +149,7 @@
           <a
             href="https://twitter.com/intent/tweet?text=J'utilise https%3A%2F%2Fvaccin.click de %40dunglas pour réserver automatiquement mon rendez-vous de vaccination %23COVID19 !"
             target="_blank"
+            data-i18n="shareOnTwitter"
           >
             Partager vaccin.click sur Twitter</a
           >
@@ -142,10 +160,10 @@
       <div class="panel-section-separator"></div>
 
       <details class="panel-section panel-section-formElements">
-        <summary>Options avancées</summary>
+        <summary data-i18n="advancedConfiguration">Options avancées</summary>
 
         <div class="panel-formElements-item">
-          <button id="reset" class="expander">
+          <button id="reset" class="expander" data-i18n="resetEverything">
             Remise à zéro (effacera toutes les données)
           </button>
         </div>
@@ -155,7 +173,7 @@
 
       <div class="panel-list-item">
         <div class="icon"></div>
-        <div class="text">Journal d'activité</div>
+        <div class="text" data-i18n="activityLog">Journal d'activité</div>
         <div class="text-shortcut"></div>
       </div>
 

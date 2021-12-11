@@ -4,8 +4,8 @@
 
   if (!document.querySelector(".dl-search-result")) return;
 
-  const MSG_ADD = " Ajouter à ma liste";
-  const MSG_DELETE = " Retirer de ma liste";
+  const MSG_ADD = browser.i18n.getMessage("addToMyList");
+  const MSG_DELETE = browser.i18n.getMessage("removeFromMyList");
   const ICON_URL = browser.runtime.getURL("icons/vaccine-color.svg");
   const MAX_LOCATIONS = 24; // Limite de storage.sync
   let observerList = [];
@@ -97,9 +97,7 @@
       delete locations[locationUrl];
     } else {
       if (Object.keys(locations).length >= MAX_LOCATIONS) {
-        alert(
-          "Pour ne pas trop charger les serveurs de Doctolib, il n'est pas possible de surveiller plus de 24 centres en même temps. Supprimez des centres de votre liste pour en ajouter d'autres."
-        );
+        alert(browser.i18n.getMessage("alertWatchlistSizeExceeded"));
         return;
       }
 

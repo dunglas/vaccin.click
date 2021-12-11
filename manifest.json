@@ -1,10 +1,11 @@
 {
   "manifest_version": 2,
-  "name": "vaccin.click",
+  "name": "__MSG_extensionName__",
   "version": "1.11",
-  "description": "Trouvez et réservez automatiquement votre créneau de vaccination COVID-19.",
+  "description": "__MSG_extensionDescription__",
   "author": "Kévin Dunglas",
   "homepage_url": "https://dunglas.fr",
+  "default_locale": "fr",
   "icons": {
     "48": "icons/vaccine-color.svg",
     "96": "icons/vaccine-color.svg"
