@@ -1,0 +1,5 @@
+languages: Sprachen
+description: Eine Firefox Erweiterung die automatisch für Sie einen Corona-Impftermin findet und reserviert.
+sidebar:
+  see_source: Source Code anzeigen
+  credits: Ein Projekt von <a href="https://twitter.com/dunglas">Kévin Dunglas</a> und Anne Lesouef

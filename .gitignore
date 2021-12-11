@@ -1,2 +1,4 @@
 /_site
 /web-ext-artifacts
+/.bundle
+/vendor

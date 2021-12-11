@@ -1,6 +1,8 @@
 lang: fr
 theme: jekyll-theme-minimal
 title: vaccin.click
-description: Une extension Firefox pour trouver et réserver automatiquement votre créneau de vaccination COVID-19
 logo: logo.svg
 show_downloads: false
+
+# jekyll-multiple-languages-plugin specific settings: https://github.com/kurtsson/jekyll-multiple-languages-plugin#4-configuration
+languages: ["fr", "de"]

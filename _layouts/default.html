@@ -25,10 +25,10 @@
           <a href="https://addons.mozilla.org/fr/firefox/addon/vaccin-click/"><img src="{{site.logo | relative_url}}" alt="Logo" /></a>
         {% endif %}
 
-        <p>{{ site.description | default: site.github.project_tagline }}</p>
+        <p>{% t description %}</p>
 
         {% if site.github.is_project_page %}
-        <p class="view"><a href="{{ site.github.repository_url }}">Voir le code source <small>{{ site.github.repository_nwo }}</small></a></p>
+        <p class="view"><a href="{{ site.github.repository_url }}">{% t sidebar.see_source %} <small>{{ site.github.repository_nwo }}</small></a></p>
         {% endif %}
 
         {% if site.show_downloads %}
@@ -45,11 +45,22 @@
 
       </section>
       <footer>
-        <p>Un projet par <a href="https://twitter.com/dunglas">Kévin Dunglas</a> et Anne Lesouef</p>
+        <p>{% t sidebar.credits %}</p>
         <ul>
           <li><a href="https://twitter.com/dunglas">Twitter</a></li>
           <li><a href="https://mastodon.social/@dunglas">Mastodon</a></li>
           <li><a href="https://github.com/dunglas">GitHub</a></li>
+        </ul>
+        <p>{% t languages %}</p>
+        <ul>
+          <li>
+            {% capture lang1 %}{{ site.baseurl_root }}{{ page.url}}{% endcapture %}
+            <a href="{{ lang1 }}" >{% t global.french %}</a>
+          </li>
+          <li>
+            {% capture lang2 %}{{ site.baseurl_root }}/de{{ page.url}}{% endcapture %}
+            <a href="{{ lang2 }}" >{% t global.german %}</a>
+          </li>
         </ul>
       </footer>
     </div>

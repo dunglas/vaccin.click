@@ -1,10 +1,6 @@
----
-layout: default
----
+## Trouvez et réservez automatiquement votre créneau de vaccination COVID-19
 
-**_vaccin.click_ supporte désormais la 3ème dose !**
-
-La vaccination contre le COVID-19 est nécessaire pour obtenir un pass sanitaire, mais si vous n'êtes pas prioritaire, il est très difficile de trouver un créneau disponible. Si vous en avez marre [d'actualiser frénétiquement Doctolib](https://twitter.com/marine_roussill/status/1393185768219287552) pour trouver un RDV, cette extension pour [Firefox](https://www.mozilla.org/fr/firefox/new/) est faite pour vous !
+La vaccination contre le COVID-19 est désormais ouverte à toutes les personnes majeures, mais si vous n'êtes pas prioritaire, il est très difficile de trouver un créneau disponible. Si vous en avez marre [d'actualiser frénétiquement Doctolib](https://twitter.com/marine_roussill/status/1393185768219287552) pour trouver un RDV, cette extension pour [Firefox](https://www.mozilla.org/fr/firefox/new/) est faite pour vous !
 
 _vaccin.click_ vous permet de lister les centres de vaccination dans lesquels vous pouvez vous rendre et de réserver automatiquement dès qu'un créneau est disponible (avant le lendemain soir ou dès le 31 mai) !
 
