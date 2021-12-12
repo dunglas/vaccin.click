@@ -104,6 +104,7 @@
     document.getElementById(injectionVaccine).checked = true;
   }
 
+  /** @param {Date} dateMaxSearch La date maximale de recherche de rdv */
   function displayDateMaxSearch(dateMaxSearch) {
     const date = new Date(dateMaxSearch);
     document.getElementById('dateMax').value = date.toISOString().split('T')[0]

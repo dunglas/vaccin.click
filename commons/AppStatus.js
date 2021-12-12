@@ -22,7 +22,8 @@ class AppStatus {
     this.injectionType = "fullServiceInjection";
     /** @type {'modernaInjection' | 'pfizerInjection'} vaccin d'injection souhaité par le user */
     this.injectionVaccine = "pfizerInjection";
-    this.dateMaxSearch = new Date(2022, 1, 15);
+    /** @type {Date} Date max de recherche de rdv (par défaut aujd + 1 mois) */
+    this.dateMaxSearch = new Date((new Date()).getFullYear()+1, (new Date()).getMonth(), (new Date()).getDate());
     /** @type {(string) => void} callback quand une {@link VaccineLocation} a été ajouté */
     this.onLocationAddedCb = (job) => {};
     /** @type {(string) => void} callback quand une {@link VaccineLocation} a été supprimée */
@@ -35,6 +36,7 @@ class AppStatus {
     this.onInjectionTypeCb = (newValue) => {};
     /** @type {'modernaInjection' | 'pfizerInjection'} callback quand injectionVaccine change de valeur */
     this.onInjectionVaccineCb = (newValue) => {};
+    /** @type {Date} callback quand maxDateSearch change de valeur */
     this.onDateMaxSearchCb = (newValue) => {};
 
     this.onStorageChange = this.onStorageChange.bind(this);
@@ -51,7 +53,7 @@ class AppStatus {
       autoBook: false,
       injectionType: "fullServiceInjection",
       injectionVaccine: "pfizerInjection",
-      dateMaxSearch: new Date(2022, 1, 15),
+      dateMaxSearch: new Date((new Date()).getFullYear()+1, (new Date()).getMonth(), (new Date()).getDate()),
     });
 
     Object.keys(result.locations).forEach((url) => {
@@ -151,6 +153,10 @@ class AppStatus {
   onInjectionVaccineChange(callback) {
     this.onInjectionVaccineCb = callback;
   }
+
+  /**
+   * @param {(Date) => void} callback quand dateMaxSearch change de valeur
+   */
   onDateMaxSearchChange(callback) {
     this.onDateMaxSearchCb = callback;
   }
@@ -181,6 +187,10 @@ class AppStatus {
     browser.storage.sync.set({ injectionType: this.injectionType });
   }
 
+
+  /**
+   * @param {Date} value The new dateMaxSearch value
+   */
   setDateMaxSearch(value) {
     this.dateMaxSearch = new Date(value.value);
     browser.storage.sync.set({ dateMaxSearch: this.dateMaxSearch });
@@ -211,7 +221,7 @@ class AppStatus {
     this.onInjectionTypeCb(this.injectionType);
     this.injectionVaccine = "pfizerInjection";
     this.onInjectionTypeCb(this.injectionVaccine);
-    this.dateMaxSearch = new Date(2022, 1, 15);
+    this.dateMaxSearch = new Date((new Date()).getFullYear(), (new Date()).getMonth()+1, (new Date()).getDate());
     this.onDateMaxSearchCb(this.dateMaxSearch);
   }
 

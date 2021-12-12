@@ -316,11 +316,10 @@
         autoBook: false,
         injectionType: "fullServiceInjection",
         injectionVaccine: "pfizerInjection",
-        dateMaxSearch: new Date(2022, 1, 15)
+        dateMaxSearch: new Date((new Date()).getFullYear()+1, (new Date()).getMonth(), (new Date()).getDate()),
       });
 
     const dateMaxSearchDate = typeof(dateMaxSearch) === 'string' ? new Date(dateMaxSearch) : dateMaxSearch;
-    console.log(dateMaxSearchDate)
 
     if (stopped || !locations[url]) {
       running = false;
@@ -455,19 +454,6 @@
 
       const date = new Date(
         `${selectedMonth} ${selectedDay} ${selectedYear} ${selectedTime}`);
-      // console.log(parts)
-      // const year = parts[1] === 'decembre' ? 2021 : 2022;
-      // const date = new Date(
-      //   `${MONTHS[parts[1]]} ${parts[0]} ${year} ${
-      //     parts[2]
-      //   }`
-      // );
-
-      const tomorrow = new Date();
-      tomorrow.setHours(23);
-      tomorrow.setMinutes(59);
-      tomorrow.setDate(tomorrow.getDate() + 1);
-
 
       if (date > dateMaxSearchDate) {
         const formatedDate = dateMaxSearchDate.toLocaleDateString();
