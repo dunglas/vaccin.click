@@ -1,24 +1,30 @@
+---
+layout: default
+lang: fr
+permalink: /
+---
+
 ## Trouvez et réservez automatiquement votre créneau de vaccination COVID-19
 
-***vaccin.click* supporte désormais la 3ème dose !**
+**_vaccin.click_ supporte désormais la 3ème dose !**
 
 La vaccination contre le COVID-19 est nécessaire pour obtenir un pass sanitaire, mais si vous n'êtes pas prioritaire, il est très difficile de trouver un créneau disponible. Si vous en avez marre [d'actualiser frénétiquement Doctolib](https://twitter.com/marine_roussill/status/1393185768219287552) pour trouver un RDV, cette extension pour [Firefox](https://www.mozilla.org/fr/firefox/new/) est faite pour vous !
 
-*vaccin.click* vous permet de lister les centres de vaccination dans lesquels vous pouvez vous rendre et de réserver automatiquement dès qu'un créneau est disponible (avant le lendemain soir ou dès le 31 mai) !
+_vaccin.click_ vous permet de lister les centres de vaccination dans lesquels vous pouvez vous rendre et de réserver automatiquement dès qu'un créneau est disponible (avant le lendemain soir ou dès le 31 mai) !
 
 [![Popup](screenshot.png)](screenshot.png)
 
 ### Installer vaccin.click
 
 1. Si ce n'est pas encore fait, [installez Firefox sur votre ordinateur](https://www.mozilla.org/fr/firefox/new/), un navigateur web libre, gratuit et respectueux de votre vie privée (la version mobile de Firefox n'est pas supportée)
-2. [Installez l'extension *vaccin.click*](https://addons.mozilla.org/fr/firefox/addon/vaccin-click/)
+2. [Installez l'extension _vaccin.click_](https://addons.mozilla.org/fr/firefox/addon/vaccin-click/)
 
 **Vous êtes prêt⋅e à être vacciné !**
 
 ### Comment ça marche ?
 
 1. Cliquez sur l'icône représentant un vaccin qui est apparue dans la barre d'outils
-2. Choisissez si vous voulez que la page du centre de vaccination s'ouvre quand un créneau est disponible (par défaut), ou si vous souhaitez que *vaccin.click* essaie de prendre le rendez-vous pour vous automatiquement (pour utiliser cette fonctionnalité, il faut que vous soyez connecté⋅e à Doctolib, dans ce cas l'extension choisira automatiquement le premier RDV disponible pour la 1ère et la 2nde dose - soyez sûr⋅e de pouvoir vous y rendre !)
+2. Choisissez si vous voulez que la page du centre de vaccination s'ouvre quand un créneau est disponible (par défaut), ou si vous souhaitez que _vaccin.click_ essaie de prendre le rendez-vous pour vous automatiquement (pour utiliser cette fonctionnalité, il faut que vous soyez connecté⋅e à Doctolib, dans ce cas l'extension choisira automatiquement le premier RDV disponible pour la 1ère et la 2nde dose - soyez sûr⋅e de pouvoir vous y rendre !)
 3. Cliquez sur `Trouver des centres de vaccination sur Doctolib`
 4. Doctolib s'ouvre, utilisez les filtres pour trouver les centres de vaccination près de chez vous
 5. Ajoutez des centres à votre liste à surveiller en appuyant sur le bouton `Ajouter à ma liste` ajouté par l'extension

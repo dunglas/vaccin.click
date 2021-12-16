@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ site.lang | default: "en-US" }}">
+<html lang="{{ page.lang | default: "fr" }}">
   <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -25,10 +25,10 @@
           <a href="https://addons.mozilla.org/fr/firefox/addon/vaccin-click/"><img src="{{site.logo | relative_url}}" alt="Logo" /></a>
         {% endif %}
 
-        <p>{{ site.description | default: site.github.project_tagline }}</p>
+        <p>{{ site.t[page.lang].description }}</p>
 
         {% if site.github.is_project_page %}
-        <p class="view"><a href="{{ site.github.repository_url }}">Voir le code source <small>{{ site.github.repository_nwo }}</small></a></p>
+        <p class="view"><a href="{{ site.github.repository_url }}">{{ site.t[page.lang].sidebar.see_source }} <small>{{ site.github.repository_nwo }}</small></a></p>
         {% endif %}
 
         {% if site.show_downloads %}
@@ -45,11 +45,20 @@
 
       </section>
       <footer>
-        <p>Un projet par <a href="https://twitter.com/dunglas">Kévin Dunglas</a> et Anne Lesouef</p>
+        <p>{{ site.t[page.lang].sidebar.credits }}</p>
         <ul>
           <li><a href="https://twitter.com/dunglas">Twitter</a></li>
           <li><a href="https://mastodon.social/@dunglas">Mastodon</a></li>
           <li><a href="https://github.com/dunglas">GitHub</a></li>
+        </ul>
+        <p>{{ site.t[page.lang].languages }}</p>
+        <ul>
+          <li>
+            <a href="{{ "/" | relative_url }}" >{{ site.global.french }}</a>
+          </li>
+          <li>
+            <a href="{{ "/de" | relative_url }}" >{{ site.global.german }}</a>
+          </li>
         </ul>
       </footer>
     </div>

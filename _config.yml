@@ -1,6 +1,22 @@
 lang: fr
 theme: jekyll-theme-minimal
 title: vaccin.click
-description: Une extension Firefox pour trouver et réserver automatiquement votre créneau de vaccination COVID-19
 logo: logo.svg
 show_downloads: false
+
+global:
+  french: Français
+  german: Deutsch
+t:
+  de:
+    languages: Sprachen
+    description: Eine Firefox Erweiterung die automatisch für Sie einen Corona-Impftermin findet und reserviert.
+    sidebar:
+      see_source: Source Code anzeigen
+      credits: Ein Projekt von <a href="https://twitter.com/dunglas">Kévin Dunglas</a> und Anne Lesouef
+  fr:
+    languages: Langues
+    description: Une extension Firefox pour trouver et réserver automatiquement votre créneau de vaccination COVID-19.
+    sidebar:
+      see_source: Voir le code source
+      credits: Un projet par <a href="https://twitter.com/dunglas">Kévin Dunglas</a> et Anne Lesouef
