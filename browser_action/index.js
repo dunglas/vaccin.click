@@ -15,7 +15,7 @@
     elements.forEach(function (element) {
       const key = element.getAttribute("data-i18n");
       const value = browser.i18n.getMessage(key);
-      element.innerHTML = value;
+      element.innerText = value;
     });
   }
 
