@@ -35,6 +35,10 @@
     "message": "Troisième dose",
     "description": "Text qui décrit une injection de rappel au dela de la deuxième dose."
   },
+  "  maxDateLabel": {
+    "message": "Date maximale de recherche (MM/DD/YYYY)",
+    "description": "Date jusqu'à laquelle un rdv sera cherché"
+  },
   "modernaVaccine": {
     "message": "Vaccin Moderna",
     "description": "Text qui décrit un vaccin Moderna."

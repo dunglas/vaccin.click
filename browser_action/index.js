@@ -107,7 +107,7 @@
   /** @param {Date} dateMaxSearch La date maximale de recherche de rdv */
   function displayDateMaxSearch(dateMaxSearch) {
     const date = new Date(dateMaxSearch);
-    document.getElementById('dateMax').value = date.toISOString().split('T')[0]
+    document.getElementById("dateMax").value = date.toISOString().split("T")[0];
   }
 
   // Preparation des données
@@ -157,8 +157,10 @@
     appStatus.setInjectionVaccine.bind(appStatus, "modernaInjection");
   document.getElementById("pfizerInjection").onclick =
     appStatus.setInjectionVaccine.bind(appStatus, "pfizerInjection");
-  document.getElementById("dateMax").onblur =
-    appStatus.setDateMaxSearch.bind(appStatus, document.getElementById('dateMax'));
+  document.getElementById("dateMax").onblur = appStatus.setDateMaxSearch.bind(
+    appStatus,
+    document.getElementById("dateMax")
+  );
 
   document.getElementById("reset").onclick = () => {
     if (

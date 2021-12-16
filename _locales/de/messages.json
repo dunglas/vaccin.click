@@ -35,6 +35,10 @@
     "message": "Auffrischimpfung",
     "description": "Text der alle Auffrischimpfungen beschreibt."
   },
+  "maxDateLabel": {
+    "message": "Termin finden bis zum (DD. MM. YYYY)",
+    "description": "Bis zu diesem Datum wird nach einem Termin gesucht"
+  },
   "modernaVaccine": {
     "message": "Moderna Impfstoff",
     "description": "Beschreibung des Moderna Impfstoffes."
