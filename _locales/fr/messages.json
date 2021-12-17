@@ -48,16 +48,28 @@
     "description": "Text qui décrit la fonctionalité lorsque la réservation automatique est désactivé."
   },
   "enableAutoBook": {
-    "message": "Réserver automatiquement (vous devez être <a href=\"https://www.doctolib.fr/sessions/new\" target=\"_blank\">connecté à Doctolib</a>)",
+    "message": "Réserver automatiquement",
     "description": "Text qui décrit la fonctionalité lorsque la réservation automatique est activé."
+  },
+  "enableAutoBookHint": {
+    "message": "(vous devez être connecté à Doctolib)",
+    "description": "Explication de comment se connecter au site Doctolib"
+  },
+  "doctolibLoginLink": {
+    "message": "https://www.doctolib.fr/sessions/new",
+    "description": "URL vers le formulaire de connexion du site Doctolib"
   },
   "myVaccinationCenters": {
     "message": "Mes centres de vaccination en réservation automatique",
     "description": "Text qui décrit la liste des centres de vaccination choisis."
   },
   "findVaccinationCenters": {
-    "message": "<a href=\"https://www.doctolib.fr/vaccination-covid-19\" target=\"_blank\">Trouver des centres de vaccination sur Doctolib</a>",
+    "message": "Trouver des centres de vaccination sur Doctolib",
     "description": "Text qui décrit la fonctionalité de recherche de centre de vaccination."
+  },
+  "doctolibFindVaccinationLink": {
+    "message": "https://www.doctolib.fr/vaccination-covid-19",
+    "description": "URL vers le site de recherche de centres de vaccination chez Doctolib"
   },
   "shareOnTwitter": {
     "message": "Partager vaccin.click sur Twitter",
