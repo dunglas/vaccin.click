@@ -48,16 +48,28 @@
     "description": "Beschreibung der Funktionalität wenn die automatische Reservierung deaktiviert ist."
   },
   "enableAutoBook": {
-    "message": "Automatisch reservieren (hierfür müssen Sie auf <a href=\"https://www.doctolib.de/sessions/new\" target=\"_blank\">Doctolib eingeloggt sein</a>)",
+    "message": "Automatisch reservieren",
     "description": "Beschreibung der Funktionalität wenn die automatische Reservierung aktiviert ist."
+  },
+  "enableAutoBookHint": {
+    "message": "hierfür müssen Sie auf Doctolib eingeloggt sein",
+    "description": "Erklaerungstext um sich auf Doctolib anzumelden"
+  },
+  "doctolibLoginLink": {
+    "message": "https://www.doctolib.de/sessions/new",
+    "description": "URL zum Doctolib Login Formular"
   },
   "myVaccinationCenters": {
     "message": "Meine Impfzentren Liste",
     "description": "Überschrift der Liste aller ausgewählten Impfzentren."
   },
   "findVaccinationCenters": {
-    "message": "<a href=\"https://www.doctolib.de/impfung-covid-19-corona\" target=\"_blank\">Impfzentren oder Ärzte auf Doctolib finden</a>",
+    "message": "Impfzentren oder Ärzte auf Doctolib finden",
     "description": "Überschrift der Suchfunktion auf Doctolib."
+  },
+  "doctolibFindVaccinationLink": {
+    "message": "https://www.doctolib.de/impfung-covid-19-corona",
+    "description": "URL zur Doctolib Suche der Impzentren oder impfenden Praxen"
   },
   "shareOnTwitter": {
     "message": "vaccin.click auf Twitter teilen",

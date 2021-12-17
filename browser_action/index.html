@@ -105,10 +105,15 @@
 
         <div>
           <input type="radio" name="autoBook" id="enableAutoBook" />
-          <label for="enableAutoBook" data-i18n="enableAutoBook"
-            >Réserver automatiquement (vous devez être
-            <a href="https://www.doctolib.fr/sessions/new" target="_blank"
-              >connecté à Doctolib</a
+          <label for="enableAutoBook"
+            ><span data-i18n="enableAutoBook">Réserver automatiquement</span>
+            <a
+              data-i18n-href="doctolibLoginLink"
+              href="https://www.doctolib.fr/sessions/new"
+              target="_blank"
+              >(<span data-i18n="enableAutoBookHint"
+                >vous devez être connecté à Doctolib</span
+              ></a
             >)</label
           >
         </div>
@@ -130,8 +135,10 @@
 
       <div class="panel-list-item">
         <div class="icon"></div>
-        <div class="text" data-i18n="findVaccinationCenters">
+        <div class="text">
           <a
+            data-i18n="findVaccinationCenters"
+            data-i18n-href="doctolibFindVaccinationLink"
             href="https://www.doctolib.fr/vaccination-covid-19"
             target="_blank"
           >

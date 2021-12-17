@@ -17,6 +17,18 @@
       const value = browser.i18n.getMessage(key);
       element.innerText = value;
     });
+
+    translateHrefTargets();
+  }
+
+  function translateHrefTargets() {
+    const elements = document.querySelectorAll("[data-i18n-href]");
+
+    elements.forEach(function (element) {
+      const key = element.getAttribute("data-i18n-link");
+      const value = browser.i18n.getMessage(key);
+      element.href = value;
+    });
   }
 
   /**
