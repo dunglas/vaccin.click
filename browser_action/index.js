@@ -25,9 +25,9 @@
     const elements = document.querySelectorAll("[data-i18n-href]");
 
     elements.forEach(function (element) {
-      const key = element.getAttribute("data-i18n-link");
+      const key = element.getAttribute("data-i18n-href");
       const value = browser.i18n.getMessage(key);
-      element.href = value;
+      element.setAttribute('href', value);
     });
   }
 
