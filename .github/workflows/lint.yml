@@ -5,13 +5,13 @@ on:
   pull_request:
 
 jobs:
-  prettier:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
 
       - name: Lint the web extension
-        run: npx web-ext lint
+        run: npx web-ext lint -w
 
       - name: Check CS
         run: npx prettier --check .
