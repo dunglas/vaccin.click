@@ -27,7 +27,7 @@
     elements.forEach(function (element) {
       const key = element.getAttribute("data-i18n-href");
       const value = browser.i18n.getMessage(key);
-      element.setAttribute('href', value);
+      element.setAttribute("href", value);
     });
   }
 

@@ -52,7 +52,7 @@
     "description": "Beschreibung der Funktionalität wenn die automatische Reservierung aktiviert ist."
   },
   "enableAutoBookHint": {
-    "message": "hierfür müssen Sie auf Doctolib eingeloggt sein",
+    "message": "(hierfür müssen Sie auf Doctolib eingeloggt sein)",
     "description": "Erklaerungstext um sich auf Doctolib anzumelden"
   },
   "doctolibLoginLink": {
