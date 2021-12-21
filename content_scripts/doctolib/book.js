@@ -295,14 +295,30 @@
 
   let running = false;
   async function checkAvailability() {
-    const { locations, stopped, autoBook, injectionType, injectionVaccine } =
-      await browser.storage.sync.get({
-        locations: {},
-        stopped: false,
-        autoBook: false,
-        injectionType: "fullServiceInjection",
-        injectionVaccine: "pfizerInjection",
-      });
+    const {
+      locations,
+      stopped,
+      autoBook,
+      injectionType,
+      injectionVaccine,
+      dateMaxSearch,
+    } = await browser.storage.sync.get({
+      locations: {},
+      stopped: false,
+      autoBook: false,
+      injectionType: "fullServiceInjection",
+      injectionVaccine: "pfizerInjection",
+      dateMaxSearch: new Date(
+        new Date().getFullYear() + 1,
+        new Date().getMonth(),
+        new Date().getDate()
+      ),
+    });
+
+    const dateMaxSearchDate =
+      typeof dateMaxSearch === "string"
+        ? new Date(dateMaxSearch)
+        : dateMaxSearch;
 
     if (stopped || !locations[url]) {
       running = false;
@@ -437,15 +453,12 @@
         `${selectedMonth} ${selectedDay} ${selectedYear} ${selectedTime}`
       );
 
-      const tomorrow = new Date();
-      tomorrow.setHours(23);
-      tomorrow.setMinutes(59);
-      tomorrow.setDate(tomorrow.getDate() + 1);
-
-      if (date > tomorrow && date < new Date("2021-05-31T00:20:00"))
+      if (date > dateMaxSearchDate) {
+        const formatedDate = dateMaxSearchDate.toLocaleDateString();
         throw new Error(
-          "Pas de créneau dispo d'ici demain soir ou après le 31 mai"
+          `Pas de créneau dispo d'ici demain soir ou avant le ${formatedDate}`
         );
+      }
 
       if (!autoBook) {
         browser.runtime.sendMessage({

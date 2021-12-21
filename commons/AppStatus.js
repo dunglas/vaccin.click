@@ -22,6 +22,12 @@ class AppStatus {
     this.injectionType = "fullServiceInjection";
     /** @type {'modernaInjection' | 'pfizerInjection'} vaccin d'injection souhaité par le user */
     this.injectionVaccine = "pfizerInjection";
+    /** @type {Date} Date max de recherche de rdv (par défaut aujd + 1 mois) */
+    this.dateMaxSearch = new Date(
+      new Date().getFullYear() + 1,
+      new Date().getMonth(),
+      new Date().getDate()
+    );
     /** @type {(string) => void} callback quand une {@link VaccineLocation} a été ajouté */
     this.onLocationAddedCb = (job) => {};
     /** @type {(string) => void} callback quand une {@link VaccineLocation} a été supprimée */
@@ -34,6 +40,8 @@ class AppStatus {
     this.onInjectionTypeCb = (newValue) => {};
     /** @type {'modernaInjection' | 'pfizerInjection'} callback quand injectionVaccine change de valeur */
     this.onInjectionVaccineCb = (newValue) => {};
+    /** @type {Date} callback quand maxDateSearch change de valeur */
+    this.onDateMaxSearchCb = (newValue) => {};
 
     this.onStorageChange = this.onStorageChange.bind(this);
     browser.storage.onChanged.addListener(this.onStorageChange);
@@ -49,6 +57,11 @@ class AppStatus {
       autoBook: false,
       injectionType: "fullServiceInjection",
       injectionVaccine: "pfizerInjection",
+      dateMaxSearch: new Date(
+        new Date().getFullYear() + 1,
+        new Date().getMonth(),
+        new Date().getDate()
+      ),
     });
 
     Object.keys(result.locations).forEach((url) => {
@@ -67,6 +80,9 @@ class AppStatus {
 
     this.injectionVaccine = result.injectionVaccine;
     this.onInjectionVaccineCb(this.injectionVaccine);
+
+    this.dateMaxSearch = result.dateMaxSearch;
+    this.onDateMaxSearchCb(this.dateMaxSearch);
   }
 
   getLocations() {
@@ -103,6 +119,10 @@ class AppStatus {
 
   getInjectionVaccine() {
     return this.injectionVaccine;
+  }
+
+  getDateMaxSearch() {
+    return this.dateMaxSearch;
   }
 
   /**
@@ -142,6 +162,13 @@ class AppStatus {
     this.onInjectionVaccineCb = callback;
   }
 
+  /**
+   * @param {(Date) => void} callback quand dateMaxSearch change de valeur
+   */
+  onDateMaxSearchChange(callback) {
+    this.onDateMaxSearchCb = callback;
+  }
+
   start() {
     this.stopped = false;
     browser.storage.sync.set({ stopped: this.stopped });
@@ -169,6 +196,14 @@ class AppStatus {
   }
 
   /**
+   * @param {Date} value The new dateMaxSearch value
+   */
+  setDateMaxSearch(value) {
+    this.dateMaxSearch = new Date(value.value);
+    browser.storage.sync.set({ dateMaxSearch: this.dateMaxSearch });
+  }
+
+  /**
    * @param {'modernaInjection' | 'pfizerInjection'} value The new injectionVaccine value
    */
   setInjectionVaccine(value) {
@@ -193,6 +228,12 @@ class AppStatus {
     this.onInjectionTypeCb(this.injectionType);
     this.injectionVaccine = "pfizerInjection";
     this.onInjectionTypeCb(this.injectionVaccine);
+    this.dateMaxSearch = new Date(
+      new Date().getFullYear() + 1,
+      new Date().getMonth(),
+      new Date().getDate()
+    );
+    this.onDateMaxSearchCb(this.dateMaxSearch);
   }
 
   /**
@@ -209,6 +250,7 @@ class AppStatus {
     this.onAutoBookChangeCb = null;
     this.onInjectionTypeCb = null;
     this.onInjectionVaccineCb = null;
+    this.onDateMaxSearchCb = null;
   }
 
   /**
@@ -261,6 +303,11 @@ class AppStatus {
       this.injectionVaccine = change.injectionVaccine.newValue;
 
       this.onInjectionVaccineCb(this.injectionVaccine);
+    }
+    if (change.dateMaxSearch) {
+      this.dateMaxSearch = change.dateMaxSearch.newValue;
+
+      this.onDateMaxSearchCb(this.dateMaxSearch);
     }
   }
 }
